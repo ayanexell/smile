@@ -1,9 +1,7 @@
 <?php
 
 use App\Concerns\ProfileValidationRules;
-/* @chisel-email-verification */
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-/* @end-chisel-email-verification */
 use Flux\Flux;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -14,26 +12,31 @@ use Livewire\Component;
 new #[Title('Profile settings')] class extends Component {
     use ProfileValidationRules;
 
-    public string $name = '';
+    public string $nama_lengkap = '';
+    public string $nik = '';
+    public string $tgl_lahir = '';
+    public string $jenis_kelamin = '';
     public string $email = '';
+    public string $alamat = '';
+    public string $pekerjaan = '';
 
-    /**
-     * Mount the component.
-     */
     public function mount(): void
     {
-        $this->name = Auth::user()->name;
-        $this->email = Auth::user()->email;
+        $user = Auth::user();
+        $this->nama_lengkap  = $user->nama_lengkap;
+        $this->nik           = $user->nik;
+        $this->tgl_lahir     = $user->tgl_lahir;
+        $this->jenis_kelamin = $user->jenis_kelamin;
+        $this->email         = $user->email;
+        $this->alamat        = $user->alamat;
+        $this->pekerjaan     = $user->pekerjaan;
     }
 
-    /**
-     * Update the profile information for the currently authenticated user.
-     */
     public function updateProfileInformation(): void
     {
         $user = Auth::user();
 
-        $validated = $this->validate($this->profileRules($user->id));
+        $validated = $this->validate($this->profileRules($user->id_user));
 
         $user->fill($validated);
 
@@ -85,24 +88,79 @@ new #[Title('Profile settings')] class extends Component {
 
     <flux:heading class="sr-only">{{ __('Profile settings') }}</flux:heading>
 
-    <x-pages::settings.layout :heading="__('Profile')" :subheading="__('Update your name and email address')">
+    <x-pages::settings.layout :heading="__('Profile')" :subheading="__('Update your personal information')">
         <form wire:submit="updateProfileInformation" class="my-6 w-full space-y-6">
-            <flux:input wire:model="name" :label="__('Name')" type="text" required autofocus autocomplete="name" />
+            <!-- Nama Lengkap -->
+            <flux:input
+                wire:model="nama_lengkap"
+                :label="__('Nama Lengkap')"
+                type="text"
+                required
+                autofocus
+                autocomplete="name"
+            />
 
+            <!-- NIK -->
+            <flux:input
+                wire:model="nik"
+                :label="__('NIK')"
+                type="text"
+                inputmode="numeric"
+                maxlength="16"
+                minlength="16"
+                required
+                autocomplete="off"
+            />
+
+            <!-- Tanggal Lahir -->
+            <flux:input
+                wire:model="tgl_lahir"
+                :label="__('Tanggal Lahir')"
+                type="date"
+                required
+                autocomplete="bday"
+                max="{{ now()->subYears(17)->format('Y-m-d') }}"
+            />
+
+            <!-- Jenis Kelamin -->
+            <fieldset>
+                <legend class="mb-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                    {{ __('Jenis Kelamin') }}
+                </legend>
+                <div class="flex gap-4">
+                    <label class="flex items-center gap-2">
+                        <input type="radio" wire:model="jenis_kelamin" value="laki-laki" required>
+                        <span>{{ __('Laki-laki') }}</span>
+                    </label>
+                    <label class="flex items-center gap-2">
+                        <input type="radio" wire:model="jenis_kelamin" value="perempuan">
+                        <span>{{ __('Perempuan') }}</span>
+                    </label>
+                </div>
+                @error('jenis_kelamin')
+                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                @enderror
+            </fieldset>
+
+            <!-- Email -->
             <div>
-                <flux:input wire:model="email" :label="__('Email')" type="email" required autocomplete="email" />
+                <flux:input
+                    wire:model="email"
+                    :label="__('Email')"
+                    type="email"
+                    required
+                    autocomplete="email"
+                />
 
-                {{-- @chisel-email-verification --}}
+                {{-- Verifikasi email (opsional) --}}
                 @if ($this->hasUnverifiedEmail)
-                    <div>
-                        <flux:text class="mt-4">
+                    <div class="mt-2">
+                        <flux:text>
                             {{ __('Your email address is unverified.') }}
-
                             <flux:link class="text-sm cursor-pointer" wire:click.prevent="resendVerificationNotification">
                                 {{ __('Click here to re-send the verification email.') }}
                             </flux:link>
                         </flux:text>
-
                         @if (session('status') === 'verification-link-sent')
                             <flux:text class="mt-2 font-medium !dark:text-green-400 !text-green-600">
                                 {{ __('A new verification link has been sent to your email address.') }}
@@ -110,25 +168,35 @@ new #[Title('Profile settings')] class extends Component {
                         @endif
                     </div>
                 @endif
-                {{-- @end-chisel-email-verification --}}
             </div>
 
-            <div class="flex items-center gap-4">
-                <div class="flex items-center justify-end">
-                    <flux:button variant="primary" type="submit" class="w-full" data-test="update-profile-button">
-                        {{ __('Save') }}
-                    </flux:button>
-                </div>
+            <!-- Alamat -->
+            <flux:input
+                wire:model="alamat"
+                :label="__('Alamat')"
+                type="text"
+                required
+                autocomplete="street-address"
+            />
 
+            <!-- Pekerjaan -->
+            <flux:input
+                wire:model="pekerjaan"
+                :label="__('Pekerjaan')"
+                type="text"
+                required
+                autocomplete="organization-title"
+            />
+
+            <div class="flex items-center justify-end">
+                <flux:button variant="primary" type="submit" data-test="update-profile-button">
+                    {{ __('Save') }}
+                </flux:button>
             </div>
         </form>
 
-        {{-- @chisel-email-verification --}}
         @if ($this->showDeleteUser)
-        {{-- @end-chisel-email-verification --}}
             <livewire:pages::settings.delete-user-form />
-        {{-- @chisel-email-verification --}}
         @endif
-        {{-- @end-chisel-email-verification --}}
     </x-pages::settings.layout>
 </section>
