@@ -54,11 +54,15 @@ class User extends Authenticatable
      */
     public function initials(): string
     {
-        return Str::of($this->name)
-            ->explode(' ')
-            ->take(2)
-            ->map(fn ($word) => Str::substr($word, 0, 1))
-            ->implode('');
+        $words = explode(' ', $this->nama_lengkap);
+        $wordCount = count($words);
+
+        if ($wordCount === 1) {
+            return Str::substr($words[0], 0, 2);
+        }
+
+        // 2 kata atau lebih: ambil huruf pertama dari dua kata pertama
+        return Str::substr($words[0], 0, 1) . Str::substr($words[1], 0, 1);
     }
 
     public function role()
