@@ -17,7 +17,7 @@ class RolesFactory extends Factory
     public function definition(): array
     {
         return [
-            'nama_role' => fake()->unique()->randomElement(['User', 'Admin', 'Super Admin']),
+            'nama_role' => fake()->unique()->randomElement(['User', 'Koordinator', 'Admin', 'Super Admin']),
         ];
     }
 
@@ -40,6 +40,15 @@ class RolesFactory extends Factory
             'nama_role' => 'Admin',
         ]);
     }
+
+    public function koordinators(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'nama_role' => 'Koordinator',
+        ]);
+    }
+
+
 
     /**
      * Indicate that the role is user.

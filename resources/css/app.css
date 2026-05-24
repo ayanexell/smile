@@ -236,7 +236,7 @@ select:focus[data-flux-control] {
                bg-sage-600 dark:bg-sage-500
                shadow-sm;
         width: 35px;
-        height: 35px;
+        height: 36px;
         box-shadow: 0 3px 10px rgba(72, 101, 72, 0.25)
     }
 
@@ -317,7 +317,7 @@ select:focus[data-flux-control] {
        ════════════════════════════════════ */
 
     .app-main {
-        @apply flex flex-col flex-1 overflow-hidden min-w-0;
+        @apply flex flex-col flex-1 overflow-y-auto min-w-0;
     }
 
     /* ── Desktop Header ── */

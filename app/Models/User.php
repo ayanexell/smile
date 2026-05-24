@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 
 #[Fillable([
     'nama_lengkap',
@@ -88,5 +89,29 @@ class User extends Authenticatable
     public function peminjamans()
     {
         return $this->hasMany(Peminjaman::class, 'user_id', 'id_user');
+    }
+
+    #[Scope]
+    protected function onlyAdmins($query)
+    {
+        return $query->whereHas('role', function ($q) {
+            $q->where('nama_role', 'Admin');
+        });
+    }
+
+    #[Scope]
+    protected function onlyKoordinators($query)
+    {
+        return $query->whereHas('role', function ($q) {
+            $q->where('nama_role', 'Koordinator');
+        });
+    }
+
+    #[Scope]
+    protected function onlyUsers($query)
+    {
+        return $query->whereHas('role', function ($q) {
+            $q->where('nama_role', 'User');
+        });
     }
 }
