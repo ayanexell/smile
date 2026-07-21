@@ -19,6 +19,7 @@ class UserForm extends Form
     public $alamat = '';
     public $pekerjaan = '';
     public $id_role = '';
+    public $departemen_id = '';
 
     /**
      * Aturan validasi data
@@ -33,6 +34,7 @@ class UserForm extends Form
             'email'        => ['required','email', Rule::unique('users', 'email')->ignore($this->user->id_user, 'id_user')],
             'alamat'       => ['nullable','string','max:500'],
             'pekerjaan'    => ['nullable','string','max:100'],
+            'departemen_id' => ['nullable','exists:departemens,id_departemen'],
         ];
     }
 
@@ -50,6 +52,7 @@ class UserForm extends Form
         $this->email = $user->email;
         $this->alamat = $user->alamat;
         $this->pekerjaan = $user->pekerjaan;
+        $this->departemen_id = $user->departemen_id;
     }
 
     /**

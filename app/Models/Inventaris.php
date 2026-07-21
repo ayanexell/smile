@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use App\Models\User;
 use App\Models\Peminjaman;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 #[Fillable(['user_id', 'nama_barang', 'jumlah', 'kondisi', 'tipe', 'img_path', 'warna', 'dpt_dipinjam'])]
 class Inventaris extends Model
 {

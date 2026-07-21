@@ -29,12 +29,17 @@ new class extends Component {
         $this->showDeleteModal = true;
     }
 
-    public function deleteUser(): void
+    public function deleteAdmin(): void
     {
         User::findOrFail($this->deleteTargetId)->delete();
         $this->showDeleteModal = false;
         $this->deleteTargetId = null;
         session()->flash('success', 'User berhasil dihapus.');
+    }
+
+    public function updateAdmin($id)
+    {
+        $this->dispatch('edit-admin', id: $id);
     }
 
     public function render()
@@ -61,7 +66,7 @@ new class extends Component {
 
     {{-- ── PAGE HEADER ── --}}
     <div class="bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 px-5 py-3.5">
-        <div class="max-w-screen-xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
                 <div class="flex items-center gap-2 mb-0.5">
                     <span
@@ -218,37 +223,67 @@ new class extends Component {
 
                                 {{-- Aksi --}}
                                 <td class="px-2.5 py-1.5 text-right">
-                                    <div
-                                        class="flex items-center justify-end gap-0.5 opacity-60 group-hover:opacity-100 transition-opacity">
-                                        <a href="#"
-                                            class="p-1 rounded text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-800"
-                                            title="Detail">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                            </svg>
-                                        </a>
-                                        <a href="#"
-                                            class="p-1 rounded text-sage-600 hover:text-sage-800 dark:text-sage-400 dark:hover:text-sage-200 hover:bg-sage-50 dark:hover:bg-sage-950/50"
-                                            title="Edit">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                            </svg>
-                                        </a>
-                                        <button wire:click="confirmDelete({{ $user->id_user }})"
-                                            class="p-1 rounded text-red-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/50"
-                                            title="Hapus">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                            </svg>
-                                        </button>
+                                    <div class="flex items-center justify-end" x-data="{ open: false }">
+                                        <div class="relative inline-block text-left">
+
+                                            {{-- Tombol Titik Tiga --}}
+                                            <button @click="open = !open" @click.outside="open = false"
+                                                class="cursor-pointer p-1 rounded-md text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors focus:outline-none"
+                                                title="Menu Aksi">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                    stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
+                                                </svg>
+                                            </button>
+
+                                            {{-- Menu Dropdown Konten --}}
+                                            <div x-show="open" x-transition:enter="transition ease-out duration-100"
+                                                x-transition:enter-start="transform opacity-0 scale-95"
+                                                x-transition:enter-end="transform opacity-100 scale-100"
+                                                x-transition:leave="transition ease-in duration-75"
+                                                x-transition:leave-start="transform opacity-100 scale-100"
+                                                x-transition:leave-end="transform opacity-0 scale-95"
+                                                class="absolute right-0 mt-1 w-32 origin-top-right rounded-md border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-30"
+                                                style="display: none;">
+                                                <div class="p-1 space-y-0.5">
+
+                                                    {{-- Edit --}}
+                                                    <button
+                                                        x-on:click="
+                                                            $flux.modal('edit-admin-modal').show();
+                                                            $wire.updateAdmin({{ $user->id_user }});
+                                                            open = false;"
+                                                        @click="open = false"
+                                                        class="cursor-pointer w-full flex items-center gap-2 px-2.5 py-1.5 text-xs text-sage-600 dark:text-sage-400 hover:bg-sage-50 dark:hover:bg-sage-950/30 rounded transition-colors text-left">
+                                                        <svg class="w-3.5 h-3.5 text-sage-500" fill="none"
+                                                            stroke="currentColor" stroke-width="2"
+                                                            viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                                                        </svg>
+                                                        Edit
+                                                    </button>
+
+                                                    <flux:separator />
+
+                                                    {{-- Hapus --}}
+                                                    <button wire:click="confirmDelete({{ $user->id_user }})"
+                                                        @click="open = false"
+                                                        class="cursor-pointer w-full flex items-center gap-2 px-2.5 py-1.5 text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 rounded transition-colors text-left">
+                                                        <svg class="w-3.5 h-3.5 text-red-400" fill="none"
+                                                            stroke="currentColor" stroke-width="2"
+                                                            viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                                        </svg>
+                                                        Hapus
+                                                    </button>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
@@ -273,6 +308,8 @@ new class extends Component {
 
     </div>
 
+    <livewire:admin.admins.edit-admin />"
+
     {{-- ── DELETE MODAL ── --}}
     @if ($showDeleteModal)
         <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 dark:bg-black/60 backdrop-blur-sm"
@@ -288,8 +325,8 @@ new class extends Component {
                         </svg>
                     </div>
                     <div class="flex-1">
-                        <h3 class="text-sm font-semibold text-stone-800 dark:text-stone-100 mb-0.5">Hapus Pengguna</h3>
-                        <p class="text-xs text-stone-500 dark:text-stone-400">Data pengguna akan dihapus permanen dari
+                        <h3 class="text-sm font-semibold text-stone-800 dark:text-stone-100 mb-0.5">Hapus Admin</h3>
+                        <p class="text-xs text-stone-500 dark:text-stone-400">Data Admin akan dihapus permanen dari
                             sistem.</p>
                     </div>
                 </div>
@@ -298,7 +335,7 @@ new class extends Component {
                         class="flex-1 px-3 py-2 text-xs font-medium rounded-lg border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors">
                         Batal
                     </button>
-                    <button wire:click="deleteUser"
+                    <button wire:click="deleteAdmin"
                         class="flex-1 px-3 py-2 text-xs font-semibold rounded-lg bg-red-500 hover:bg-red-600 text-white transition-colors">
                         Ya, Hapus
                     </button>
