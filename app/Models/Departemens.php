@@ -11,7 +11,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Departemens extends Model
 {
     protected $primaryKey = 'id_departemen';
+
     use HasFactory;
+
     public function users()
     {
         return $this->hasMany(User::class, 'departemen_id', 'id_departemen');

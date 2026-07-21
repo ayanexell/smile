@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 
 #[Fillable([
     'nama_lengkap',
@@ -54,11 +55,15 @@ class User extends Authenticatable
      */
     public function initials(): string
     {
-        return Str::of($this->name)
-            ->explode(' ')
-            ->take(2)
-            ->map(fn ($word) => Str::substr($word, 0, 1))
-            ->implode('');
+        $words = explode(' ', $this->nama_lengkap);
+        $wordCount = count($words);
+
+        if ($wordCount === 1) {
+            return Str::substr($words[0], 0, 2);
+        }
+
+        // 2 kata atau lebih: ambil huruf pertama dari dua kata pertama
+        return Str::substr($words[0], 0, 1) . Str::substr($words[1], 0, 1);
     }
 
     public function role()
@@ -84,5 +89,29 @@ class User extends Authenticatable
     public function peminjamans()
     {
         return $this->hasMany(Peminjaman::class, 'user_id', 'id_user');
+    }
+
+    #[Scope]
+    protected function onlyAdmins($query)
+    {
+        return $query->whereHas('role', function ($q) {
+            $q->where('nama_role', 'Admin');
+        });
+    }
+
+    #[Scope]
+    protected function onlyKoordinators($query)
+    {
+        return $query->whereHas('role', function ($q) {
+            $q->where('nama_role', 'Koordinator');
+        });
+    }
+
+    #[Scope]
+    protected function onlyUsers($query)
+    {
+        return $query->whereHas('role', function ($q) {
+            $q->where('nama_role', 'User');
+        });
     }
 }

@@ -14,14 +14,15 @@ class RoleSeeder extends Seeder
         $roles = [
             ['nama_role' => 'Super Admin'],
             ['nama_role' => 'Admin'],
+            ['nama_role' => 'Koordinator'],
             ['nama_role' => 'User'],
         ];
 
-        // foreach ($roles as $role) {
-        //     Roles::firstOrCreate(
-        //         ['nama_role' => $role['nama_role']],
-        //         $role
-        //     );
-        // }
+        foreach ($roles as $role) {
+            Roles::firstOrCreate(
+                ['nama_role' => $role['nama_role']],
+                $role
+            );
+        }
     }
 }

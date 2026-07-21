@@ -25,8 +25,7 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'role_id' => Roles::factory()->create(['nama_role' => 'User'])->id_role,
-            // 'departemen_id' => Departemens::factory(),
+            'role_id' => Roles::where('nama_role', 'User')->first()->id_role,
             'nama_lengkap' => fake()->name(),
             'nik' => fake()->unique()->numerify('################'),
             'tgl_lahir' => fake()->date('Y-m-d', '-18 years'),
@@ -54,7 +53,15 @@ class UserFactory extends Factory
 public function superAdmin(): static
 {
     return $this->state(function (array $attributes) {
-        $role = Roles::firstOrCreate(['nama_role' => 'Super Admin']);
+        $role = Roles::where('nama_role', 'Super Admin')->first();
+        return ['role_id' => $role->id_role];
+    });
+}
+
+public function koordinator(): static
+{
+    return $this->state(function (array $attributes) {
+        $role = Roles::where('nama_role', 'Koordinator')->first();
         return ['role_id' => $role->id_role];
     });
 }
@@ -62,7 +69,7 @@ public function superAdmin(): static
 public function admin(): static
 {
     return $this->state(function (array $attributes) {
-        $role = Roles::firstOrCreate(['nama_role' => 'Admin']);
+        $role = Roles::where('nama_role', 'Admin')->first();
         return ['role_id' => $role->id_role];
     });
 }
@@ -70,7 +77,7 @@ public function admin(): static
 public function regularUser(): static
 {
     return $this->state(function (array $attributes) {
-        $role = Roles::firstOrCreate(['nama_role' => 'User']);
+        $role = Roles::where('nama_role', 'User')->first();
         return ['role_id' => $role->id_role];
     });
 }
