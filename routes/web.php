@@ -12,6 +12,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::livewire('koordinators', 'admin.manage-koordinators')->name('koordinators');
         Route::livewire('users', 'admin.manage-users')->name('users');
 
+        Route::livewire('departemens', 'admin.manage-departemen')->name('departemens');
         Route::livewire('inventaris', 'admin.manage-inventaris')->name('inventaris');
     });
 });

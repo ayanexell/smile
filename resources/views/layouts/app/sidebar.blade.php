@@ -115,13 +115,25 @@
                         </div>
                     </div>
 
+                    {{-- Departemen --}}
+                    <a href="{{ route('admin.departemens') }}" wire:navigate
+                        class="sidebar-item w-full flex justify-between items-center text-left cursor-pointer transition-colors text-xs py-1.5 {{ request()->routeIs('admin.departemens') ? 'active' : '' }}">
+                        <div class="flex items-center gap-2.5">
+                            {{-- Ikon Departemens --}}
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="2-3.5 h-3.5 flex-shrink-0 text-stone-400 dark:text-stone-500 group-[.active]:text-current">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 21h7.5V10.75M2.25 21h1.5m18 0h-18M2.25 9l4.5-1.636M18.75 3l-1.5.545m0 6.205 3 1m1.5.5-1.5-.5M6.75 7.364V3h-3v18m3-13.636 10.5-3.819" />
+                            </svg>
+
+                            <span class="font-medium">{{ __('Departemens') }}</span>
+                        </div>
+                    </a>
                     {{-- Inventaris --}}
                     <a href="{{ route('admin.inventaris') }}" wire:navigate
-                        class="sidebar-item w-full flex justify-between items-center text-left cursor-pointer transition-colors text-xs py-1.5">
+                        class="sidebar-item w-full flex justify-between items-center text-left cursor-pointer transition-colors text-xs py-1.5 {{ request()->routeIs('admin.inventaris') ? 'active' : '' }}">
                         <div class="flex items-center gap-2.5">
                             {{-- Ikon Inventaris --}}
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                <path fill="currentColor" d="M5.616 21q-.672 0-1.144-.472T4 19.385V8.263q-.43-.178-.715-.577Q3 7.286 3 6.769V4.615q0-.67.472-1.143Q3.944 3 4.616 3h14.769q.67 0 1.143.472q.472.472.472 1.144v2.153q0 .517-.285.916q-.284.4-.715.578v11.122q0 .67-.472 1.143q-.472.472-1.143.472zM5 8.385v10.904q0 .307.221.509T5.77 20h12.616q.269 0 .442-.173t.173-.442v-11zm-.385-1h14.77q.269 0 .442-.173T20 6.769V4.616q0-.27-.173-.443T19.384 4H4.616q-.27 0-.443.173T4 4.616v2.153q0 .27.173.442q.173.173.443.173m4.769 5.482h5.23V12h-5.23zM12 14.192" />
+                                <path fill="currentColor" d="M5.616 21q-.672 0-1.144-.472T4 19.385V8.263q-.43-.178-.715-.577Q3 7.286 3 6.769V4.615q0-.67.472-1.143Q3.944 3 4.616 3h14.769q.67 0 1.143.472q.472.472.472 1.144v2.153q0 .517-.285.916q-.284.4-.715.578v11.122q0 .67-.472 1.143q-.472.472-1.143.472zM5 8.385v10.904q0 .307.221.509T5.77 20h12.616q.269 0 .442-.173t.173-.442v-11zm-.385-1h14.77q.269 0 .442-.173T20 6.769V4.616q0-.27-.173-.443T19.384 4H4.616q-.27 0-.443.173T4 4.616v2.１53q0 .27.１７３.４４２q.１７３.１７３.４４３.１７３m４.７６９ ５．４８２h５．２３V１２h-５．２３zM１２ １４．１９２" />
                             </svg>
 
                             <span class="font-medium">{{ __('Inventaris') }}</span>

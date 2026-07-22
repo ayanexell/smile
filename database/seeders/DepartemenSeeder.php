@@ -12,17 +12,16 @@ class DepartemenSeeder extends Seeder
     public function run(): void
     {
         $departemens = [
-            ['nama_departemen' => 'Keamanan dan Ketertiban', 'singkatan' => 'KAMTIB'],
-            ['nama_departemen' => 'Madrasah Diniyah', 'singkatan' => 'MADAL'],
-            ['nama_departemen' => 'Bimbingan dan Konseling', 'singkatan' => 'BK'],
-            ['nama_departemen' => 'Peribadatan Takmir dan SKIA', 'singkatan' => 'TASKIA'],
-            ['nama_departemen' => 'Pengajian Al-Qur\'an & Kitab', 'singkatan' => 'DEPAK'],
-            ['nama_departemen' => 'Olahraga dan Kesehatan', 'singkatan' => 'DOK'],
-            ['nama_departemen' => 'Kebersihan dan Lingkungan Hidup', 'singkatan' => 'DKLH'],
-            ['nama_departemen' => 'Publikasi Organisasi dan Seni', 'singkatan' => 'PORSENI'],
-            ['nama_departemen' => 'Pekerjaan Umum', 'singkatan' => 'PU'],
-            ['nama_departemen' => 'Badan Usaha Milik Pesantren', 'singkatan' => 'BUMP'],
-            ['nama_departemen' => 'Pengambangan Bahasa dan Lokal', 'singkatan' => 'DPBL'],
+            ['nama_departemen' => 'Keamanan dan Ketertiban', 'singkatan' => 'KAMTIB', 'deskripsi' => 'Departemen yang bertanggung jawab atas keamanan dan ketertiban di lingkungan organisasi.'],
+            ['nama_departemen' => 'Madrasah Diniyah', 'singkatan' => 'MADAL', 'deskripsi' => 'Departemen yang mengelola kegiatan pendidikan agama dan madrasah diniyah.'],
+            ['nama_departemen' => 'Peribadatan dan SKIA', 'singkatan' => 'TASKIA', 'deskripsi' => 'Departemen yang mengelola kegiatan peribadatan dan SKIA.'],
+            ['nama_departemen' => 'Pengajian Al-Qur\'an & Kitab', 'singkatan' => 'DEPAK', 'deskripsi' => 'Departemen yang mengelola kegiatan Pengajian Al-Qur\'an & Kitab.'],
+            ['nama_departemen' => 'Olahraga dan Kesehatan', 'singkatan' => 'DOK', 'deskripsi' => 'Departemen yang mengelola kegiatan Olahraga dan Kesehatan.'],
+            ['nama_departemen' => 'Kebersihan dan Lingkungan Hidup', 'singkatan' => 'DKLH', 'deskripsi' => 'Departemen yang mengelola kegiatan Kebersihan dan Lingkungan Hidup.'],
+            ['nama_departemen' => 'Bimbingan dan Konseling', 'singkatan' => 'BK', 'deskripsi' => 'Departemen yang mengelola kegiatan Bimbingan dan Konseling.'],
+            ['nama_departemen' => 'Pekerjaan Umum', 'singkatan' => 'PU', 'deskripsi' => 'Departemen yang mengelola kegiatan Pekerjaan Umum.'],
+            ['nama_departemen' => 'Pengembangan Bahasa dan Lokal', 'singkatan' => 'DPBL', 'deskripsi' => 'Departemen yang mengelola kegiatan Pengembangan Bahasa dan Lokal.'],
+            ['nama_departemen' => 'Publikasi Organisasi dan Seni', 'singkatan' => 'PORSENI', 'deskripsi' => 'Departemen yang mengelola kegiatan publikasi organisasi dan seni.'],
         ];
 
         foreach ($departemens as $departemen) {
