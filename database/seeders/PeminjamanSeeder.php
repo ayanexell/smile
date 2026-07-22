@@ -14,7 +14,9 @@ class PeminjamanSeeder extends Seeder
      */
     public function run(): void
     {
-        $users = User::all();
+        $users = User::whereHas('role', function ($q) {
+            $q->where('nama_role', 'User');
+        })->get();
         $inventarisBorrowable = Inventaris::where('dpt_dipinjam', true)
             ->where('kondisi', 'baik')
             ->get();
@@ -27,7 +29,6 @@ class PeminjamanSeeder extends Seeder
             for ($i = 0; $i < $count; $i++) {
                 if ($inventarisBorrowable->isNotEmpty()) {
                     $inventaris = $inventarisBorrowable->random();
-
                     Peminjaman::factory()
                         ->oleh($user)
                         ->untuk($inventaris)
@@ -37,21 +38,19 @@ class PeminjamanSeeder extends Seeder
         }
 
         // Create active peminjamans
-        Peminjaman::factory()
-            ->count(10)
-            ->dipinjam()
-            ->create();
+        // Peminjaman::factory()
+        //     ->count(10)
+        //     ->dipinjam()
+        //     ->create();
 
         // Create late peminjamans
-        Peminjaman::factory()
-            ->count(5)
-            ->terlambat()
-            ->create();
+        // Peminjaman::fact
+
 
         // Create returned peminjamans
-        Peminjaman::factory()
-            ->count(15)
-            ->dikembalikan()
-            ->create();
+        // Peminjaman::factory()
+        //     ->count(15)
+        //     ->dikembalikan()
+        //     ->create();
     }
 }

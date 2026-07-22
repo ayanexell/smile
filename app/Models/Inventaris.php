@@ -8,16 +8,17 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use App\Models\User;
 use App\Models\Peminjaman;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Departemens;
 
-#[Fillable(['user_id', 'nama_barang', 'jumlah', 'kondisi', 'tipe', 'img_path', 'warna', 'dpt_dipinjam'])]
+#[Fillable(['departemen_id', 'nama_barang', 'jumlah', 'kondisi', 'tipe', 'img_path', 'warna', 'dpt_dipinjam'])]
 class Inventaris extends Model
 {
     use HasFactory;
     protected $primaryKey = 'id_inventaris';
 
-    public function user()
+    public function departemen()
     {
-        return $this->belongsTo(User::class, 'user_id', 'id_user');
+        return $this->belongsTo(Departemens::class, 'departemen_id', 'id_departemen');
     }
 
     public function peminjamans()

@@ -11,6 +11,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::livewire('admins', 'admin.manage-admins')->name('admins');
         Route::livewire('koordinators', 'admin.manage-koordinators')->name('koordinators');
         Route::livewire('users', 'admin.manage-users')->name('users');
+
+        Route::livewire('inventaris', 'admin.manage-inventaris')->name('inventaris');
     });
 });
 

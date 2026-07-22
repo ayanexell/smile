@@ -84,6 +84,6 @@ class UserSeeder extends Seeder
         ]);
 
         // Create Regular Users
-        User::factory()->regularUser()->count(23)->create();
+        User::factory()->regularUser()->count(10)->create();
     }
 }
