@@ -17,12 +17,12 @@ class DepartemensFactory extends Factory
     public function definition(): array
     {
         $departemens = [
-            ['nama_departemen' => 'Keamanan dan Ketertiban', 'singkatan' => 'KAMTIB'],
-            ['nama_departemen' => 'Madrasah Diniyah', 'singkatan' => 'MADAL'],
-            ['nama_departemen' => 'Peribadatan dan SKIA', 'singkatan' => 'TASKIA'],
-            ['nama_departemen' => 'Pengajian Al-Qur\'an & Kitab', 'singkatan' => 'DEPAK'],
-            ['nama_departemen' => 'Olahraga dan Kesenian', 'singkatan' => 'PORSENI'],
-            ['nama_departemen' => 'Kebersihan dan Linkungan Hidup', 'singkatan' => 'DKLH'],
+            ['nama_departemen' => 'Keamanan dan Ketertiban', 'singkatan' => 'KAMTIB', 'deskripsi' => 'Departemen yang bertanggung jawab atas keamanan dan ketertiban di lingkungan organisasi.'],
+            ['nama_departemen' => 'Madrasah Diniyah', 'singkatan' => 'MADAL', 'deskripsi' => 'Departemen yang mengelola kegiatan pendidikan agama dan madrasah diniyah.'],
+            ['nama_departemen' => 'Peribadatan dan SKIA', 'singkatan' => 'TASKIA', 'deskripsi' => 'Departemen yang mengelola kegiatan peribadatan dan SKIA.'],
+            ['nama_departemen' => 'Pengajian Al-Qur\'an & Kitab', 'singkatan' => 'DEPAK', 'deskripsi' => 'Departemen yang mengelola kegiatan Pengajian Al-Qur\'an & Kitab.'],
+            ['nama_departemen' => 'Olahraga dan Kesenian', 'singkatan' => 'PORSENI', 'deskripsi' => 'Departemen yang mengelola kegiatan Olahraga dan Kesenian.'],
+            ['nama_departemen' => 'Kebersihan dan Linkungan Hidup', 'singkatan' => 'DKLH', 'deskripsi' => 'Departemen yang mengelola kegiatan Kebersihan dan Lingkungan Hidup.'],
         ];
 
         $departemen = fake()->unique()->randomElement($departemens);
@@ -30,6 +30,7 @@ class DepartemensFactory extends Factory
         return [
             'nama_departemen' => $departemen['nama_departemen'],
             'singkatan' => $departemen['singkatan'],
+            'deskripsi' => $departemen['deskripsi'],
         ];
     }
 

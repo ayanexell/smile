@@ -47,69 +47,98 @@
                     {{-- Label Grup Menu --}}
                     <div class="sidebar-group-label">{{ __('Administrator') }}</div>
 
-                    {{-- Dropdown Trigger (User) --}}
-                    <button @click="open = !open"
-                        class="sidebar-item w-full flex justify-between items-center text-left cursor-pointer transition-colors text-xs py-1.5">
-                        <div class="flex items-center gap-2.5">
-                            {{-- Ikon Users --}}
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                stroke-width="1.5" stroke="currentColor" class="size-5">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M4.5 12a7.5 7.5 0 0 0 15 0m-15 0a7.5 7.5 0 1 1 15 0m-15 0H3m16.5 0H21m-1.5 0H12m-8.457 3.077 1.41-.513m14.095-5.13 1.41-.513M5.106 17.785l1.15-.964m11.49-9.642 1.149-.964M7.501 19.795l.75-1.3m7.5-12.99.75-1.3m-6.063 16.658.26-1.477m2.605-14.772.26-1.477m0 17.726-.26-1.477M10.698 4.614l-.26-1.477M16.5 19.794l-.75-1.299M7.5 4.205 12 12m6.894 5.785-1.149-.964M6.256 7.178l-1.15-.964m15.352 8.864-1.41-.513M4.954 9.435l-1.41-.514M12.002 12l-3.75 6.495" />
-                            </svg>
+                    {{-- User Navigasi --}}
+                    <div>
+                        {{-- Dropdown Trigger (User) --}}
+                        <button @click="open = !open"
+                            class="sidebar-item w-full flex justify-between items-center text-left cursor-pointer transition-colors text-xs py-1.5">
+                            <div class="flex items-center gap-2.5">
+                                {{-- Ikon Users --}}
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="size-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M4.5 12a7.5 7.5 0 0 0 15 0m-15 0a7.5 7.5 0 1 1 15 0m-15 0H3m16.5 0H21m-1.5 0H12m-8.457 3.077 1.41-.513m14.095-5.13 1.41-.513M5.106 17.785l1.15-.964m11.49-9.642 1.149-.964M7.501 19.795l.75-1.3m7.5-12.99.75-1.3m-6.063 16.658.26-1.477m2.605-14.772.26-1.477m0 17.726-.26-1.477M10.698 4.614l-.26-1.477M16.5 19.794l-.75-1.299M7.5 4.205 12 12m6.894 5.785-1.149-.964M6.256 7.178l-1.15-.964m15.352 8.864-1.41-.513M4.954 9.435l-1.41-.514M12.002 12l-3.75 6.495" />
+                                </svg>
 
-                            <span class="font-medium">{{ __('User') }}</span>
+                                <span class="font-medium">{{ __('User') }}</span>
+                            </div>
+
+                            {{-- Ikon Chevron (Berputar otomatis menggunakan Alpine) --}}
+                            <svg :class="open ? 'rotate-180' : ''"
+                                class="w-3.5 h-3.5 transition-transform duration-200 text-stone-400 dark:text-stone-500"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+
+                        {{-- Sub Navigasi Vertikal --}}
+                        <div x-show="open" x-collapse class="flex flex-col pl-4 pr-1 mt-0.5 space-y-0.5"
+                            style="display: none;">
+
+                            {{-- Admin --}}
+                            <a href="{{ route('admin.admins') }}" wire:navigate
+                                class="sidebar-item text-[11px] py-1 pl-3 flex items-center gap-2 {{ request()->routeIs('admin.admins') ? 'active' : '' }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.8" stroke="currentColor"
+                                    class="w-3.5 h-3.5 flex-shrink-0 text-stone-400 dark:text-stone-500 group-[.active]:text-current">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                                </svg>
+                                <span>{{ __('Admin') }}</span>
+                            </a>
+
+                            {{-- Koordinator --}}
+                            <a href="{{ route('admin.koordinators') }}" wire:navigate
+                                class="sidebar-item text-[11px] py-1 pl-3 flex items-center gap-2 {{ request()->routeIs('admin.koordinators') ? 'active' : '' }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.8" stroke="currentColor"
+                                    class="w-3.5 h-3.5 flex-shrink-0 text-stone-400 dark:text-stone-500 group-[.active]:text-current">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z" />
+                                </svg>
+                                <span>{{ __('Koordinator') }}</span>
+                            </a>
+
+                            {{-- User --}}
+                            <a href="{{ route('admin.users') }}" wire:navigate
+                                class="sidebar-item text-[11px] py-1 pl-3 flex items-center gap-2 {{ request()->routeIs('admin.users') ? 'active' : '' }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.8" stroke="currentColor"
+                                    class="w-3.5 h-3.5 flex-shrink-0 text-stone-400 dark:text-stone-500 group-[.active]:text-current">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+                                </svg>
+                                <span>{{ __('User') }}</span>
+                            </a>
+
                         </div>
-
-                        {{-- Ikon Chevron (Berputar otomatis menggunakan Alpine) --}}
-                        <svg :class="open ? 'rotate-180' : ''"
-                            class="w-3.5 h-3.5 transition-transform duration-200 text-stone-400 dark:text-stone-500"
-                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-
-                    {{-- Sub Navigasi Vertikal --}}
-                    <div x-show="open" x-collapse class="flex flex-col pl-4 pr-1 mt-0.5 space-y-0.5"
-                        style="display: none;">
-
-                        {{-- Admin --}}
-                        <a href="{{ route('admin.admins') }}" wire:navigate
-                            class="sidebar-item text-[11px] py-1 pl-3 flex items-center gap-2 {{ request()->routeIs('admin.admins') ? 'active' : '' }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                stroke-width="1.8" stroke="currentColor"
-                                class="w-3.5 h-3.5 flex-shrink-0 text-stone-400 dark:text-stone-500 group-[.active]:text-current">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-                            </svg>
-                            <span>{{ __('Admin') }}</span>
-                        </a>
-
-                        {{-- Koordinator --}}
-                        <a href="{{ route("admin.koordinators") }}" wire:navigate
-                            class="sidebar-item text-[11px] py-1 pl-3 flex items-center gap-2 {{ request()->routeIs('admin.koordinators') ? 'active' : '' }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                stroke-width="1.8" stroke="currentColor"
-                                class="w-3.5 h-3.5 flex-shrink-0 text-stone-400 dark:text-stone-500 group-[.active]:text-current">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z" />
-                            </svg>
-                            <span>{{ __('Koordinator') }}</span>
-                        </a>
-
-                        {{-- User --}}
-                        <a href="{{ route("admin.users") }}" wire:navigate
-                            class="sidebar-item text-[11px] py-1 pl-3 flex items-center gap-2 {{ request()->routeIs('admin.users') ? 'active' : '' }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                stroke-width="1.8" stroke="currentColor"
-                                class="w-3.5 h-3.5 flex-shrink-0 text-stone-400 dark:text-stone-500 group-[.active]:text-current">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
-                            </svg>
-                            <span>{{ __('User') }}</span>
-                        </a>
-
                     </div>
+
+                    {{-- Departemen --}}
+                    <a href="{{ route('admin.departemens') }}" wire:navigate
+                        class="sidebar-item w-full flex justify-between items-center text-left cursor-pointer transition-colors text-xs py-1.5 {{ request()->routeIs('admin.departemens') ? 'active' : '' }}">
+                        <div class="flex items-center gap-2.5">
+                            {{-- Ikon Departemens --}}
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="2-3.5 h-3.5 flex-shrink-0 text-stone-400 dark:text-stone-500 group-[.active]:text-current">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 21h7.5V10.75M2.25 21h1.5m18 0h-18M2.25 9l4.5-1.636M18.75 3l-1.5.545m0 6.205 3 1m1.5.5-1.5-.5M6.75 7.364V3h-3v18m3-13.636 10.5-3.819" />
+                            </svg>
+
+                            <span class="font-medium">{{ __('Departemens') }}</span>
+                        </div>
+                    </a>
+                    {{-- Inventaris --}}
+                    <a href="{{ route('admin.inventaris') }}" wire:navigate
+                        class="sidebar-item w-full flex justify-between items-center text-left cursor-pointer transition-colors text-xs py-1.5 {{ request()->routeIs('admin.inventaris') ? 'active' : '' }}">
+                        <div class="flex items-center gap-2.5">
+                            {{-- Ikon Inventaris --}}
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M5.616 21q-.672 0-1.144-.472T4 19.385V8.263q-.43-.178-.715-.577Q3 7.286 3 6.769V4.615q0-.67.472-1.143Q3.944 3 4.616 3h14.769q.67 0 1.143.472q.472.472.472 1.144v2.153q0 .517-.285.916q-.284.4-.715.578v11.122q0 .67-.472 1.143q-.472.472-1.143.472zM5 8.385v10.904q0 .307.221.509T5.77 20h12.616q.269 0 .442-.173t.173-.442v-11zm-.385-1h14.77q.269 0 .442-.173T20 6.769V4.616q0-.27-.173-.443T19.384 4H4.616q-.27 0-.443.173T4 4.616v2.１53q0 .27.１７３.４４２q.１７３.１７３.４４３.１７３m４.７６９ ５．４８２h５．２３V１２h-５．２３zM１２ １４．１９２" />
+                            </svg>
+
+                            <span class="font-medium">{{ __('Inventaris') }}</span>
+                        </div>
+                    </a>
                 </div>
 
                 {{-- Slot untuk navigasi tambahan --}}

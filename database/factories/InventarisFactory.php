@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\User;
+use App\Models\Departemens;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 use App\Models\Peminjaman;
@@ -30,11 +31,10 @@ class InventarisFactory extends Factory
         $tipe = ['Elektronik', 'Furniture', 'Alat Musik', 'Perlengkapan', 'Kendaraan'];
 
         $namaBarang = fake()->randomElement($barang);
-        $user = User::factory()->create();
+        // $departemen = Departemens::factory()->create();
 
         return [
-            // Jangan set default user_id, biarkan null atau set manual
-            'user_id' => $user->id_user,
+            // Jangan set default departemen_id, biarkan null atau set manual
             'nama_barang' => $namaBarang,
             'jumlah' => fake()->numberBetween(1, 50),
             'kondisi' => fake()->randomElement(['baik', 'rusak']),
@@ -46,12 +46,12 @@ class InventarisFactory extends Factory
     }
 
     /**
-     * Set inventaris with specific user.
+     * Set inventaris with specific departemen.
      */
-    public function ownedBy(User $user): static
+    public function ownedBy(Departemens $departemen): static
     {
         return $this->state(fn (array $attributes) => [
-            'user_id' => $user->id_user,
+            'departemen_id' => $departemen->id_departemen,
         ]);
     }
 

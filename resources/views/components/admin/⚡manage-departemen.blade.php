@@ -1,66 +1,44 @@
 <?php
 
 use Livewire\Component;
-use Livewire\WithPagination;
-use App\Models\User;
-use App\Models\Roles;
 use App\Models\Departemens;
 
-new class extends Component {
-    use WithPagination;
+new class extends Component
+{
+    public $search = '';
+    public $nama_departemen;
+    public $singkatan;
+    public $showDeleteModal = false;
+    public $departemen;
 
-    public string $search = '';
-    public string $filterGender = '';
-    public string $filterDepartemen = '';
-    public bool $showDeleteModal = false;
-    public ?int $deleteTargetId = null;
 
-    public function updatingSearch(): void
+    public function confirmDelete(Departemens $departemen): void
     {
-        $this->resetPage();
-    }
-    public function updatingFilterGender(): void
-    {
-        $this->resetPage();
-    }
-
-    public function confirmDelete(int $id): void
-    {
-        $this->deleteTargetId = $id;
+        $this->departemen = $departemen;
         $this->showDeleteModal = true;
     }
 
-    public function deleteKoordinator(): void
+    public function deleteDepartemen(): void
     {
-        User::findOrFail($this->deleteTargetId)->delete();
+        $this->departemen->delete();
         $this->showDeleteModal = false;
-        $this->deleteTargetId = null;
-        session()->flash('success', 'Koordinator berhasil dihapus.');
-    }
-
-    public function updateKoordinator($id)
-    {
-        return $this->dispatch('edit-koordinator', id: $id);
+        $this->departemen = null;
+        session()->flash('success', 'Departemen berhasil dihapus.');
     }
 
     public function render()
     {
-        $users = User::onlyKoordinators()
-            ->when(
+        $departemens = Departemens::query()->when(
                 $this->search,
                 fn($q) => $q
-                    ->where('nama_lengkap', 'like', "%{$this->search}%")
-                    ->orWhere('nik', 'like', "%{$this->search}%")
-                    ->orWhere('email', 'like', "%{$this->search}%"),
+                    ->where('nama_departemen', 'like', "%{$this->search}%")
+                    ->orWhere('singkatan', 'like', "%{$this->search}%"),
             )
-            ->when($this->filterGender, fn($q) => $q->where('jenis_kelamin', $this->filterGender))
-            ->when($this->filterDepartemen, fn($q) => $q->where('departemen_id', $this->filterDepartemen))
             ->latest()
             ->paginate(10);
 
         return $this->view([
-            'users' => $users,
-            'departemens' => Departemens::all(),
+            'departemens' => $departemens,
         ]);
     }
 };
@@ -70,16 +48,14 @@ new class extends Component {
 
     {{-- ── PAGE HEADER ── --}}
     <div class="bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 px-5 py-3.5">
-        <div class="max-w-screen-xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
                 <div class="flex items-center gap-2 mb-0.5">
                     <span
-                        class="font-mono text-[9px] tracking-widest uppercase text-sage-600 dark:text-sage-400">{{ __('Manajemen') }}</span>
+                        class="font-mono text-[9px] tracking-widest uppercase text-sage-600 dark:text-sage-400">{{ __("Manajemen") }}</span>
                 </div>
-                <h1 class="font-display text-xl font-semibold text-stone-800 dark:text-stone-100">
-                    {{ __('Daftar Koordinator') }}</h1>
-                <p class="text-xs text-stone-500 dark:text-stone-400 mt-0.5">
-                    {{ __('Kelola semua akun koordinator sistem SMILE') }}</p>
+                <h1 class="font-display text-xl font-semibold text-stone-800 dark:text-stone-100">{{ __("Daftar Departemen") }}</h1>
+                <p class="text-xs text-stone-500 dark:text-stone-400 mt-0.5">{{ __("Kelola semua departemen sistem SMILE") }}</p>
             </div>
         </div>
     </div>
@@ -113,29 +89,12 @@ new class extends Component {
                         class="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-800 dark:text-stone-100 placeholder:text-stone-400 dark:placeholder:text-stone-500 focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-transparent transition" />
                 </div>
 
-                {{-- Filter Departemen --}}
-                <select wire:model.live="filterDepartemen"
-                    class="py-1.5 px-2.5 text-xs rounded-lg border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-700 dark:text-stone-300 focus:outline-none focus:ring-1 focus:ring-sage-500 transition">
-                    <option value="">{{ __('Semua Departemen') }}</option>
-                    @foreach ($departemens as $dep)
-                        <option value="{{ $dep->id_departemen }}">{{ $dep->nama_departemen }}</option>
-                    @endforeach
-                </select>
-
-                {{-- Filter Gender --}}
-                <select wire:model.live="filterGender"
-                    class="py-1.5 px-2.5 text-xs rounded-lg border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-700 dark:text-stone-300 focus:outline-none focus:ring-1 focus:ring-sage-500 transition">
-                    <option value="">{{ __('Semua Gender') }}</option>
-                    <option value="laki-laki">{{ __('Laki-laki') }}</option>
-                    <option value="perempuan">{{ __('Perempuan') }}</option>
-                </select>
-
                 <a href="#"
                     class="inline-flex items-center gap-1.5 px-3 py-2 bg-sage-600 hover:bg-sage-700 dark:bg-sage-500 dark:hover:bg-sage-600 text-white text-xs font-semibold rounded-lg shadow-sm transition-colors whitespace-nowrap">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
-                    {{ __('Tambah Koordinator') }}
+                    Tambah Dept.
                 </a>
 
             </div>
@@ -148,7 +107,7 @@ new class extends Component {
             {{-- Table meta --}}
             <div class="py-2 border-b border-stone-100 dark:border-stone-800 flex items-center justify-between">
                 <span class="text-[10px] font-mono text-stone-400 dark:text-stone-500 uppercase tracking-wider">
-                    {{ $users->total() }} {{ __('pengguna ditemukan') }}
+                    {{ $departemens->total() }} {{ __("departemen ditemukan") }}
                 </span>
                 <div wire:loading class="flex items-center gap-1 text-[11px] text-sage-600 dark:text-sage-400">
                     <svg class="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -156,91 +115,53 @@ new class extends Component {
                             stroke-width="4" />
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
                     </svg>
-                    {{ __('Memuat…') }}
+                    {{ __("Memuat…") }}
                 </div>
             </div>
 
             {{-- Scrollable table wrapper --}}
-            <div class="overflow-x-auto border dark:border-stone-800 rounded-xl bg-white dark:bg-stone-900 shadow-sm">
+            <div
+                class="overflow-x-auto border dark:border-stone-800 rounded-xl bg-white dark:bg-stone-900 shadow-sm">
                 <table class="w-full text-[11px] text-left border-collapse">
                     <thead>
                         <tr
                             class="bg-stone-50 dark:bg-stone-800/50 border-b border-stone-200 dark:border-stone-800 text-stone-500 dark:text-stone-400 font-semibold uppercase tracking-wider">
                             <th class="px-2.5 py-1.5 w-6 text-center">#</th>
-                            <th class="px-2.5 py-1.5">{{ __('Pengguna') }}</th>
-                            <th class="px-2.5 py-1.5 hidden sm:table-cell">{{ __('NIK') }}</th>
-                            <th class="px-2.5 py-1.5">{{ __('Departemen') }}</th>
-                            <th class="px-2.5 py-1.5 hidden md:table-cell">{{ __('Tgl. Lahir') }}</th>
-                            <th class="px-2.5 py-1.5 hidden sm:table-cell w-10 text-center">{{ __('JK') }}</th>
-                            <th class="px-2.5 py-1.5 hidden xl:table-cell">{{ __('Alamat') }}</th>
-                            <th class="px-2.5 py-1.5 hidden lg:table-cell">{{ __('Pekerjaan') }}</th>
-                            <th class="px-2.5 py-1.5 text-right w-20">{{ __('Aksi') }}</th>
+                            <th class="px-2.5 py-1.5">{{ __("Departemen") }}</th>
+                            <th class="px-2.5 py-1.5 hidden sm:table-cell">{{ __("Singkatan") }}</th>
+                            <th class="px-2.5 py-1.5 hidden md:table-cell">{{ __("Deskripsi") }}</th>
+                            <th class="px-2.5 py-1.5 text-right w-20">{{ __("Aksi") }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-stone-100 dark:divide-stone-800/60">
-                        @forelse ($users as $user)
+                        @forelse ($departemens as $departemen)
                             <tr class="hover:bg-stone-50 dark:hover:bg-stone-800/30 transition-colors group">
 
                                 {{-- No --}}
                                 <td class="px-2.5 py-1.5 text-stone-400 dark:text-stone-600 font-mono text-center">
-                                    {{ $loop->iteration + ($users->currentPage() - 1) * $users->perPage() }}
+                                    {{ $loop->iteration + ($departemens->currentPage() - 1) * $departemens->perPage() }}
                                 </td>
 
                                 {{-- Nama, Avatar + Email (Digabung agar hemat space) --}}
                                 <td class="px-2.5 py-1.5">
-                                    <div class="flex items-center gap-2 max-w-[180px] sm:max-w-xs">
-                                        <div
-                                            class="w-5 h-5 rounded-full bg-sage-100 dark:bg-sage-900/60 flex items-center justify-center flex-shrink-0 text-sage-700 dark:text-sage-400 font-bold text-[9px] uppercase">
-                                            {{ mb_substr($user->nama_lengkap, 0, 2) }}
-                                        </div>
-                                        <div class="truncate">
-                                            <div class="font-medium text-stone-800 dark:text-stone-200 truncate">
-                                                {{ $user->nama_lengkap }}</div>
-                                            <div class="text-[10px] text-stone-400 dark:text-stone-500 truncate"
-                                                title="{{ $user->email }}">{{ $user->email }}</div>
-                                        </div>
+                                    <div class="truncate">
+                                        <div class="font-medium text-stone-800 dark:text-stone-200 truncate">
+                                            {{ $departemen->nama_departemen }}</div>
                                     </div>
                                 </td>
 
-                                {{-- NIK (Sembunyi di HP) --}}
-                                <td
-                                    class="px-2.5 py-1.5 font-mono text-stone-500 dark:text-stone-400 hidden sm:table-cell">
-                                    {{ $user->nik }}
+                                <td class="px-2.5 py-1.5">
+                                    <div class="truncate">
+                                        <div class="font-medium text-stone-800 dark:text-stone-200 truncate">
+                                            {{ $departemen->singkatan }}</div>
+                                    </div>
                                 </td>
 
-                                {{-- Departemen & Role (Digabung vertikal) --}}
-                                <td class="px-2.5 py-1.5 space-y-0.5">
-                                    <div class="text-stone-700 dark:text-stone-300 font-medium">
-                                        {{ $user->departemen->singkatan }}</div>
-                                </td>
-
-                                {{-- Tgl Lahir (Sembunyi di HP/Tablet) --}}
-                                <td
-                                    class="px-2.5 py-1.5 text-stone-500 dark:text-stone-400 whitespace-nowrap hidden md:table-cell">
-                                    {{ \Carbon\Carbon::parse($user->tgl_lahir)->translatedFormat('d M Y') }}
-                                </td>
-
-                                {{-- Gender (Dipersingkat) --}}
-                                <td class="px-2.5 py-1.5 text-center hidden sm:table-cell">
-                                    @if ($user->jenis_kelamin === 'laki-laki')
-                                        <span class="text-blue-600 dark:text-blue-400 font-semibold"
-                                            title="Laki-laki">L</span>
-                                    @else
-                                        <span class="text-pink-600 dark:text-pink-400 font-semibold"
-                                            title="Perempuan">P</span>
-                                    @endif
-                                </td>
-
-                                {{-- Alamat (Hanya tampil di layar ultra lebar) --}}
-                                <td class="px-2.5 py-1.5 text-stone-500 dark:text-stone-500 max-w-[140px] truncate hidden xl:table-cell"
-                                    title="{{ $user->alamat }}">
-                                    {{ $user->alamat }}
-                                </td>
-
-                                {{-- Pekerjaan (Hanya tampil di desktop) --}}
-                                <td
-                                    class="px-2.5 py-1.5 text-stone-500 dark:text-stone-400 truncate hidden lg:table-cell">
-                                    {{ __($user->pekerjaan) }}
+                                <td class="px-2.5 py-1.5">
+                                    <div class="truncate">
+                                        <div class="font-medium text-stone-800 dark:text-stone-200 truncate">
+                                            {{ $departemen->deskripsi }}</div>
+                                    </div>
                                 </td>
 
                                 {{-- Aksi --}}
@@ -273,8 +194,8 @@ new class extends Component {
                                                     {{-- Edit --}}
                                                     <button
                                                         x-on:click="
-                                                            $flux.modal('edit-koordinator-modal').show();
-                                                            $wire.updateKoordinator({{ $user->id_user }});
+                                                            $flux.modal('edit-admin-modal').show();
+                                                            $wire.updateAdmin({{ $departemen->id_departemen }});
                                                             open = false;"
                                                         @click="open = false"
                                                         class="cursor-pointer w-full flex items-center gap-2 px-2.5 py-1.5 text-xs text-sage-600 dark:text-sage-400 hover:bg-sage-50 dark:hover:bg-sage-950/30 rounded transition-colors text-left">
@@ -290,7 +211,7 @@ new class extends Component {
                                                     <flux:separator />
 
                                                     {{-- Hapus --}}
-                                                    <button wire:click="confirmDelete({{ $user->id_user }})"
+                                                    <button wire:click="confirmDelete({{ $departemen->id_departemen }})"
                                                         @click="open = false"
                                                         class="cursor-pointer w-full flex items-center gap-2 px-2.5 py-1.5 text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 rounded transition-colors text-left">
                                                         <svg class="w-3.5 h-3.5 text-red-400" fill="none"
@@ -313,7 +234,7 @@ new class extends Component {
                             <tr>
                                 <td colspan="9" class="px-2.5 py-10 text-center">
                                     <div class="flex flex-col items-center gap-1.5 text-stone-400">
-                                        <p class="text-xs font-medium">{{ __('Tidak ada pengguna ditemukan') }}</p>
+                                        <p class="text-xs font-medium">{{ __("Tidak ada pengguna ditemukan") }}</p>
                                     </div>
                                 </td>
                             </tr>
@@ -323,17 +244,14 @@ new class extends Component {
             </div>
 
             {{-- Pagination --}}
-            <div
-                class="px-3 py-2 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between dynamic-pagination">
-                <div class="w-full text-xs transform scale-95 origin-left text-stone-500 dark:text-stone-400">
-                    {{ $users->links('pagination::tailwind') }}
-                </div>
+            <div class="px-4 py-3 border-t border-stone-100 dark:border-stone-800">
+                {{ $departemens->links() }}
             </div>
         </div>
 
     </div>
 
-    <livewire:admin.koordinators.edit-koordinator />
+    <livewire:admin.departemens.edit-departemen />
 
     {{-- ── DELETE MODAL ── --}}
     @if ($showDeleteModal)
@@ -350,8 +268,8 @@ new class extends Component {
                         </svg>
                     </div>
                     <div class="flex-1">
-                        <h3 class="text-sm font-semibold text-stone-800 dark:text-stone-100 mb-0.5">Hapus Koordinator</h3>
-                        <p class="text-xs text-stone-500 dark:text-stone-400">Data koordinator akan dihapus permanen dari
+                        <h3 class="text-sm font-semibold text-stone-800 dark:text-stone-100 mb-0.5">Hapus Departemen</h3>
+                        <p class="text-xs text-stone-500 dark:text-stone-400">Data Departemen akan dihapus permanen dari
                             sistem.</p>
                     </div>
                 </div>
@@ -360,7 +278,7 @@ new class extends Component {
                         class="flex-1 px-3 py-2 text-xs font-medium rounded-lg border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors">
                         Batal
                     </button>
-                    <button wire:click="deleteKoordinator"
+                    <button wire:click="deleteDepartemen"
                         class="flex-1 px-3 py-2 text-xs font-semibold rounded-lg bg-red-500 hover:bg-red-600 text-white transition-colors">
                         Ya, Hapus
                     </button>
