@@ -1,8 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
+// Auth::loginUsingId(6);
 Route::view('/', 'welcome')->name('home');
+Route::livewire('list-inventaris', 'list-inventaris')->name('list-inventaris');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
