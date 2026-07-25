@@ -3,12 +3,15 @@
 namespace Database\Factories;
 
 use App\Models\Departemens;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Models\Roles;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
+ * @extends Factory<User>
  */
 class UserFactory extends Factory
 {
@@ -27,10 +30,12 @@ class UserFactory extends Factory
         return [
             'role_id' => Roles::where('nama_role', 'User')->first()->id_role,
             'nama_lengkap' => fake()->name(),
+            'avatar' => 'Avatar User',
             'nik' => fake()->unique()->numerify('################'),
             'tgl_lahir' => fake()->date('Y-m-d', '-18 years'),
             'jenis_kelamin' => fake()->randomElement(['laki-laki', 'perempuan']),
             'email' => fake()->unique()->safeEmail(),
+            'no_wa' => $this->faker->phoneNumber(),
             'alamat' => fake()->address(),
             'pekerjaan' => fake()->jobTitle(),
             'email_verified_at' => now(),

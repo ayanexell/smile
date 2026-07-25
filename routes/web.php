@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
-// Auth::loginUsingId(6);
 Route::view('/', 'welcome')->name('home');
 Route::livewire('list-inventaris', 'list-inventaris')->name('list-inventaris');
 
@@ -17,6 +16,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::livewire('departemens', 'admin.manage-departemen')->name('departemens');
         Route::livewire('inventaris', 'admin.manage-inventaris')->name('inventaris');
+        Route::livewire('peminjaman', 'admin.manage-peminjaman')->name('peminjaman');
     });
 });
 

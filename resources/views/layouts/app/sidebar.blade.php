@@ -120,8 +120,11 @@
                         class="sidebar-item w-full flex justify-between items-center text-left cursor-pointer transition-colors text-xs py-1.5 {{ request()->routeIs('admin.departemens') ? 'active' : '' }}">
                         <div class="flex items-center gap-2.5">
                             {{-- Ikon Departemens --}}
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="2-3.5 h-3.5 flex-shrink-0 text-stone-400 dark:text-stone-500 group-[.active]:text-current">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 21h7.5V10.75M2.25 21h1.5m18 0h-18M2.25 9l4.5-1.636M18.75 3l-1.5.545m0 6.205 3 1m1.5.5-1.5-.5M6.75 7.364V3h-3v18m3-13.636 10.5-3.819" />
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke-width="1.5" stroke="currentColor"
+                                class="w-3.5 h-3.5 flex-shrink-0 text-stone-400 dark:text-stone-500 group-[.active]:text-current">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 21h7.5V10.75M2.25 21h1.5m18 0h-18M2.25 9l4.5-1.636M18.75 3l-1.5.545m0 6.205 3 1m1.5.5-1.5-.5M6.75 7.364V3h-3v18m3-13.636 10.5-3.819" />
                             </svg>
 
                             <span class="font-medium">{{ __('Departemens') }}</span>
@@ -132,11 +135,33 @@
                         class="sidebar-item w-full flex justify-between items-center text-left cursor-pointer transition-colors text-xs py-1.5 {{ request()->routeIs('admin.inventaris') ? 'active' : '' }}">
                         <div class="flex items-center gap-2.5">
                             {{-- Ikon Inventaris --}}
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                <path fill="currentColor" d="M5.616 21q-.672 0-1.144-.472T4 19.385V8.263q-.43-.178-.715-.577Q3 7.286 3 6.769V4.615q0-.67.472-1.143Q3.944 3 4.616 3h14.769q.67 0 1.143.472q.472.472.472 1.144v2.153q0 .517-.285.916q-.284.4-.715.578v11.122q0 .67-.472 1.143q-.472.472-1.143.472zM5 8.385v10.904q0 .307.221.509T5.77 20h12.616q.269 0 .442-.173t.173-.442v-11zm-.385-1h14.77q.269 0 .442-.173T20 6.769V4.616q0-.27-.173-.443T19.384 4H4.616q-.27 0-.443.173T4 4.616v2.１53q0 .27.１７３.４４２q.１７３.１７３.４４３.１７３m４.７６９ ５．４８２h５．２３V１２h-５．２３zM１２ １４．１９２" />
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-3.5 h-3.5 {{ request()->routeIs('admin.inventaris') ? 'w-4 h-4' : '' }}">
+                                <path fill="currentColor"
+                                    d="M5.616 21q-.672 0-1.144-.472T4 19.385V8.263q-.43-.178-.715-.577Q3 7.286 3 6.769V4.615q0-.67.472-1.143Q3.944 3 4.616 3h14.769q.67 0 1.143.472q.472.472.472 1.144v2.153q0 .517-.285.916q-.284.4-.715.578v11.122q0 .67-.472 1.143q-.472.472-1.143.472zM5 8.385v10.904q0 .307.221.509T5.77 20h12.616q.269 0 .442-.173t.173-.442v-11zm-.385-1h14.77q.269 0 .442-.173T20 6.769V4.616q0-.27-.173-.443T19.384 4H4.616q-.27 0-.443.１７３T４ ４．６１６v２．１５３q０．２７．１７３．４４２q．１７３．１７３．４４３．１７３m４．７６９ ５．４８２h５．２３V１２h-５．２３zM１２ １４．１９２" />
                             </svg>
 
                             <span class="font-medium">{{ __('Inventaris') }}</span>
+                        </div>
+                    </a>
+
+                    {{-- Peminjaman --}}
+                    <a href="{{ route('admin.peminjaman') }}" wire:navigate
+                        class="sidebar-item w-full flex justify-between items-center text-left cursor-pointer transition-colors text-xs py-1.5 {{ request()->routeIs('admin.peminjaman') ? 'active' : '' }}">
+                        <div class="flex items-center gap-2.5">
+                            {{-- Ikon Peminjamans --}}
+                            <svg fill="currentColor" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 {{ request()->routeIs('admin.peminjaman') ? 'w-3.5 h-3.5' : '' }}"
+                                xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 502.56 502.56"
+                                xml:space="preserve">
+                                <g><g><g><path d="M467.28,467.496h24v-128h-24V129.328l12.088,3.888l23.192-46.392L251.28,3.064L0,86.824l23.192,46.392l12.088-3.888  v354.168h-32v16h32h432h32v-16h-32V467.496z M475.28,355.496v96h-8v-96H475.28z M215.6,483.496H107.28v-216h80v184h-64v16h80v-16 v-184v-16v-16h16v180.32c-9.792,8.792-16,21.504-16,35.68C203.28,463.8,207.968,474.992,215.6,483.496z M251.28,483.496 c-17.648,0-32-14.352-32-32s14.352-32,32-32s32,14.352,32,32S268.928,483.496,251.28,483.496z M296.936,309.84l-11.312,11.312 l10.344,10.344l-31.04,31.04l32.464-119.04h92.256l29.6,82.896l-97.728,45.104h-42.928l28.688-28.688l10.344,10.344 l11.312-11.312L296.936,309.84z M236.528,405.84c-0.424,0.136-0.832,0.304-1.248,0.456v-138.8h38.984L236.528,405.84z M286.96,483.496c4.144-4.624,7.4-10.032,9.52-16h77.6c2.12,5.968,5.376,11.376,9.52,16H286.96z M419.28,483.496 c-17.648,0-32-14.352-32-32s14.352-32,32-32s32,14.352,32,32S436.928,483.496,419.28,483.496z M451.28,415.816  c-8.504-7.632-19.696-12.32-32-12.32c-26.472,0-48,21.528-48,48h-72c0-25.648-20.232-46.592-45.56-47.88l4.4-16.12h66.92 l99.608-45.976l4.992,13.976h21.64V415.816z M451.28,339.496h-10.36l-34.288-96h12.648v-16h-152v16h13.528l-2.184,8H235.28v-16 h16v-16h-80v16h16v16h-96v232h-40v-288h400V339.496z M451.28,179.496h-400v-55.312l200-64.28l200,64.288V179.496z M251.28,43.088L31.368,113.776L22.56,96.168l228.72-76.24L480,96.168l-8.808,17.608L251.28,43.088z" />
+                                            <rect x="243.28" y="91.496" width="16" height="16" />
+                                            <rect x="275.28" y="91.496" width="16" height="16" />
+                                            <rect x="211.28" y="91.496" width="16" height="16" />
+                                        </g>
+                                    </g>
+                                </g>
+                            </svg>
+
+                            <span class="font-medium">{{ __('Peminjaman') }}</span>
                         </div>
                     </a>
                 </div>

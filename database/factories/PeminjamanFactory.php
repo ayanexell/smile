@@ -7,7 +7,7 @@ use App\Models\Inventaris;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Carbon\Carbon;
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Peminjaman>
+ * @extends Factory<\App\Models\Peminjaman>
  */
 class PeminjamanFactory extends Factory
 {
@@ -26,6 +26,7 @@ class PeminjamanFactory extends Factory
             'tgl_peminjaman' => $tgl_peminjaman,
             'tgl_pengembalian' => $tgl_pengembalian,
             'status' => fake()->randomElement(['dipinjam', 'dikembalikan', 'terlambat']),
+            'jumlah' => fake()->numberBetween(1, 5),
             'hibah' => fake()->numberBetween(0, 2),
             'lambat' => false,
         ];
