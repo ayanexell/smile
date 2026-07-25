@@ -1,7 +1,7 @@
 <?php
 
 use Livewire\Component;
-use App\Forms\InventarisForm;
+use App\Models\Inventaris;
 use Livewire\WithFileUploads;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
@@ -19,7 +19,7 @@ new class extends Component {
     public $kondisi;
     #[Validate('required|string|max:100')]
     public $tipe;
-    #[Validate("required|string|max:255")]
+    #[Validate('required|string|max:255')]
     public $img_path;
     #[Validate('required|string|max:100')]
     public $warna;
@@ -56,7 +56,7 @@ new class extends Component {
         $this->showModal = false;
         session()->flash('notification', [
             'type' => 'success',
-            'message' => 'Inventaris berhasil ditambahkan!'
+            'message' => 'Inventaris berhasil ditambahkan!',
         ]);
     }
 
@@ -84,18 +84,18 @@ new class extends Component {
                 $this->jumlah = 1; // default jumlah
                 session()->flash('notification', [
                     'type' => 'success',
-                    'message' => 'Analisis berhasil! Form telah terisi otomatis.'
+                    'message' => 'Analisis berhasil! Form telah terisi otomatis.',
                 ]);
             } else {
                 session()->flash('notification', [
                     'type' => 'error',
-                    'message' => 'Gagal menganalisis gambar: ' . $response->body()
+                    'message' => 'Gagal menganalisis gambar: ' . $response->body(),
                 ]);
             }
         } catch (\Exception $e) {
             session()->flash('notification', [
                 'type' => 'error',
-                'message' => 'Error koneksi ke API YOLO: ' . $e->getMessage()
+                'message' => 'Error koneksi ke API YOLO: ' . $e->getMessage(),
             ]);
         }
 
@@ -104,7 +104,7 @@ new class extends Component {
 
     public function saveInventaris()
     {
-        if($this->img_upload) {
+        if ($this->img_upload) {
             $this->img_path = $this->img_upload->store('inventaris', 'public');
         }
         $this->validate();
@@ -125,7 +125,7 @@ new class extends Component {
         $this->showModal = false;
         session()->flash('notification', [
             'type' => 'success',
-            'message' => 'Inventaris berhasil ditambahkan!'
+            'message' => 'Inventaris berhasil ditambahkan!',
         ]);
     }
 };
@@ -137,18 +137,18 @@ new class extends Component {
         x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
         x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4 backdrop-blur-sm"
         @click.self="show = false">
 
         {{-- Kontainer Modal --}}
-        <div class="bg-white dark:bg-stone-900 rounded-xl shadow-2xl w-full max-w-lg overflow-hidden" @click.stop>
+        <div class="w-full max-w-lg overflow-hidden rounded-xl bg-white shadow-2xl dark:bg-stone-900" @click.stop>
 
             {{-- Header --}}
-            <div class="flex items-center justify-between px-5 py-3 border-b border-stone-200 dark:border-stone-800">
+            <div class="flex items-center justify-between border-b border-stone-200 px-5 py-3 dark:border-stone-800">
                 <h3 class="text-sm font-semibold text-stone-800 dark:text-stone-200">Tambah Inventaris</h3>
                 <button @click="show = false"
-                    class="p-1 rounded-md text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-800 transition">
-                    <svg class="cursor-pointer w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
+                    class="rounded-md p-1 text-stone-400 transition hover:bg-stone-100 hover:text-stone-600 dark:hover:bg-stone-800 dark:hover:text-stone-200">
+                    <svg class="h-4 w-4 cursor-pointer" fill="none" stroke="currentColor" stroke-width="2"
                         viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
@@ -194,12 +194,12 @@ new class extends Component {
                         x-transition:leave="transition ease-in duration-200"
                         x-transition:leave-start="opacity-100 translate-y-0"
                         x-transition:leave-end="opacity-0 -translate-y-4"
-                        class="fixed top-5 left-1/2 -translate-x-1/2 z-[9999] w-full max-w-sm px-4">
+                        class="z-9999 fixed left-1/2 top-5 w-full max-w-sm -translate-x-1/2 px-4">
 
                         <div
-                            class="flex items-center gap-2.5 pl-3 pr-2.5 py-2 bg-white dark:bg-stone-900 border rounded-lg shadow-xl shadow-stone-200/50 dark:shadow-none select-none {{ $colorClass }}">
-                            <div class="flex-shrink-0">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5"
+                            class="{{ $colorClass }} flex select-none items-center gap-2.5 rounded-lg border bg-white py-2 pl-3 pr-2.5 shadow-xl shadow-stone-200/50 dark:bg-stone-900 dark:shadow-none">
+                            <div class="shrink-0">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5"
                                     viewBox="0 0 24 24">
                                     {!! $iconPath !!}
                                 </svg>
@@ -208,8 +208,8 @@ new class extends Component {
                                 {{ $message }}
                             </div>
                             <button @click="show = false"
-                                class="flex-shrink-0 p-1 text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 rounded transition-colors">
-                                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2"
+                                class="shrink-0 rounded p-1 text-stone-400 transition-colors hover:text-stone-600 dark:hover:text-stone-200">
+                                <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                                 </svg>
@@ -220,81 +220,81 @@ new class extends Component {
             </div>
 
             {{-- Body Form --}}
-            <form wire:submit.prevent="saveInventory" class="p-5 space-y-4">
+            <form wire:submit.prevent="saveInventory" class="space-y-4 p-5">
                 {{-- Nama Barang --}}
                 <div>
-                    <label class="block text-[11px] font-medium text-stone-600 dark:text-stone-400 mb-1">Nama
+                    <label class="mb-1 block text-[11px] font-medium text-stone-600 dark:text-stone-400">Nama
                         Barang</label>
                     <input wire:model.live="nama_barang" type="text" required placeholder="Nama inventaris"
-                        class="w-full px-3 py-1.5 text-xs rounded-lg border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-800 dark:text-stone-100 placeholder:text-stone-400 focus:outline-none focus:ring-1 focus:ring-sage-500" />
+                        class="focus:ring-sage-500 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 py-1.5 text-xs text-stone-800 placeholder:text-stone-400 focus:outline-none focus:ring-1 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-100" />
                     @error('nama_barang')
-                        <p class="text-[10px] text-red-500 mt-1">{{ $message }}</p>
+                        <p class="mt-1 text-[10px] text-red-500">{{ $message }}</p>
                     @enderror
                 </div>
 
                 {{-- Grid: Tipe & Jumlah --}}
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
                         <label
-                            class="block text-[11px] font-medium text-stone-600 dark:text-stone-400 mb-1">Tipe</label>
+                            class="mb-1 block text-[11px] font-medium text-stone-600 dark:text-stone-400">Tipe</label>
                         <input wire:model.live="tipe" type="text" required placeholder="Elektronik, Furniture, dll."
-                            class="w-full px-3 py-1.5 text-xs rounded-lg border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-800 dark:text-stone-100 placeholder:text-stone-400 focus:outline-none focus:ring-1 focus:ring-sage-500" />
+                            class="focus:ring-sage-500 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 py-1.5 text-xs text-stone-800 placeholder:text-stone-400 focus:outline-none focus:ring-1 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-100" />
                         @error('tipe')
-                            <p class="text-[10px] text-red-500 mt-1">{{ $message }}</p>
+                            <p class="mt-1 text-[10px] text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
                     <div>
                         <label
-                            class="block text-[11px] font-medium text-stone-600 dark:text-stone-400 mb-1">Jumlah</label>
+                            class="mb-1 block text-[11px] font-medium text-stone-600 dark:text-stone-400">Jumlah</label>
                         <input wire:model.live="jumlah" type="number" min="0" required placeholder="0"
-                            class="w-full px-3 py-1.5 text-xs rounded-lg border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-800 dark:text-stone-100 placeholder:text-stone-400 focus:outline-none focus:ring-1 focus:ring-sage-500" />
+                            class="focus:ring-sage-500 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 py-1.5 text-xs text-stone-800 placeholder:text-stone-400 focus:outline-none focus:ring-1 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-100" />
                         @error('jumlah')
-                            <p class="text-[10px] text-red-500 mt-1">{{ $message }}</p>
+                            <p class="mt-1 text-[10px] text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
 
                 {{-- Grid: Kondisi & Warna --}}
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
                         <label
-                            class="block text-[11px] font-medium text-stone-600 dark:text-stone-400 mb-1">Kondisi</label>
+                            class="mb-1 block text-[11px] font-medium text-stone-600 dark:text-stone-400">Kondisi</label>
                         <select wire:model.live="kondisi" required
-                            class="w-full px-3 py-1.5 text-xs rounded-lg border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-800 dark:text-stone-100 focus:outline-none focus:ring-1 focus:ring-sage-500">
+                            class="focus:ring-sage-500 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 py-1.5 text-xs text-stone-800 focus:outline-none focus:ring-1 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-100">
                             <option value="">Pilih kondisi</option>
                             <option value="baik">Baik</option>
                             <option value="rusak">Rusak</option>
                         </select>
                         @error('kondisi')
-                            <p class="text-[10px] text-red-500 mt-1">{{ $message }}</p>
+                            <p class="mt-1 text-[10px] text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
                     <div>
                         <label
-                            class="block text-[11px] font-medium text-stone-600 dark:text-stone-400 mb-1">Warna</label>
+                            class="mb-1 block text-[11px] font-medium text-stone-600 dark:text-stone-400">Warna</label>
                         <input wire:model.live="warna" type="text" required placeholder="Hitam, Putih, dll."
-                            class="w-full px-3 py-1.5 text-xs rounded-lg border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-800 dark:text-stone-100 placeholder:text-stone-400 focus:outline-none focus:ring-1 focus:ring-sage-500" />
+                            class="focus:ring-sage-500 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 py-1.5 text-xs text-stone-800 placeholder:text-stone-400 focus:outline-none focus:ring-1 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-100" />
                         @error('warna')
-                            <p class="text-[10px] text-red-500 mt-1">{{ $message }}</p>
+                            <p class="mt-1 text-[10px] text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
 
                 {{-- Upload Gambar -- Area Penuh --}}
                 <div>
-                    <label class="block text-[11px] font-medium text-stone-600 dark:text-stone-400 mb-1">Gambar</label>
+                    <label class="mb-1 block text-[11px] font-medium text-stone-600 dark:text-stone-400">Gambar</label>
 
                     {{-- Area Upload --}}
                     <label
-                        class="block w-full cursor-pointer border-2 border-dashed border-stone-300 dark:border-stone-600 rounded-lg p-4 text-center hover:border-sage-400 dark:hover:border-sage-500 transition relative">
+                        class="hover:border-sage-400 dark:hover:border-sage-500 relative block w-full cursor-pointer rounded-lg border-2 border-dashed border-stone-300 p-4 text-center transition dark:border-stone-600">
 
                         {{-- Input file asli disembunyikan --}}
                         <input type="file" wire:model.live="img_upload" accept="image/*" class="hidden">
 
                         {{-- Loading --}}
                         <div wire:loading wire:target="img_upload"
-                            class="flex items-center justify-center gap-2 text-xs text-stone-500 py-4">
-                            <svg class="animate-spin h-4 w-4 text-sage-500" xmlns="http://www.w3.org/2000/svg"
+                            class="flex items-center justify-center gap-2 py-4 text-xs text-stone-500">
+                            <svg class="text-sage-500 h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg"
                                 fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
                                     stroke-width="4"></circle>
@@ -308,7 +308,7 @@ new class extends Component {
                         {{-- State Kosong --}}
                         @if (!$img_upload)
                             <div wire:loading.remove wire:target="img_upload" class="py-2">
-                                <svg class="mx-auto h-6 w-6 text-stone-400 mb-1" fill="none" stroke="currentColor"
+                                <svg class="mx-auto mb-1 h-6 w-6 text-stone-400" fill="none" stroke="currentColor"
                                     stroke-width="1.5" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                                 </svg>
@@ -321,23 +321,23 @@ new class extends Component {
                         @if ($img_upload)
                             <div wire:loading.remove wire:target="img_upload" class="relative inline-block">
                                 <img src="{{ $img_upload->temporaryUrl() }}"
-                                    class="h-24 w-24 object-cover rounded-lg border border-stone-200 dark:border-stone-700 shadow-sm mx-auto">
+                                    class="mx-auto h-24 w-24 rounded-lg border border-stone-200 object-cover shadow-sm dark:border-stone-700">
                                 <button type="button" wire:click="$set('img_upload', null)"
-                                    class="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full text-[10px] flex items-center justify-center hover:bg-red-600 focus:outline-none transition-opacity shadow">
+                                    class="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] text-white shadow transition-opacity hover:bg-red-600 focus:outline-none">
                                     ×
                                 </button>
                             </div>
                         @endif
 
                         @error('img_upload')
-                            <p class="text-[10px] text-red-500 mt-2">{{ $message }}</p>
+                            <p class="mt-2 text-[10px] text-red-500">{{ $message }}</p>
                         @enderror
                     </label>
                     @if ($img_upload)
                         {{-- Tombol analisis ulang (opsional) --}}
                         <div class="mt-2 text-center">
                             <button type="button" wire:click="analyzeImage" :disabled="$wire.analyzing"
-                                class="text-[10px] text-sage-600 hover:underline focus:outline-none">
+                                class="text-sage-600 text-[10px] hover:underline focus:outline-none">
                                 Analisis Ulang Gambar dengan AI
                             </button>
                         </div>
@@ -345,8 +345,8 @@ new class extends Component {
 
                     {{-- Indikator sedang menganalisis --}}
                     <div wire:loading wire:target="analyzeImage"
-                        class="flex items-center justify-center gap-2 text-xs text-stone-500 py-2">
-                        <svg class="animate-spin h-4 w-4 text-sage-500" ...>...</svg>
+                        class="flex items-center justify-center gap-2 py-2 text-xs text-stone-500">
+                        <svg class="text-sage-500 h-4 w-4 animate-spin" ...>...</svg>
                         Menganalisis gambar dengan AI...
                     </div>
                 </div>
@@ -354,25 +354,25 @@ new class extends Component {
                 {{-- Dapat Dipinjam (Toggle Switch) --}}
                 <div class="flex items-center justify-between">
                     <span class="text-[11px] font-medium text-stone-600 dark:text-stone-400">Dapat Dipinjam</span>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" wire:model.live="dpt_dipinjam" class="sr-only peer">
+                    <label class="relative inline-flex cursor-pointer items-center">
+                        <input type="checkbox" wire:model.live="dpt_dipinjam" class="peer sr-only">
                         <div
-                            class="w-9 h-5 bg-stone-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-sage-300 dark:peer-focus:ring-sage-800 rounded-full peer dark:bg-stone-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-stone-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-stone-600 peer-checked:bg-sage-600">
+                            class="peer-focus:ring-sage-300 dark:peer-focus:ring-sage-800 peer-checked:bg-sage-600 after:inset-s-0.5 peer h-5 w-9 rounded-full bg-stone-200 after:absolute after:top-0.5 after:h-4 after:w-4 after:rounded-full after:border after:border-stone-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-2 rtl:peer-checked:after:-translate-x-full dark:border-stone-600 dark:bg-stone-700">
                         </div>
                     </label>
                 </div>
                 @error('dpt_dipinjam')
-                    <p class="text-[10px] text-red-500 mt-1">{{ $message }}</p>
+                    <p class="mt-1 text-[10px] text-red-500">{{ $message }}</p>
                 @enderror
 
                 {{-- Footer --}}
-                <div class="flex justify-end gap-2 pt-4 border-t border-stone-100 dark:border-stone-800">
+                <div class="flex justify-end gap-2 border-t border-stone-100 pt-4 dark:border-stone-800">
                     <button type="button" @click="show = false"
-                        class="px-4 py-1.5 text-xs font-medium rounded-lg border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-800 transition">
+                        class="rounded-lg border border-stone-200 px-4 py-1.5 text-xs font-medium text-stone-600 transition hover:bg-stone-50 dark:border-stone-700 dark:text-stone-400 dark:hover:bg-stone-800">
                         Batal
                     </button>
                     <button type="submit"
-                        class="px-4 py-1.5 text-xs font-medium rounded-lg bg-sage-600 text-white hover:bg-sage-700 transition focus:outline-none focus:ring-2 focus:ring-sage-500 focus:ring-offset-1">
+                        class="bg-sage-600 hover:bg-sage-700 focus:ring-sage-500 rounded-lg px-4 py-1.5 text-xs font-medium text-white transition focus:outline-none focus:ring-2 focus:ring-offset-1">
                         Simpan
                     </button>
                 </div>
