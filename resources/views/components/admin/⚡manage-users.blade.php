@@ -174,10 +174,12 @@ new class extends Component {
                             <th class="px-2.5 py-1.5 w-6 text-center">#</th>
                             <th class="px-2.5 py-1.5">{{ __('Pengguna') }}</th>
                             <th class="px-2.5 py-1.5 hidden sm:table-cell">{{ __('NIK') }}</th>
+                            <th class="px-2.5 py-1.5 hidden sm:table-cell">{{ __('Whatsapp') }}</th>
                             <th class="px-2.5 py-1.5 hidden md:table-cell">{{ __('Tgl. Lahir') }}</th>
                             <th class="px-2.5 py-1.5 hidden sm:table-cell w-10 text-center">{{ __('JK') }}</th>
                             <th class="px-2.5 py-1.5 hidden xl:table-cell">{{ __('Alamat') }}</th>
                             <th class="px-2.5 py-1.5 hidden lg:table-cell">{{ __('Pekerjaan') }}</th>
+                            <th class="px-2.5 py-1.5 hidden lg:table-cell">{{ __('KTP') }}</th>
                             <th class="px-2.5 py-1.5 text-right w-20">{{ __('Aksi') }}</th>
                         </tr>
                     </thead>
@@ -213,6 +215,12 @@ new class extends Component {
                                     {{ $user->nik }}
                                 </td>
 
+                                {{-- Whatsapp --}}
+                                <td
+                                    class="px-2.5 py-1.5 font-mono text-stone-500 dark:text-stone-400 hidden sm:table-cell">
+                                    {{ $user->no_wa }}
+                                </td>
+
                                 {{-- Tgl Lahir (Sembunyi di HP/Tablet) --}}
                                 <td
                                     class="px-2.5 py-1.5 text-stone-500 dark:text-stone-400 whitespace-nowrap hidden md:table-cell">
@@ -240,6 +248,14 @@ new class extends Component {
                                 <td
                                     class="px-2.5 py-1.5 text-stone-500 dark:text-stone-400 truncate hidden lg:table-cell">
                                     {{ $user->pekerjaan }}
+                                </td>
+
+                                {{-- KTP --}}
+                                <td
+                                    class="px-2.5 py-1.5 text-stone-500 dark:text-stone-400 truncate hidden lg:table-cell">
+                                    <button class="cursor-pointer">
+                                        <svg class="w-8 h-8" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><defs><style>.a{fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;}</style></defs><rect class="a" x="5.6751" y="10.9786" width="36.6498" height="26.0429" rx="3"/><circle class="a" cx="14.8376" cy="21.4867" r="3.5632"/><path class="a" d="M10.3276,31.0945h9.7835a.92.92,0,0,0,.6994-1.5192,7.1719,7.1719,0,0,0-11.1823,0,.92.92,0,0,0,.6994,1.5192Z"/><line class="a" x1="28.7085" y1="20.8504" x2="35.7076" y2="20.8504"/><line class="a" x1="28.7085" y1="27.7222" x2="35.7076" y2="27.7222"/><line class="a" x1="28.7085" y1="24.2863" x2="38.38" y2="24.2863"/></svg>
+                                    </button>
                                 </td>
 
                                 {{-- Aksi --}}

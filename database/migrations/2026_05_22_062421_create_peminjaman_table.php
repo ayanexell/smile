@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id('id_peminjaman');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('inventaris_id');
-            $table->date('tgl_peminjaman');
-            $table->date('tgl_pengembalian');
+            $table->datetime('tgl_peminjaman');
+            $table->datetime('tgl_pengembalian');
+            $table->integer('jumlah');
             $table->string('status');
             $table->integer('hibah');
             $table->boolean('lambat');

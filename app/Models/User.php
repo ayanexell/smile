@@ -19,12 +19,15 @@ use Illuminate\Database\Eloquent\Attributes\Scope;
 
 #[Fillable([
     'nama_lengkap',
+    'avatar',
     'role_id',
     'departemen_id',
     'nik',
+    'ktp_path',
     'tgl_lahir',
     'jenis_kelamin',
     'email',
+    'no_wa',
     'alamat',
     'pekerjaan',
     'password'

@@ -34,13 +34,15 @@ class UserSeeder extends Seeder
         User::create([
             'role_id' => $superAdminRole->id_role,
             'departemen_id' => null,
-            'nama_lengkap' => 'Super Admin User',
+            'nama_lengkap' => 'Super Admin',
+            'avatar' => 'avatar.png',
             'nik' => '3201010101900001',
             'tgl_lahir' => fake()->date('Y-m-d', '-18 years'),
             'Alamat' => fake()->address(),
             'jenis_kelamin' => 'laki-laki',
             'pekerjaan' => 'Mahasiswa',
             'email' => 'superadmin@example.com',
+            'no_wa' => '087654456765',
             'password' => Hash::make('password'),
         ]);
 

@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-
 use App\Models\User;
 use App\Models\Inventaris;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,8 +12,8 @@ class Peminjaman extends Model
 {
     protected $table = 'peminjaman';
     protected $cast = [
-        'tgl_peminjaman' => 'date',
-        'tgl_pengembalian' => 'date',
+        'tgl_peminjaman' => 'datetime',
+        'tgl_pengembalian' => 'datetime',
         'lambat' => 'boolean',
     ];
     use HasFactory;

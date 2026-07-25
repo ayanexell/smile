@@ -16,10 +16,13 @@ return new class extends Migration
             $table->unsignedBigInteger('role_id');
             $table->unsignedBigInteger('departemen_id')->nullable();
             $table->string('nama_lengkap');
+            $table->string('avatar')->nullable();
             $table->char('nik', 16)->unique();
+            $table->string('ktp_path')->nullable();
             $table->date('tgl_lahir');
             $table->enum('jenis_kelamin', ['laki-laki', 'perempuan']);
             $table->string('email')->unique();
+            $table->string('no_wa')->unique();
             $table->text('alamat');
             $table->string('pekerjaan');
             $table->timestamp('email_verified_at')->nullable();
