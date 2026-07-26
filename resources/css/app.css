@@ -152,7 +152,7 @@
 }
 
 [data-flux-label] {
-    @apply !mb-0 !leading-tight;
+    @apply mb-0! leading-tight!;
 }
 
 input:focus[data-flux-control],
@@ -224,7 +224,7 @@ select:focus[data-flux-control] {
        ════════════════════════════════════ */
 
     .app-sidebar {
-        @apply flex flex-col h-screen flex-shrink-0 overflow-hidden z-40
+        @apply flex flex-col h-screen shrink-0 overflow-hidden z-40
                bg-white dark:bg-stone-950
                border-r border-stone-200 dark:border-stone-800
                transition-colors duration-200;
@@ -232,7 +232,7 @@ select:focus[data-flux-control] {
     }
 
     .sidebar-logo-icon {
-        @apply flex items-center justify-center flex-shrink-0 rounded-xl
+        @apply flex items-center justify-center shrink-0 rounded-xl
                bg-sage-600 dark:bg-sage-500
                shadow-sm;
         width: 35px;
@@ -289,7 +289,7 @@ select:focus[data-flux-control] {
     }
 
     .sidebar-item svg {
-        @apply flex-shrink-0;
+        @apply shrink-0;
         width: 15px;
         height: 15px;
         opacity: 0.7;
@@ -308,7 +308,7 @@ select:focus[data-flux-control] {
     }
 
     .sidebar-footer {
-        @apply flex-shrink-0 px-3 py-3
+        @apply shrink-0 px-3 py-3
                border-t border-stone-200 dark:border-stone-800;
     }
 
@@ -322,7 +322,7 @@ select:focus[data-flux-control] {
 
     /* ── Desktop Header ── */
     .app-header {
-        @apply flex items-center flex-shrink-0 sticky top-0 z-30 gap-3
+        @apply flex items-center shrink-0 sticky top-0 z-30 gap-3
                border-b border-stone-200 dark:border-stone-800
                transition-colors duration-200;
         height: 56px;
@@ -387,7 +387,7 @@ select:focus[data-flux-control] {
     }
 
     .header-avatar {
-        @apply flex items-center justify-center flex-shrink-0 rounded-full
+        @apply flex items-center justify-center shrink-0 rounded-full
                bg-sage-600 dark:bg-sage-500 text-white font-semibold;
         width: 30px;
         height: 30px;
@@ -426,7 +426,7 @@ select:focus[data-flux-control] {
 
     /* ── Mobile header ── */
     .mobile-header {
-        @apply hidden items-center flex-shrink-0 gap-2.5
+        @apply hidden items-center shrink-0 gap-2.5
                border-b border-stone-200 dark:border-stone-800;
         height: 52px;
         padding: 0 1rem;
@@ -477,7 +477,7 @@ select:focus[data-flux-control] {
     }
 
     .reg-radio-pip {
-        @apply inline-block flex-shrink-0 rounded-full border border-stone-300 dark:border-stone-700 relative;
+        @apply inline-block shrink-0 rounded-full border border-stone-300 dark:border-stone-700 relative;
         width: 13px;
         height: 13px;
         transition: border-color 0.2s;
@@ -576,7 +576,7 @@ select:focus[data-flux-control] {
 
     .banner-eyebrow::before {
         content: '';
-        @apply inline-block rounded-full bg-sage-600 dark:bg-sage-400 flex-shrink-0;
+        @apply inline-block rounded-full bg-sage-600 dark:bg-sage-400 shrink-0;
         width: 6px;
         height: 6px;
     }
@@ -596,7 +596,7 @@ select:focus[data-flux-control] {
     }
 
     .banner-illustration img {
-        @apply flex-shrink-0 opacity-90;
+        @apply shrink-0 opacity-90;
         width: 140px;
         filter: drop-shadow(0 8px 20px rgba(72, 101, 72, 0.2));
     }
@@ -643,12 +643,13 @@ select:focus[data-flux-control] {
         padding: 1px;
         background: linear-gradient(135deg, rgba(92, 127, 92, 0.25), transparent 60%);
         -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
         -webkit-mask-composite: xor;
         mask-composite: exclude;
     }
 
     .stat-icon-wrap {
-        @apply flex items-center justify-center flex-shrink-0 rounded-xl
+        @apply flex items-center justify-center shrink-0 rounded-xl
                bg-sage-50 dark:bg-sage-950;
         width: 48px;
         height: 48px;
@@ -755,7 +756,7 @@ select:focus[data-flux-control] {
 
     .badge::before {
         content: '';
-        @apply inline-block flex-shrink-0 rounded-full;
+        @apply inline-block shrink-0 rounded-full;
         width: 5px;
         height: 5px;
     }

@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('pekerjaan');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->boolean('profile_status');
             $table->rememberToken();
             $table->timestamps();
             $table->foreign('role_id')->references('id_role')->on('roles')->onDelete('cascade');

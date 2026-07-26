@@ -4,6 +4,7 @@ use Livewire\Component;
 use Livewire\Attributes\On;
 use App\Livewire\Forms\UserForm;
 use App\Models\User;
+use Flux\Flux;
 
 new class extends Component {
     public UserForm $form;
@@ -45,45 +46,45 @@ new class extends Component {
                     <!-- Loading indicator -->
                     <div class="animate-pulse space-y-3">
                         {{-- Grid untuk menyamai Baris 1 (Nama & NIK) --}}
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                             <div class="space-y-1">
-                                <div class="h-3 bg-stone-200 dark:bg-stone-800 rounded w-20"></div>
-                                <div class="h-7 bg-stone-100 dark:bg-stone-800/50 rounded w-full"></div>
+                                <div class="h-3 w-20 rounded bg-stone-200 dark:bg-stone-800"></div>
+                                <div class="h-7 w-full rounded bg-stone-100 dark:bg-stone-800/50"></div>
                             </div>
                             <div class="space-y-1">
-                                <div class="h-3 bg-stone-200 dark:bg-stone-800 rounded w-12"></div>
-                                <div class="h-7 bg-stone-100 dark:bg-stone-800/50 rounded w-full"></div>
+                                <div class="h-3 w-12 rounded bg-stone-200 dark:bg-stone-800"></div>
+                                <div class="h-7 w-full rounded bg-stone-100 dark:bg-stone-800/50"></div>
                             </div>
                         </div>
 
                         {{-- Menyampingi Baris 2 (Email) --}}
                         <div class="space-y-1">
-                            <div class="h-3 bg-stone-200 dark:bg-stone-800 rounded w-16"></div>
-                            <div class="h-7 bg-stone-100 dark:bg-stone-800/50 rounded w-full"></div>
+                            <div class="h-3 w-16 rounded bg-stone-200 dark:bg-stone-800"></div>
+                            <div class="h-7 w-full rounded bg-stone-100 dark:bg-stone-800/50"></div>
                         </div>
 
                         {{-- Grid untuk menyamai Baris 3 (Tanggal Lahir & Jenis Kelamin) --}}
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                             <div class="space-y-1">
-                                <div class="h-3 bg-stone-200 dark:bg-stone-800 rounded w-24"></div>
-                                <div class="h-7 bg-stone-100 dark:bg-stone-800/50 rounded w-full"></div>
+                                <div class="h-3 w-24 rounded bg-stone-200 dark:bg-stone-800"></div>
+                                <div class="h-7 w-full rounded bg-stone-100 dark:bg-stone-800/50"></div>
                             </div>
                             <div class="space-y-1">
-                                <div class="h-3 bg-stone-200 dark:bg-stone-800 rounded w-20"></div>
-                                <div class="h-7 bg-stone-100 dark:bg-stone-800/50 rounded w-full"></div>
+                                <div class="h-3 w-20 rounded bg-stone-200 dark:bg-stone-800"></div>
+                                <div class="h-7 w-full rounded bg-stone-100 dark:bg-stone-800/50"></div>
                             </div>
                         </div>
 
                         {{-- Menyampingi Baris 4 (Pekerjaan) --}}
                         <div class="space-y-1">
-                            <div class="h-3 bg-stone-200 dark:bg-stone-800 rounded w-28"></div>
-                            <div class="h-7 bg-stone-100 dark:bg-stone-800/50 rounded w-full"></div>
+                            <div class="h-3 w-28 rounded bg-stone-200 dark:bg-stone-800"></div>
+                            <div class="h-7 w-full rounded bg-stone-100 dark:bg-stone-800/50"></div>
                         </div>
 
                         {{-- Menyampingi Baris 5 (Alamat Textarea) --}}
                         <div class="space-y-1">
-                            <div class="h-3 bg-stone-200 dark:bg-stone-800 rounded w-32"></div>
-                            <div class="h-12 bg-stone-100 dark:bg-stone-800/50 rounded w-full"></div>
+                            <div class="h-3 w-32 rounded bg-stone-200 dark:bg-stone-800"></div>
+                            <div class="h-12 w-full rounded bg-stone-100 dark:bg-stone-800/50"></div>
                         </div>
                     </div>
                 @endplaceholder
@@ -91,10 +92,10 @@ new class extends Component {
 
                     {{-- Indikator Loading khusus saat method editAdmin berjalan --}}
                     <div wire:loading wire:target="editAdmin"
-                        class="absolute inset-0 z-50 flex items-center justify-center bg-white/60 dark:bg-stone-900/60 rounded-lg backdrop-blur-[0.5px]">
+                        class="absolute inset-0 z-50 flex items-center justify-center rounded-lg bg-white/60 backdrop-blur-[0.5px] dark:bg-stone-900/60">
                         <div
-                            class="flex items-center gap-2 px-3 py-2 bg-white dark:bg-stone-800 border border-stone-100 dark:border-stone-700 shadow-md rounded-lg">
-                            <svg class="w-4 h-4 animate-spin text-sage-600 dark:text-sage-400" fill="none"
+                            class="flex items-center gap-2 rounded-lg border border-stone-100 bg-white px-3 py-2 shadow-md dark:border-stone-700 dark:bg-stone-800">
+                            <svg class="text-sage-600 dark:text-sage-400 h-4 w-4 animate-spin" fill="none"
                                 viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
                                     stroke-width="4"></circle>
@@ -109,7 +110,7 @@ new class extends Component {
                     <div class="space-y-3 text-xs">
 
                         {{-- Baris 1: Nama & NIK --}}
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                             <div>
                                 <flux:input wire:model="form.nama_lengkap" label="Nama Lengkap" placeholder="Sesuai KTP"
                                     size="sm" class="text-xs" required />
@@ -125,15 +126,15 @@ new class extends Component {
                         <div>
                             <flux:input wire:model="form.email" type="email" label="Alamat Email"
                                 placeholder="user@domain.com" size="sm" class="text-xs" required />
-                            <flux:error name="form.email" class="text-[10px] mt-1 font-medium" />
+                            <flux:error name="form.email" class="mt-1 text-[10px] font-medium" />
                         </div>
 
                         {{-- Baris 3: Tanggal Lahir & Jenis Kelamin --}}
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                             <div>
                                 <flux:input wire:model="form.tgl_lahir" type="date" label="Tanggal Lahir" size="sm"
                                     class="text-xs" required />
-                                <flux:error name="form.tgl_lahir" class="text-[10px] mt-1 font-medium" />
+                                <flux:error name="form.tgl_lahir" class="mt-1 text-[10px] font-medium" />
                             </div>
 
                             <div>
@@ -142,7 +143,7 @@ new class extends Component {
                                     <flux:select.option value="laki-laki">{{ __('Laki-laki') }}</flux:select.option>
                                     <flux:select.option value="perempuan">{{ __('Perempuan') }}</flux:select.option>
                                 </flux:select>
-                                <flux:error name="form.jenis_kelamin" class="text-[10px] mt-1 font-medium" />
+                                <flux:error name="form.jenis_kelamin" class="mt-1 text-[10px] font-medium" />
                             </div>
                         </div>
 
@@ -150,21 +151,21 @@ new class extends Component {
                         <div>
                             <flux:input wire:model="form.pekerjaan" label="Pekerjaan / Jabatan"
                                 placeholder="Contoh: Staff Administrasi" size="sm" class="text-xs" />
-                            <flux:error name="form.pekerjaan" class="text-[10px] mt-1 font-medium" />
+                            <flux:error name="form.pekerjaan" class="mt-1 text-[10px] font-medium" />
                         </div>
 
                         {{-- Baris 5: Alamat --}}
                         <div>
                             <flux:textarea wire:model="form.alamat" label="Alamat Lengkap Rumah"
                                 placeholder="Tuliskan alamat domisili saat ini..." rows="2" class="text-xs" />
-                            <flux:error name="form.alamat" class="text-[10px] mt-1 font-medium" />
+                            <flux:error name="form.alamat" class="mt-1 text-[10px] font-medium" />
                         </div>
                     </div>
                 </div>
             @endisland
 
             {{-- Footer Modal / Tombol Aksi --}}
-            <div class="flex justify-end gap-1.5 border-t border-stone-100 dark:border-stone-800/60 pt-3 mt-4">
+            <div class="mt-4 flex justify-end gap-1.5 border-t border-stone-100 pt-3 dark:border-stone-800/60">
                 <flux:modal.close>
                     <flux:button variant="ghost" size="sm" class="text-xs">{{ __('Batal') }}</flux:button>
                 </flux:modal.close>
@@ -172,7 +173,7 @@ new class extends Component {
                 {{-- Tombol simpan otomatis disabled saat data sedang dimuat --}}
                 <flux:button type="submit" variant="primary" size="sm" wire:loading.attr="disabled"
                     wire:target="editAdmin"
-                    class="text-xs bg-sage-600 hover:bg-sage-700 dark:bg-sage-500 dark:hover:bg-sage-600 font-medium">
+                    class="bg-sage-600 hover:bg-sage-700 dark:bg-sage-500 dark:hover:bg-sage-600 text-xs font-medium">
                     {{ __('Perbarui Data') }}
                 </flux:button>
             </div>

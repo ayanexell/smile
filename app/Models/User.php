@@ -30,7 +30,8 @@ use Illuminate\Database\Eloquent\Attributes\Scope;
     'no_wa',
     'alamat',
     'pekerjaan',
-    'password'
+    'password',
+    'profile_status',
 ])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable

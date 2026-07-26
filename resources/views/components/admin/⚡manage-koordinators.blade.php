@@ -69,28 +69,28 @@ new class extends Component {
 <div class="min-h-screen bg-stone-100 dark:bg-stone-950">
 
     {{-- ── PAGE HEADER ── --}}
-    <div class="bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 px-5 py-3.5">
-        <div class="max-w-screen-xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    <div class="border-b border-stone-200 bg-white px-5 py-3.5 dark:border-stone-800 dark:bg-stone-900">
+        <div class="mx-auto flex max-w-7xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <div class="flex items-center gap-2 mb-0.5">
+                <div class="mb-0.5 flex items-center gap-2">
                     <span
-                        class="font-mono text-[9px] tracking-widest uppercase text-sage-600 dark:text-sage-400">{{ __('Manajemen') }}</span>
+                        class="text-sage-600 dark:text-sage-400 font-mono text-[9px] uppercase tracking-widest">{{ __('Manajemen') }}</span>
                 </div>
                 <h1 class="font-display text-xl font-semibold text-stone-800 dark:text-stone-100">
                     {{ __('Daftar Koordinator') }}</h1>
-                <p class="text-xs text-stone-500 dark:text-stone-400 mt-0.5">
+                <p class="mt-0.5 text-xs text-stone-500 dark:text-stone-400">
                     {{ __('Kelola semua akun koordinator sistem SMILE') }}</p>
             </div>
         </div>
     </div>
 
-    <div class="max-w-screen-xl mt-2 space-y-2 mx-auto">
+    <div class="mx-auto mt-2 max-w-7xl space-y-2">
 
         {{-- ── FLASH MESSAGE ── --}}
         @if (session('success'))
             <div
-                class="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-sage-50 dark:bg-sage-950 border border-sage-200 dark:border-sage-800 text-sage-700 dark:text-sage-300 text-xs">
-                <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                class="bg-sage-50 dark:bg-sage-950 border-sage-200 dark:border-sage-800 text-sage-700 dark:text-sage-300 flex items-center gap-2.5 rounded-xl border px-3 py-2 text-xs">
+                <svg class="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                 </svg>
                 {{ session('success') }}
@@ -98,24 +98,24 @@ new class extends Component {
         @endif
 
         {{-- ── FILTER BAR ── --}}
-        <div class="bg-white dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 px-3 py-3">
-            <div class="flex flex-col sm:flex-row gap-2">
+        <div class="rounded-xl border border-stone-200 bg-white px-3 py-3 dark:border-stone-800 dark:bg-stone-900">
+            <div class="flex flex-col gap-2 sm:flex-row">
 
                 {{-- Search --}}
                 <div class="relative flex-1">
-                    <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-400 dark:text-stone-500 pointer-events-none"
+                    <svg class="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-stone-400 dark:text-stone-500"
                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
                     </svg>
                     <input wire:model.live.debounce.300ms="search" type="text"
                         placeholder="Cari nama, NIK, atau email…"
-                        class="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-800 dark:text-stone-100 placeholder:text-stone-400 dark:placeholder:text-stone-500 focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-transparent transition" />
+                        class="focus:ring-sage-500 w-full rounded-lg border border-stone-200 bg-stone-50 py-1.5 pl-8 pr-3 text-xs text-stone-800 transition placeholder:text-stone-400 focus:border-transparent focus:outline-none focus:ring-1 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-100 dark:placeholder:text-stone-500" />
                 </div>
 
                 {{-- Filter Departemen --}}
                 <select wire:model.live="filterDepartemen"
-                    class="py-1.5 px-2.5 text-xs rounded-lg border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-700 dark:text-stone-300 focus:outline-none focus:ring-1 focus:ring-sage-500 transition">
+                    class="focus:ring-sage-500 rounded-lg border border-stone-200 bg-stone-50 px-2.5 py-1.5 text-xs text-stone-700 transition focus:outline-none focus:ring-1 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-300">
                     <option value="">{{ __('Semua Departemen') }}</option>
                     @foreach ($departemens as $dep)
                         <option value="{{ $dep->id_departemen }}">{{ $dep->nama_departemen }}</option>
@@ -124,15 +124,15 @@ new class extends Component {
 
                 {{-- Filter Gender --}}
                 <select wire:model.live="filterGender"
-                    class="py-1.5 px-2.5 text-xs rounded-lg border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-700 dark:text-stone-300 focus:outline-none focus:ring-1 focus:ring-sage-500 transition">
+                    class="focus:ring-sage-500 rounded-lg border border-stone-200 bg-stone-50 px-2.5 py-1.5 text-xs text-stone-700 transition focus:outline-none focus:ring-1 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-300">
                     <option value="">{{ __('Semua Gender') }}</option>
                     <option value="laki-laki">{{ __('Laki-laki') }}</option>
                     <option value="perempuan">{{ __('Perempuan') }}</option>
                 </select>
 
                 <a href="#"
-                    class="inline-flex items-center gap-1.5 px-3 py-2 bg-sage-600 hover:bg-sage-700 dark:bg-sage-500 dark:hover:bg-sage-600 text-white text-xs font-semibold rounded-lg shadow-sm transition-colors whitespace-nowrap">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    class="bg-sage-600 hover:bg-sage-700 dark:bg-sage-500 dark:hover:bg-sage-600 inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-xs font-semibold text-white shadow-sm transition-colors">
+                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
                     {{ __('Tambah Koordinator') }}
@@ -143,15 +143,15 @@ new class extends Component {
 
         {{-- ── TABLE CARD ── --}}
         <div
-            class="bg-white dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 overflow-hidden px-4">
+            class="overflow-hidden rounded-xl border border-stone-200 bg-white px-4 dark:border-stone-800 dark:bg-stone-900">
 
             {{-- Table meta --}}
-            <div class="py-2 border-b border-stone-100 dark:border-stone-800 flex items-center justify-between">
-                <span class="text-[10px] font-mono text-stone-400 dark:text-stone-500 uppercase tracking-wider">
+            <div class="flex items-center justify-between border-b border-stone-100 py-2 dark:border-stone-800">
+                <span class="font-mono text-[10px] uppercase tracking-wider text-stone-400 dark:text-stone-500">
                     {{ $users->total() }} {{ __('pengguna ditemukan') }}
                 </span>
-                <div wire:loading class="flex items-center gap-1 text-[11px] text-sage-600 dark:text-sage-400">
-                    <svg class="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
+                <div wire:loading class="text-sage-600 dark:text-sage-400 flex items-center gap-1 text-[11px]">
+                    <svg class="h-3 w-3 animate-spin" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
                             stroke-width="4" />
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
@@ -161,42 +161,42 @@ new class extends Component {
             </div>
 
             {{-- Scrollable table wrapper --}}
-            <div class="overflow-x-auto border dark:border-stone-800 rounded-xl bg-white dark:bg-stone-900 shadow-sm">
-                <table class="w-full text-[11px] text-left border-collapse">
+            <div class="overflow-x-auto rounded-xl border bg-white shadow-sm dark:border-stone-800 dark:bg-stone-900">
+                <table class="w-full border-collapse text-left text-[11px]">
                     <thead>
                         <tr
-                            class="bg-stone-50 dark:bg-stone-800/50 border-b border-stone-200 dark:border-stone-800 text-stone-500 dark:text-stone-400 font-semibold uppercase tracking-wider">
-                            <th class="px-2.5 py-1.5 w-6 text-center">#</th>
+                            class="border-b border-stone-200 bg-stone-50 font-semibold uppercase tracking-wider text-stone-500 dark:border-stone-800 dark:bg-stone-800/50 dark:text-stone-400">
+                            <th class="w-6 px-2.5 py-1.5 text-center">#</th>
                             <th class="px-2.5 py-1.5">{{ __('Pengguna') }}</th>
-                            <th class="px-2.5 py-1.5 hidden sm:table-cell">{{ __('NIK') }}</th>
+                            <th class="hidden px-2.5 py-1.5 sm:table-cell">{{ __('NIK') }}</th>
                             <th class="px-2.5 py-1.5">{{ __('Departemen') }}</th>
-                            <th class="px-2.5 py-1.5 hidden md:table-cell">{{ __('Tgl. Lahir') }}</th>
-                            <th class="px-2.5 py-1.5 hidden sm:table-cell w-10 text-center">{{ __('JK') }}</th>
-                            <th class="px-2.5 py-1.5 hidden xl:table-cell">{{ __('Alamat') }}</th>
-                            <th class="px-2.5 py-1.5 hidden lg:table-cell">{{ __('Pekerjaan') }}</th>
-                            <th class="px-2.5 py-1.5 text-right w-20">{{ __('Aksi') }}</th>
+                            <th class="hidden px-2.5 py-1.5 md:table-cell">{{ __('Tgl. Lahir') }}</th>
+                            <th class="hidden w-10 px-2.5 py-1.5 text-center sm:table-cell">{{ __('JK') }}</th>
+                            <th class="hidden px-2.5 py-1.5 xl:table-cell">{{ __('Alamat') }}</th>
+                            <th class="hidden px-2.5 py-1.5 lg:table-cell">{{ __('Pekerjaan') }}</th>
+                            <th class="w-20 px-2.5 py-1.5 text-right">{{ __('Aksi') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-stone-100 dark:divide-stone-800/60">
                         @forelse ($users as $user)
-                            <tr class="hover:bg-stone-50 dark:hover:bg-stone-800/30 transition-colors group">
+                            <tr class="group transition-colors hover:bg-stone-50 dark:hover:bg-stone-800/30">
 
                                 {{-- No --}}
-                                <td class="px-2.5 py-1.5 text-stone-400 dark:text-stone-600 font-mono text-center">
+                                <td class="px-2.5 py-1.5 text-center font-mono text-stone-400 dark:text-stone-600">
                                     {{ $loop->iteration + ($users->currentPage() - 1) * $users->perPage() }}
                                 </td>
 
                                 {{-- Nama, Avatar + Email (Digabung agar hemat space) --}}
                                 <td class="px-2.5 py-1.5">
-                                    <div class="flex items-center gap-2 max-w-[180px] sm:max-w-xs">
+                                    <div class="max-w-45 flex items-center gap-2 sm:max-w-xs">
                                         <div
-                                            class="w-5 h-5 rounded-full bg-sage-100 dark:bg-sage-900/60 flex items-center justify-center flex-shrink-0 text-sage-700 dark:text-sage-400 font-bold text-[9px] uppercase">
+                                            class="bg-sage-100 dark:bg-sage-900/60 text-sage-700 dark:text-sage-400 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[9px] font-bold uppercase">
                                             {{ mb_substr($user->nama_lengkap, 0, 2) }}
                                         </div>
                                         <div class="truncate">
-                                            <div class="font-medium text-stone-800 dark:text-stone-200 truncate">
+                                            <div class="truncate font-medium text-stone-800 dark:text-stone-200">
                                                 {{ $user->nama_lengkap }}</div>
-                                            <div class="text-[10px] text-stone-400 dark:text-stone-500 truncate"
+                                            <div class="truncate text-[10px] text-stone-400 dark:text-stone-500"
                                                 title="{{ $user->email }}">{{ $user->email }}</div>
                                         </div>
                                     </div>
@@ -204,42 +204,42 @@ new class extends Component {
 
                                 {{-- NIK (Sembunyi di HP) --}}
                                 <td
-                                    class="px-2.5 py-1.5 font-mono text-stone-500 dark:text-stone-400 hidden sm:table-cell">
+                                    class="hidden px-2.5 py-1.5 font-mono text-stone-500 sm:table-cell dark:text-stone-400">
                                     {{ $user->nik }}
                                 </td>
 
                                 {{-- Departemen & Role (Digabung vertikal) --}}
-                                <td class="px-2.5 py-1.5 space-y-0.5">
-                                    <div class="text-stone-700 dark:text-stone-300 font-medium">
+                                <td class="space-y-0.5 px-2.5 py-1.5">
+                                    <div class="font-medium text-stone-700 dark:text-stone-300">
                                         {{ $user->departemen->singkatan }}</div>
                                 </td>
 
                                 {{-- Tgl Lahir (Sembunyi di HP/Tablet) --}}
                                 <td
-                                    class="px-2.5 py-1.5 text-stone-500 dark:text-stone-400 whitespace-nowrap hidden md:table-cell">
+                                    class="hidden whitespace-nowrap px-2.5 py-1.5 text-stone-500 md:table-cell dark:text-stone-400">
                                     {{ \Carbon\Carbon::parse($user->tgl_lahir)->translatedFormat('d M Y') }}
                                 </td>
 
                                 {{-- Gender (Dipersingkat) --}}
-                                <td class="px-2.5 py-1.5 text-center hidden sm:table-cell">
+                                <td class="hidden px-2.5 py-1.5 text-center sm:table-cell">
                                     @if ($user->jenis_kelamin === 'laki-laki')
-                                        <span class="text-blue-600 dark:text-blue-400 font-semibold"
+                                        <span class="font-semibold text-blue-600 dark:text-blue-400"
                                             title="Laki-laki">L</span>
                                     @else
-                                        <span class="text-pink-600 dark:text-pink-400 font-semibold"
+                                        <span class="font-semibold text-pink-600 dark:text-pink-400"
                                             title="Perempuan">P</span>
                                     @endif
                                 </td>
 
                                 {{-- Alamat (Hanya tampil di layar ultra lebar) --}}
-                                <td class="px-2.5 py-1.5 text-stone-500 dark:text-stone-500 max-w-[140px] truncate hidden xl:table-cell"
+                                <td class="max-w-35 hidden truncate px-2.5 py-1.5 text-stone-500 xl:table-cell dark:text-stone-500"
                                     title="{{ $user->alamat }}">
                                     {{ $user->alamat }}
                                 </td>
 
                                 {{-- Pekerjaan (Hanya tampil di desktop) --}}
                                 <td
-                                    class="px-2.5 py-1.5 text-stone-500 dark:text-stone-400 truncate hidden lg:table-cell">
+                                    class="hidden truncate px-2.5 py-1.5 text-stone-500 lg:table-cell dark:text-stone-400">
                                     {{ __($user->pekerjaan) }}
                                 </td>
 
@@ -250,9 +250,9 @@ new class extends Component {
 
                                             {{-- Tombol Titik Tiga --}}
                                             <button @click="open = !open" @click.outside="open = false"
-                                                class="cursor-pointer p-1 rounded-md text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors focus:outline-none"
+                                                class="cursor-pointer rounded-md p-1 text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-700 focus:outline-none dark:hover:bg-stone-800 dark:hover:text-stone-200"
                                                 title="Menu Aksi">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                <svg class="h-4 w-4" fill="none" stroke="currentColor"
                                                     stroke-width="2" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                         d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
@@ -266,9 +266,9 @@ new class extends Component {
                                                 x-transition:leave="transition ease-in duration-75"
                                                 x-transition:leave-start="transform opacity-100 scale-100"
                                                 x-transition:leave-end="transform opacity-0 scale-95"
-                                                class="absolute right-0 mt-1 w-32 origin-top-right rounded-md border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-30"
+                                                class="absolute right-0 z-30 mt-1 w-32 origin-top-right rounded-md border border-stone-200 bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:border-stone-800 dark:bg-stone-900"
                                                 style="display: none;">
-                                                <div class="p-1 space-y-0.5">
+                                                <div class="space-y-0.5 p-1">
 
                                                     {{-- Edit --}}
                                                     <button
@@ -277,8 +277,8 @@ new class extends Component {
                                                             $wire.updateKoordinator({{ $user->id_user }});
                                                             open = false;"
                                                         @click="open = false"
-                                                        class="cursor-pointer w-full flex items-center gap-2 px-2.5 py-1.5 text-xs text-sage-600 dark:text-sage-400 hover:bg-sage-50 dark:hover:bg-sage-950/30 rounded transition-colors text-left">
-                                                        <svg class="w-3.5 h-3.5 text-sage-500" fill="none"
+                                                        class="text-sage-600 dark:text-sage-400 hover:bg-sage-50 dark:hover:bg-sage-950/30 flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs transition-colors">
+                                                        <svg class="text-sage-500 h-3.5 w-3.5" fill="none"
                                                             stroke="currentColor" stroke-width="2"
                                                             viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -292,8 +292,8 @@ new class extends Component {
                                                     {{-- Hapus --}}
                                                     <button wire:click="confirmDelete({{ $user->id_user }})"
                                                         @click="open = false"
-                                                        class="cursor-pointer w-full flex items-center gap-2 px-2.5 py-1.5 text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 rounded transition-colors text-left">
-                                                        <svg class="w-3.5 h-3.5 text-red-400" fill="none"
+                                                        class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40">
+                                                        <svg class="h-3.5 w-3.5 text-red-400" fill="none"
                                                             stroke="currentColor" stroke-width="2"
                                                             viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -324,8 +324,8 @@ new class extends Component {
 
             {{-- Pagination --}}
             <div
-                class="px-3 py-2 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between dynamic-pagination">
-                <div class="w-full text-xs transform scale-95 origin-left text-stone-500 dark:text-stone-400">
+                class="dynamic-pagination flex items-center justify-between border-t border-stone-100 px-3 py-2 dark:border-stone-800">
+                <div class="w-full origin-left scale-95 transform text-xs text-stone-500 dark:text-stone-400">
                     {{ $users->links('pagination::tailwind') }}
                 </div>
             </div>
@@ -337,31 +337,33 @@ new class extends Component {
 
     {{-- ── DELETE MODAL ── --}}
     @if ($showDeleteModal)
-        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 dark:bg-black/60 backdrop-blur-sm"
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm dark:bg-black/60"
             wire:click.self="$set('showDeleteModal', false)">
             <div
-                class="bg-white dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 shadow-2xl w-full max-w-xs p-5">
+                class="w-full max-w-xs rounded-xl border border-stone-200 bg-white p-5 shadow-2xl dark:border-stone-800 dark:bg-stone-900">
                 <div class="flex items-start gap-3">
                     <div
-                        class="flex-shrink-0 w-8 h-8 rounded-full bg-red-50 dark:bg-red-950 flex items-center justify-center">
-                        <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-red-50 dark:bg-red-950">
+                        <svg class="h-4 w-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
                         </svg>
                     </div>
                     <div class="flex-1">
-                        <h3 class="text-sm font-semibold text-stone-800 dark:text-stone-100 mb-0.5">Hapus Koordinator</h3>
-                        <p class="text-xs text-stone-500 dark:text-stone-400">Data koordinator akan dihapus permanen dari
+                        <h3 class="mb-0.5 text-sm font-semibold text-stone-800 dark:text-stone-100">Hapus Koordinator
+                        </h3>
+                        <p class="text-xs text-stone-500 dark:text-stone-400">Data koordinator akan dihapus permanen
+                            dari
                             sistem.</p>
                     </div>
                 </div>
-                <div class="flex gap-2 mt-5">
+                <div class="mt-5 flex gap-2">
                     <button wire:click="$set('showDeleteModal', false)"
-                        class="flex-1 px-3 py-2 text-xs font-medium rounded-lg border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors">
+                        class="flex-1 rounded-lg border border-stone-200 px-3 py-2 text-xs font-medium text-stone-700 transition-colors hover:bg-stone-50 dark:border-stone-700 dark:text-stone-300 dark:hover:bg-stone-800">
                         Batal
                     </button>
                     <button wire:click="deleteKoordinator"
-                        class="flex-1 px-3 py-2 text-xs font-semibold rounded-lg bg-red-500 hover:bg-red-600 text-white transition-colors">
+                        class="flex-1 rounded-lg bg-red-500 px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-red-600">
                         Ya, Hapus
                     </button>
                 </div>

@@ -17,10 +17,13 @@ trait ProfileValidationRules
     {
         return [
             'nama_lengkap'  => $this->namaLengkapRules(),
+            'avatar'  => $this->avatarRules(),
             'nik'           => $this->nikRules($userId),
             'tgl_lahir'     => $this->tglLahirRules(),
             'jenis_kelamin' => $this->jenisKelaminRules(),
             'email'         => $this->emailRules($userId),
+            'ktp_path'       => $this->ktpRules(),
+            'no_wa'         => $this->noWaRules($userId),
             'alamat'        => $this->alamatRules(),
             'pekerjaan'     => $this->pekerjaanRules(),
         ];
@@ -34,6 +37,16 @@ trait ProfileValidationRules
     protected function namaLengkapRules(): array
     {
         return ['required', 'string', 'max:255'];
+    }
+
+    /**
+     * Get the validation rules for nama lengkap.
+     *
+     * @return array<int, ValidationRule|array<mixed>|string>
+     */
+    protected function avatarRules(): array
+    {
+        return ['nullable', 'string', 'max:255'];
     }
 
     /**
@@ -93,6 +106,32 @@ trait ProfileValidationRules
             $userId === null
                 ? Rule::unique('users', 'email')
                 : Rule::unique('users', 'email')->ignore($userId, 'id_user'),
+        ];
+    }
+
+    /**
+     * Get the validation rules for nama lengkap.
+     *
+     * @return array<int, ValidationRule|array<mixed>|string>
+     */
+    protected function ktpRules(): array
+    {
+        return ['nullable', 'string', 'max:255'];
+    }
+    /**
+     * Get the validation rules for email.
+     *
+     * @return array<int, ValidationRule|array<mixed>|string>
+     */
+    protected function noWaRules(?int $userId = null): array
+    {
+        return [
+            'required',
+            'string',
+            'max:255',
+            $userId === null
+                ? Rule::unique('users', 'no_wa')
+                : Rule::unique('users', 'no_wa')->ignore($userId, 'id_user'),
         ];
     }
 

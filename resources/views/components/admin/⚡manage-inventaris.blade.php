@@ -4,7 +4,6 @@ use Livewire\Component;
 use App\Models\Inventaris;
 
 new class extends Component {
-
     use Livewire\WithPagination;
 
     public $search = '';
@@ -19,18 +18,7 @@ new class extends Component {
 
     public function render()
     {
-        $inventaris = Inventaris::query()
-            ->when(
-                $this->search,
-                fn($q) => $q
-                    ->where('nama', 'like', "%{$this->search}%")
-                    ->orWhere('tipe', 'like', "%{$this->search}%")
-            )
-            ->when($this->filterKondisi, fn($q) => $q->where('kondisi', $this->filterKondisi))
-            ->when($this->filterTipe, fn($q) => $q->where('tipe', $this->filterTipe))
-            ->when($this->filterDptDipinjam, fn($q) => $q->where('dpt_dipinjam', $this->filterDptDipinjam))
-            ->latest()
-            ->paginate(10);
+        $inventaris = Inventaris::query()->when($this->search, fn($q) => $q->where('nama', 'like', "%{$this->search}%")->orWhere('tipe', 'like', "%{$this->search}%"))->when($this->filterKondisi, fn($q) => $q->where('kondisi', $this->filterKondisi))->when($this->filterTipe, fn($q) => $q->where('tipe', $this->filterTipe))->when($this->filterDptDipinjam, fn($q) => $q->where('dpt_dipinjam', $this->filterDptDipinjam))->latest()->paginate(10);
         // dd($inventaris);
         return $this->view([
             'inventaris' => $inventaris,
@@ -41,20 +29,20 @@ new class extends Component {
 
 <div>
     {{-- ── PAGE HEADER ── --}}
-    <div class="bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 px-5 py-3.5">
-        <div class="max-w-screen-xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    <div class="border-b border-stone-200 bg-white px-5 py-3.5 dark:border-stone-800 dark:bg-stone-900">
+        <div class="mx-auto flex max-w-7xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <div class="flex items-center gap-2 mb-0.5">
+                <div class="mb-0.5 flex items-center gap-2">
                     <span
-                        class="font-mono text-[9px] tracking-widest uppercase text-sage-600 dark:text-sage-400">Manajemen</span>
+                        class="text-sage-600 dark:text-sage-400 font-mono text-[9px] uppercase tracking-widest">Manajemen</span>
                 </div>
                 <h1 class="font-display text-xl font-semibold text-stone-800 dark:text-stone-100">Daftar Inventaris</h1>
-                <p class="text-xs text-stone-500 dark:text-stone-400 mt-0.5">Kelola semua inventaris sistem SMILE</p>
+                <p class="mt-0.5 text-xs text-stone-500 dark:text-stone-400">Kelola semua inventaris sistem SMILE</p>
             </div>
         </div>
     </div>
 
-    <div class="max-w-screen-xl mt-2 space-y-2 mx-auto">
+    <div class="mx-auto mt-2 max-w-7xl space-y-2">
 
         {{-- ── FLASH MESSAGE ── --}}
         @if (session()->has('success'))
@@ -63,26 +51,22 @@ new class extends Component {
                 x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
                 x-transition:leave="transition ease-in duration-200"
                 x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-4"
-                class="fixed top-5 left-1/2 -translate-x-1/2 z-[9999] w-full max-w-sm px-4" style="display: none;">
+                class="z-9999 fixed left-1/2 top-5 w-full max-w-sm -translate-x-1/2 px-4" style="display: none;">
                 <div
-                    class="flex items-center gap-2.5 pl-3 pr-2.5 py-2
-                        bg-white dark:bg-stone-900
-                        border border-emerald-100 dark:border-emerald-950/60
-                        rounded-lg shadow-xl shadow-stone-200/50 dark:shadow-none select-none">
-                    <div class="flex-shrink-0 text-emerald-500 dark:text-emerald-400">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5"
+                    class="flex select-none items-center gap-2.5 rounded-lg border border-emerald-100 bg-white py-2 pl-3 pr-2.5 shadow-xl shadow-stone-200/50 dark:border-emerald-950/60 dark:bg-stone-900 dark:shadow-none">
+                    <div class="shrink-0 text-emerald-500 dark:text-emerald-400">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                     </div>
-                    <div class="flex-1 text-[11px] font-medium text-stone-700 dark:text-stone-300 leading-normal">
+                    <div class="flex-1 text-[11px] font-medium leading-normal text-stone-700 dark:text-stone-300">
                         {{ session('success') }}
                     </div>
                     <button @click="show = false"
-                        class="flex-shrink-0 p-1 text-stone-400 hover:text-stone-600 dark:hover:text-stone-200
-                               rounded transition-colors focus:outline-none">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        class="shrink-0 rounded p-1 text-stone-400 transition-colors hover:text-stone-600 focus:outline-none dark:hover:text-stone-200">
+                        <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
@@ -92,35 +76,24 @@ new class extends Component {
 
 
         {{-- ── FILTER BAR ── --}}
-        <div class="bg-white dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 px-3 py-3">
-            <div class="flex flex-col sm:flex-row gap-2">
+        <div class="rounded-xl border border-stone-200 bg-white px-3 py-3 dark:border-stone-800 dark:bg-stone-900">
+            <div class="flex flex-col gap-2 sm:flex-row">
 
                 {{-- Search --}}
                 <div class="relative flex-1">
-                    <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5
-                            text-stone-400 dark:text-stone-500 pointer-events-none"
+                    <svg class="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-stone-400 dark:text-stone-500"
                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
                     </svg>
                     <input wire:model.live.debounce.300ms="search" type="text"
                         placeholder="Cari nama barang, tipe, atau warna…"
-                        class="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg
-                              border border-stone-200 dark:border-stone-700
-                              bg-stone-50 dark:bg-stone-800
-                              text-stone-800 dark:text-stone-100
-                              placeholder:text-stone-400 dark:placeholder:text-stone-500
-                              focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-transparent
-                              transition" />
+                        class="focus:ring-sage-500 w-full rounded-lg border border-stone-200 bg-stone-50 py-1.5 pl-8 pr-3 text-xs text-stone-800 transition placeholder:text-stone-400 focus:border-transparent focus:outline-none focus:ring-1 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-100 dark:placeholder:text-stone-500" />
                 </div>
 
                 {{-- Filter Kondisi --}}
                 <select wire:model.live="filterKondisi"
-                    class="py-1.5 px-2.5 text-xs rounded-lg
-                           border border-stone-200 dark:border-stone-700
-                           bg-stone-50 dark:bg-stone-800
-                           text-stone-700 dark:text-stone-300
-                           focus:outline-none focus:ring-1 focus:ring-sage-500 transition">
+                    class="focus:ring-sage-500 rounded-lg border border-stone-200 bg-stone-50 px-2.5 py-1.5 text-xs text-stone-700 transition focus:outline-none focus:ring-1 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-300">
                     <option value="">Semua Kondisi</option>
                     <option value="baik">Baik</option>
                     <option value="rusak">Rusak</option>
@@ -129,11 +102,7 @@ new class extends Component {
 
                 {{-- Filter Tipe --}}
                 <select wire:model.live="filterTipe"
-                    class="py-1.5 px-2.5 text-xs rounded-lg
-                           border border-stone-200 dark:border-stone-700
-                           bg-stone-50 dark:bg-stone-800
-                           text-stone-700 dark:text-stone-300
-                           focus:outline-none focus:ring-1 focus:ring-sage-500 transition">
+                    class="focus:ring-sage-500 rounded-lg border border-stone-200 bg-stone-50 px-2.5 py-1.5 text-xs text-stone-700 transition focus:outline-none focus:ring-1 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-300">
                     <option value="">Semua Tipe</option>
                     @foreach ($tipeList ?? [] as $tipe)
                         <option value="{{ $tipe }}">{{ $tipe }}</option>
@@ -142,11 +111,7 @@ new class extends Component {
 
                 {{-- Filter Dapat Dipinjam --}}
                 <select wire:model.live="filterDptDipinjam"
-                    class="py-1.5 px-2.5 text-xs rounded-lg
-                           border border-stone-200 dark:border-stone-700
-                           bg-stone-50 dark:bg-stone-800
-                           text-stone-700 dark:text-stone-300
-                           focus:outline-none focus:ring-1 focus:ring-sage-500 transition">
+                    class="focus:ring-sage-500 rounded-lg border border-stone-200 bg-stone-50 px-2.5 py-1.5 text-xs text-stone-700 transition focus:outline-none focus:ring-1 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-300">
                     <option value="">Semua</option>
                     <option value="1">Dapat Dipinjam</option>
                     <option value="0">Tidak Dapat Dipinjam</option>
@@ -154,11 +119,8 @@ new class extends Component {
 
                 {{-- Tombol Tambah --}}
                 <button @click="$dispatch('add-inventaris-modal')"
-                    class="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg
-                           bg-sage-600 dark:bg-sage-500 hover:bg-sage-700 dark:hover:bg-sage-400
-                           text-white transition-all shadow-sm hover:shadow hover:shadow-sage-600/20
-                           whitespace-nowrap flex-shrink-0">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    class="bg-sage-600 dark:bg-sage-500 hover:bg-sage-700 dark:hover:bg-sage-400 hover:shadow-sage-600/20 inline-flex shrink-0 cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-medium text-white shadow-sm transition-all hover:shadow">
+                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
                     Tambah Barang
@@ -170,60 +132,53 @@ new class extends Component {
 
         {{-- ── TABLE CARD ── --}}
         <div
-            class="bg-white dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 overflow-hidden px-4">
+            class="overflow-hidden rounded-xl border border-stone-200 bg-white px-4 dark:border-stone-800 dark:bg-stone-900">
 
             {{-- Meta --}}
-            <div class="py-2 border-b border-stone-100 dark:border-stone-800 flex items-center justify-between">
-                <span class="text-[10px] font-mono text-stone-400 dark:text-stone-500 uppercase tracking-wider">
+            <div class="flex items-center justify-between border-b border-stone-100 py-2 dark:border-stone-800">
+                <span class="font-mono text-[10px] uppercase tracking-wider text-stone-400 dark:text-stone-500">
                     {{ $inventaris->count() }} barang ditemukan
                 </span>
             </div>
 
             {{-- Tabel --}}
-            <div class="overflow-x-auto border dark:border-stone-800 rounded-xl bg-white dark:bg-stone-900 shadow-sm">
-                <table class="w-full text-[11px] text-left border-collapse">
+            <div class="overflow-x-auto rounded-xl border bg-white shadow-sm dark:border-stone-800 dark:bg-stone-900">
+                <table class="w-full border-collapse text-left text-[11px]">
                     <thead>
                         <tr
-                            class="bg-stone-50 dark:bg-stone-800/50
-                               border-b border-stone-200 dark:border-stone-800
-                               text-stone-500 dark:text-stone-400
-                               font-semibold uppercase tracking-wider">
-                            <th class="px-2.5 py-1.5 w-6 text-center">#</th>
+                            class="border-b border-stone-200 bg-stone-50 font-semibold uppercase tracking-wider text-stone-500 dark:border-stone-800 dark:bg-stone-800/50 dark:text-stone-400">
+                            <th class="w-6 px-2.5 py-1.5 text-center">#</th>
                             <th class="px-2.5 py-1.5">Barang</th>
-                            <th class="px-2.5 py-1.5 hidden sm:table-cell">Tipe</th>
-                            <th class="px-2.5 py-1.5 hidden md:table-cell w-16 text-center">Jumlah</th>
-                            <th class="px-2.5 py-1.5 hidden sm:table-cell">Kondisi</th>
-                            <th class="px-2.5 py-1.5 hidden lg:table-cell">Warna</th>
-                            <th class="px-2.5 py-1.5 hidden md:table-cell text-center">Dipinjam</th>
-                            <th class="px-2.5 py-1.5 text-right w-20">Aksi</th>
+                            <th class="hidden px-2.5 py-1.5 sm:table-cell">Tipe</th>
+                            <th class="hidden w-16 px-2.5 py-1.5 text-center md:table-cell">Jumlah</th>
+                            <th class="hidden px-2.5 py-1.5 sm:table-cell">Kondisi</th>
+                            <th class="hidden px-2.5 py-1.5 lg:table-cell">Warna</th>
+                            <th class="hidden px-2.5 py-1.5 text-center md:table-cell">Dipinjam</th>
+                            <th class="w-20 px-2.5 py-1.5 text-right">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-stone-100 dark:divide-stone-800/60">
                         @forelse ($inventaris as $item)
                             <tr wire:key="inventaris-{{ $item->id }}"
-                                class="hover:bg-stone-50 dark:hover:bg-stone-800/30 transition-colors group">
+                                class="group transition-colors hover:bg-stone-50 dark:hover:bg-stone-800/30">
 
                                 {{-- No --}}
-                                <td class="px-2.5 py-1.5 text-stone-400 dark:text-stone-600 font-mono text-center">
+                                <td class="px-2.5 py-1.5 text-center font-mono text-stone-400 dark:text-stone-600">
                                     {{ $loop->iteration + ($inventaris->currentPage() - 1) * $inventaris->perPage() }}
                                 </td>
 
                                 {{-- Gambar + Nama Barang --}}
                                 <td class="px-2.5 py-1.5">
-                                    <div class="flex items-center gap-2 max-w-[180px] sm:max-w-xs">
+                                    <div class="max-w-45 flex items-center gap-2 sm:max-w-xs">
                                         {{-- Thumbnail gambar atau placeholder --}}
                                         @if ($item->img_path)
                                             <img src="{{ Storage::url($item->img_path) }}"
                                                 alt="{{ $item->nama_barang }}"
-                                                class="w-7 h-7 rounded-lg object-cover flex-shrink-0
-                                                    border border-stone-200 dark:border-stone-700" />
+                                                class="h-7 w-7 shrink-0 rounded-lg border border-stone-200 object-cover dark:border-stone-700" />
                                         @else
                                             <div
-                                                class="w-7 h-7 rounded-lg flex-shrink-0
-                                                    bg-sage-100 dark:bg-sage-900/40
-                                                    border border-stone-200 dark:border-stone-700
-                                                    flex items-center justify-center">
-                                                <svg class="w-3.5 h-3.5 text-sage-500 dark:text-sage-400"
+                                                class="bg-sage-100 dark:bg-sage-900/40 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-stone-200 dark:border-stone-700">
+                                                <svg class="text-sage-500 dark:text-sage-400 h-3.5 w-3.5"
                                                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                         stroke-width="2"
@@ -233,11 +188,11 @@ new class extends Component {
                                         @endif
 
                                         <div class="truncate">
-                                            <div class="font-medium text-stone-800 dark:text-stone-200 truncate">
+                                            <div class="truncate font-medium text-stone-800 dark:text-stone-200">
                                                 {{ $item->nama_barang }}
                                             </div>
-                                            <div class="text-[10px] text-stone-400 dark:text-stone-500 truncate">
-                                                Oleh: {{ $item->departemen->nama_departemen ?? '-'}}
+                                            <div class="truncate text-[10px] text-stone-400 dark:text-stone-500">
+                                                Oleh: {{ $item->departemen->nama_departemen ?? '-' }}
                                             </div>
                                         </div>
                                     </div>
@@ -245,18 +200,18 @@ new class extends Component {
 
                                 {{-- Tipe --}}
                                 <td
-                                    class="px-2.5 py-1.5 text-stone-500 dark:text-stone-400 truncate hidden sm:table-cell">
+                                    class="hidden truncate px-2.5 py-1.5 text-stone-500 sm:table-cell dark:text-stone-400">
                                     {{ $item->tipe ?? '-' }}
                                 </td>
 
                                 {{-- Jumlah --}}
                                 <td
-                                    class="px-2.5 py-1.5 text-center font-mono text-stone-600 dark:text-stone-400 hidden md:table-cell">
+                                    class="hidden px-2.5 py-1.5 text-center font-mono text-stone-600 md:table-cell dark:text-stone-400">
                                     {{ $item->jumlah }}
                                 </td>
 
                                 {{-- Kondisi Badge --}}
-                                <td class="px-2.5 py-1.5 hidden sm:table-cell">
+                                <td class="hidden px-2.5 py-1.5 sm:table-cell">
                                     @php
                                         [$lbl, $cls] = match ($item->kondisi ?? '') {
                                             'baik' => [
@@ -275,21 +230,21 @@ new class extends Component {
                                         };
                                     @endphp
                                     <span
-                                        class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-medium {{ $cls }}">
+                                        class="{{ $cls }} inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium">
                                         {{ $lbl }}
                                     </span>
                                 </td>
 
                                 {{-- Warna --}}
-                                <td class="px-2.5 py-1.5 hidden lg:table-cell">
+                                <td class="hidden px-2.5 py-1.5 lg:table-cell">
                                     @if ($item->warna)
                                         <div class="flex items-center gap-1.5">
                                             {{-- Swatch warna (best-effort CSS color name / hex) --}}
                                             <span
-                                                class="w-3 h-3 rounded-full border border-stone-300 dark:border-stone-600 flex-shrink-0"
+                                                class="h-3 w-3 shrink-0 rounded-full border border-stone-300 dark:border-stone-600"
                                                 style="background-color: {{ $item->warna }};"></span>
                                             <span
-                                                class="text-stone-500 dark:text-stone-400 capitalize truncate max-w-[80px]">
+                                                class="max-w-20 truncate capitalize text-stone-500 dark:text-stone-400">
                                                 {{ $item->warna }}
                                             </span>
                                         </div>
@@ -299,12 +254,11 @@ new class extends Component {
                                 </td>
 
                                 {{-- Dapat Dipinjam --}}
-                                <td class="px-2.5 py-1.5 text-center hidden md:table-cell">
+                                <td class="hidden px-2.5 py-1.5 text-center md:table-cell">
                                     @if ($item->dpt_dipinjam)
                                         <span
-                                            class="inline-flex items-center gap-1 text-[10px] font-medium
-                                                 text-emerald-600 dark:text-emerald-400">
-                                            <svg class="w-3 h-3" fill="none" stroke="currentColor"
+                                            class="inline-flex items-center gap-1 text-[10px] font-medium text-emerald-600 dark:text-emerald-400">
+                                            <svg class="h-3 w-3" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     stroke-width="2.5" d="M5 13l4 4L19 7" />
@@ -313,9 +267,8 @@ new class extends Component {
                                         </span>
                                     @else
                                         <span
-                                            class="inline-flex items-center gap-1 text-[10px] font-medium
-                                                 text-stone-400 dark:text-stone-600">
-                                            <svg class="w-3 h-3" fill="none" stroke="currentColor"
+                                            class="inline-flex items-center gap-1 text-[10px] font-medium text-stone-400 dark:text-stone-600">
+                                            <svg class="h-3 w-3" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
@@ -332,12 +285,9 @@ new class extends Component {
 
                                             {{-- Tombol titik tiga --}}
                                             <button @click="open = !open" @click.outside="open = false"
-                                                class="cursor-pointer p-1 rounded-md
-                                                       text-stone-400 hover:text-stone-700 dark:hover:text-stone-200
-                                                       hover:bg-stone-100 dark:hover:bg-stone-800
-                                                       transition-colors focus:outline-none"
+                                                class="cursor-pointer rounded-md p-1 text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-700 focus:outline-none dark:hover:bg-stone-800 dark:hover:text-stone-200"
                                                 title="Menu Aksi">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                <svg class="h-4 w-4" fill="none" stroke="currentColor"
                                                     stroke-width="2" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                         d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
@@ -351,13 +301,9 @@ new class extends Component {
                                                 x-transition:leave="transition ease-in duration-75"
                                                 x-transition:leave-start="transform opacity-100 scale-100"
                                                 x-transition:leave-end="transform opacity-0 scale-95"
-                                                class="absolute right-0 mt-1 w-36 origin-top-right rounded-md
-                                                    border border-stone-200 dark:border-stone-800
-                                                    bg-white dark:bg-stone-900
-                                                    shadow-lg ring-1 ring-black ring-opacity-5
-                                                    focus:outline-none z-30"
+                                                class="absolute right-0 z-30 mt-1 w-36 origin-top-right rounded-md border border-stone-200 bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:border-stone-800 dark:bg-stone-900"
                                                 style="display: none;">
-                                                <div class="p-1 space-y-0.5">
+                                                <div class="space-y-0.5 p-1">
 
                                                     {{-- Detail --}}
                                                     <button
@@ -365,11 +311,8 @@ new class extends Component {
                                                         $flux.modal('detail-inventaris-modal').show();
                                                         $wire.lihatDetail({{ $item->id }});
                                                         open = false;"
-                                                        class="cursor-pointer w-full flex items-center gap-2 px-2.5 py-1.5
-                                                           text-xs text-stone-600 dark:text-stone-400
-                                                           hover:bg-stone-50 dark:hover:bg-stone-800/60
-                                                           rounded transition-colors text-left">
-                                                        <svg class="w-3.5 h-3.5 text-stone-400" fill="none"
+                                                        class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-stone-600 transition-colors hover:bg-stone-50 dark:text-stone-400 dark:hover:bg-stone-800/60">
+                                                        <svg class="h-3.5 w-3.5 text-stone-400" fill="none"
                                                             stroke="currentColor" stroke-width="2"
                                                             viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -386,11 +329,8 @@ new class extends Component {
                                                         $flux.modal('edit-inventaris-modal').show();
                                                         $wire.editInventaris({{ $item->id_inventaris }});
                                                         open = false;"
-                                                        class="cursor-pointer w-full flex items-center gap-2 px-2.5 py-1.5
-                                                           text-xs text-sage-600 dark:text-sage-400
-                                                           hover:bg-sage-50 dark:hover:bg-sage-950/30
-                                                           rounded transition-colors text-left">
-                                                        <svg class="w-3.5 h-3.5 text-sage-500" fill="none"
+                                                        class="text-sage-600 dark:text-sage-400 hover:bg-sage-50 dark:hover:bg-sage-950/30 flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs transition-colors">
+                                                        <svg class="text-sage-500 h-3.5 w-3.5" fill="none"
                                                             stroke="currentColor" stroke-width="2"
                                                             viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -404,11 +344,8 @@ new class extends Component {
                                                     {{-- Hapus --}}
                                                     <button wire:click="confirmDelete({{ $item->id }})"
                                                         @click="open = false"
-                                                        class="cursor-pointer w-full flex items-center gap-2 px-2.5 py-1.5
-                                                               text-xs text-rose-600 dark:text-rose-400
-                                                               hover:bg-rose-50 dark:hover:bg-rose-950/40
-                                                               rounded transition-colors text-left">
-                                                        <svg class="w-3.5 h-3.5 text-rose-400" fill="none"
+                                                        class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-rose-600 transition-colors hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/40">
+                                                        <svg class="h-3.5 w-3.5 text-rose-400" fill="none"
                                                             stroke="currentColor" stroke-width="2"
                                                             viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -429,7 +366,7 @@ new class extends Component {
                             <tr>
                                 <td colspan="8" class="px-2.5 py-10 text-center">
                                     <div class="flex flex-col items-center gap-2 text-stone-400">
-                                        <svg class="w-8 h-8 text-stone-300 dark:text-stone-700" fill="none"
+                                        <svg class="h-8 w-8 text-stone-300 dark:text-stone-700" fill="none"
                                             stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                                 d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
@@ -447,11 +384,11 @@ new class extends Component {
             </div>
 
             {{-- Pagination --}}
-            <div class="px-4 py-3 border-t border-stone-100 dark:border-stone-800">
+            <div class="border-t border-stone-100 px-4 py-3 dark:border-stone-800">
                 {{ $inventaris->links('pagination::tailwind') }}
             </div>
 
         </div>
-        <livewire:admin.inventaris.add-inventaris  />
+        <livewire:admin.inventaris.add-inventaris />
     </div>
 </div>

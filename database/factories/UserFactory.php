@@ -40,6 +40,7 @@ class UserFactory extends Factory
             'pekerjaan' => fake()->jobTitle(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
+            'profile_status' => false,
             'remember_token' => Str::random(10),
         ];
     }
