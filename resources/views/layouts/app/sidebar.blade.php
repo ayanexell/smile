@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' }" :class="{ 'dark': darkMode }"
+    x-init="$watch('darkMode', val => localStorage.setItem('darkMode', val))">
 
 <head>
     @include('partials.head')
 </head>
 
-<body class="bg-stone-100 dark:bg-stone-950 text-stone-800 dark:text-stone-100">
+<body class="bg-stone-100 text-stone-800 dark:bg-stone-950 dark:text-stone-100">
 
     <div class="app-shell">
 
@@ -14,10 +15,10 @@
 
             {{-- Logo --}}
             <a href="{{ route('dashboard') }}" wire:navigate
-                class="flex items-center gap-2.5 flex-shrink-0 no-underline px-5 py-3 border-b border-stone-200 dark:border-stone-800">
+                class="flex shrink-0 items-center gap-2.5 border-b border-stone-200 px-5 py-3 no-underline dark:border-stone-800">
                 <div class="sidebar-logo-icon">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
                         <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                     </svg>
                 </div>
@@ -51,7 +52,7 @@
                     <div>
                         {{-- Dropdown Trigger (User) --}}
                         <button @click="open = !open"
-                            class="sidebar-item w-full flex justify-between items-center text-left cursor-pointer transition-colors text-xs py-1.5">
+                            class="sidebar-item flex w-full cursor-pointer items-center justify-between py-1.5 text-left text-xs transition-colors">
                             <div class="flex items-center gap-2.5">
                                 {{-- Ikon Users --}}
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -65,7 +66,7 @@
 
                             {{-- Ikon Chevron (Berputar otomatis menggunakan Alpine) --}}
                             <svg :class="open ? 'rotate-180' : ''"
-                                class="w-3.5 h-3.5 transition-transform duration-200 text-stone-400 dark:text-stone-500"
+                                class="h-3.5 w-3.5 text-stone-400 transition-transform duration-200 dark:text-stone-500"
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M19 9l-7 7-7-7" />
@@ -73,15 +74,15 @@
                         </button>
 
                         {{-- Sub Navigasi Vertikal --}}
-                        <div x-show="open" x-collapse class="flex flex-col pl-4 pr-1 mt-0.5 space-y-0.5"
+                        <div x-show="open" x-collapse class="mt-0.5 flex flex-col space-y-0.5 pl-4 pr-1"
                             style="display: none;">
 
                             {{-- Admin --}}
                             <a href="{{ route('admin.admins') }}" wire:navigate
-                                class="sidebar-item text-[11px] py-1 pl-3 flex items-center gap-2 {{ request()->routeIs('admin.admins') ? 'active' : '' }}">
+                                class="sidebar-item {{ request()->routeIs('admin.admins') ? 'active' : '' }} flex items-center gap-2 py-1 pl-3 text-[11px]">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                     stroke-width="1.8" stroke="currentColor"
-                                    class="w-3.5 h-3.5 flex-shrink-0 text-stone-400 dark:text-stone-500 group-[.active]:text-current">
+                                    class="h-3.5 w-3.5 flex-shrink-0 text-stone-400 group-[.active]:text-current dark:text-stone-500">
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
                                 </svg>
@@ -90,10 +91,10 @@
 
                             {{-- Koordinator --}}
                             <a href="{{ route('admin.koordinators') }}" wire:navigate
-                                class="sidebar-item text-[11px] py-1 pl-3 flex items-center gap-2 {{ request()->routeIs('admin.koordinators') ? 'active' : '' }}">
+                                class="sidebar-item {{ request()->routeIs('admin.koordinators') ? 'active' : '' }} flex items-center gap-2 py-1 pl-3 text-[11px]">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                     stroke-width="1.8" stroke="currentColor"
-                                    class="w-3.5 h-3.5 flex-shrink-0 text-stone-400 dark:text-stone-500 group-[.active]:text-current">
+                                    class="h-3.5 w-3.5 flex-shrink-0 text-stone-400 group-[.active]:text-current dark:text-stone-500">
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z" />
                                 </svg>
@@ -102,10 +103,10 @@
 
                             {{-- User --}}
                             <a href="{{ route('admin.users') }}" wire:navigate
-                                class="sidebar-item text-[11px] py-1 pl-3 flex items-center gap-2 {{ request()->routeIs('admin.users') ? 'active' : '' }}">
+                                class="sidebar-item {{ request()->routeIs('admin.users') ? 'active' : '' }} flex items-center gap-2 py-1 pl-3 text-[11px]">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                     stroke-width="1.8" stroke="currentColor"
-                                    class="w-3.5 h-3.5 flex-shrink-0 text-stone-400 dark:text-stone-500 group-[.active]:text-current">
+                                    class="h-3.5 w-3.5 flex-shrink-0 text-stone-400 group-[.active]:text-current dark:text-stone-500">
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
                                 </svg>
@@ -117,12 +118,12 @@
 
                     {{-- Departemen --}}
                     <a href="{{ route('admin.departemens') }}" wire:navigate
-                        class="sidebar-item w-full flex justify-between items-center text-left cursor-pointer transition-colors text-xs py-1.5 {{ request()->routeIs('admin.departemens') ? 'active' : '' }}">
+                        class="sidebar-item {{ request()->routeIs('admin.departemens') ? 'active' : '' }} flex w-full cursor-pointer items-center justify-between py-1.5 text-left text-xs transition-colors">
                         <div class="flex items-center gap-2.5">
                             {{-- Ikon Departemens --}}
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                 stroke-width="1.5" stroke="currentColor"
-                                class="w-3.5 h-3.5 flex-shrink-0 text-stone-400 dark:text-stone-500 group-[.active]:text-current">
+                                class="h-3.5 w-3.5 flex-shrink-0 text-stone-400 group-[.active]:text-current dark:text-stone-500">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 21h7.5V10.75M2.25 21h1.5m18 0h-18M2.25 9l4.5-1.636M18.75 3l-1.5.545m0 6.205 3 1m1.5.5-1.5-.5M6.75 7.364V3h-3v18m3-13.636 10.5-3.819" />
                             </svg>
@@ -132,10 +133,11 @@
                     </a>
                     {{-- Inventaris --}}
                     <a href="{{ route('admin.inventaris') }}" wire:navigate
-                        class="sidebar-item w-full flex justify-between items-center text-left cursor-pointer transition-colors text-xs py-1.5 {{ request()->routeIs('admin.inventaris') ? 'active' : '' }}">
+                        class="sidebar-item {{ request()->routeIs('admin.inventaris') ? 'active' : '' }} flex w-full cursor-pointer items-center justify-between py-1.5 text-left text-xs transition-colors">
                         <div class="flex items-center gap-2.5">
                             {{-- Ikon Inventaris --}}
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-3.5 h-3.5 {{ request()->routeIs('admin.inventaris') ? 'w-4 h-4' : '' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                class="{{ request()->routeIs('admin.inventaris') ? 'w-4 h-4' : '' }} h-3.5 w-3.5">
                                 <path fill="currentColor"
                                     d="M5.616 21q-.672 0-1.144-.472T4 19.385V8.263q-.43-.178-.715-.577Q3 7.286 3 6.769V4.615q0-.67.472-1.143Q3.944 3 4.616 3h14.769q.67 0 1.143.472q.472.472.472 1.144v2.153q0 .517-.285.916q-.284.4-.715.578v11.122q0 .67-.472 1.143q-.472.472-1.143.472zM5 8.385v10.904q0 .307.221.509T5.77 20h12.616q.269 0 .442-.173t.173-.442v-11zm-.385-1h14.77q.269 0 .442-.173T20 6.769V4.616q0-.27-.173-.443T19.384 4H4.616q-.27 0-.443.１７３T４ ４．６１６v２．１５３q０．２７．１７３．４４２q．１７３．１７３．４４３．１７３m４．７６９ ５．４８２h５．２３V１２h-５．２３zM１２ １４．１９２" />
                             </svg>
@@ -146,13 +148,19 @@
 
                     {{-- Peminjaman --}}
                     <a href="{{ route('admin.peminjaman') }}" wire:navigate
-                        class="sidebar-item w-full flex justify-between items-center text-left cursor-pointer transition-colors text-xs py-1.5 {{ request()->routeIs('admin.peminjaman') ? 'active' : '' }}">
+                        class="sidebar-item {{ request()->routeIs('admin.peminjaman') ? 'active' : '' }} flex w-full cursor-pointer items-center justify-between py-1.5 text-left text-xs transition-colors">
                         <div class="flex items-center gap-2.5">
                             {{-- Ikon Peminjamans --}}
-                            <svg fill="currentColor" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 {{ request()->routeIs('admin.peminjaman') ? 'w-3.5 h-3.5' : '' }}"
+                            <svg fill="currentColor" version="1.1" id="Layer_1"
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="{{ request()->routeIs('admin.peminjaman') ? 'w-3.5 h-3.5' : '' }} h-3 w-3"
                                 xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 502.56 502.56"
                                 xml:space="preserve">
-                                <g><g><g><path d="M467.28,467.496h24v-128h-24V129.328l12.088,3.888l23.192-46.392L251.28,3.064L0,86.824l23.192,46.392l12.088-3.888  v354.168h-32v16h32h432h32v-16h-32V467.496z M475.28,355.496v96h-8v-96H475.28z M215.6,483.496H107.28v-216h80v184h-64v16h80v-16 v-184v-16v-16h16v180.32c-9.792,8.792-16,21.504-16,35.68C203.28,463.8,207.968,474.992,215.6,483.496z M251.28,483.496 c-17.648,0-32-14.352-32-32s14.352-32,32-32s32,14.352,32,32S268.928,483.496,251.28,483.496z M296.936,309.84l-11.312,11.312 l10.344,10.344l-31.04,31.04l32.464-119.04h92.256l29.6,82.896l-97.728,45.104h-42.928l28.688-28.688l10.344,10.344 l11.312-11.312L296.936,309.84z M236.528,405.84c-0.424,0.136-0.832,0.304-1.248,0.456v-138.8h38.984L236.528,405.84z M286.96,483.496c4.144-4.624,7.4-10.032,9.52-16h77.6c2.12,5.968,5.376,11.376,9.52,16H286.96z M419.28,483.496 c-17.648,0-32-14.352-32-32s14.352-32,32-32s32,14.352,32,32S436.928,483.496,419.28,483.496z M451.28,415.816  c-8.504-7.632-19.696-12.32-32-12.32c-26.472,0-48,21.528-48,48h-72c0-25.648-20.232-46.592-45.56-47.88l4.4-16.12h66.92 l99.608-45.976l4.992,13.976h21.64V415.816z M451.28,339.496h-10.36l-34.288-96h12.648v-16h-152v16h13.528l-2.184,8H235.28v-16 h16v-16h-80v16h16v16h-96v232h-40v-288h400V339.496z M451.28,179.496h-400v-55.312l200-64.28l200,64.288V179.496z M251.28,43.088L31.368,113.776L22.56,96.168l228.72-76.24L480,96.168l-8.808,17.608L251.28,43.088z" />
+                                <g>
+                                    <g>
+                                        <g>
+                                            <path
+                                                d="M467.28,467.496h24v-128h-24V129.328l12.088,3.888l23.192-46.392L251.28,3.064L0,86.824l23.192,46.392l12.088-3.888  v354.168h-32v16h32h432h32v-16h-32V467.496z M475.28,355.496v96h-8v-96H475.28z M215.6,483.496H107.28v-216h80v184h-64v16h80v-16 v-184v-16v-16h16v180.32c-9.792,8.792-16,21.504-16,35.68C203.28,463.8,207.968,474.992,215.6,483.496z M251.28,483.496 c-17.648,0-32-14.352-32-32s14.352-32,32-32s32,14.352,32,32S268.928,483.496,251.28,483.496z M296.936,309.84l-11.312,11.312 l10.344,10.344l-31.04,31.04l32.464-119.04h92.256l29.6,82.896l-97.728,45.104h-42.928l28.688-28.688l10.344,10.344 l11.312-11.312L296.936,309.84z M236.528,405.84c-0.424,0.136-0.832,0.304-1.248,0.456v-138.8h38.984L236.528,405.84z M286.96,483.496c4.144-4.624,7.4-10.032,9.52-16h77.6c2.12,5.968,5.376,11.376,9.52,16H286.96z M419.28,483.496 c-17.648,0-32-14.352-32-32s14.352-32,32-32s32,14.352,32,32S436.928,483.496,419.28,483.496z M451.28,415.816  c-8.504-7.632-19.696-12.32-32-12.32c-26.472,0-48,21.528-48,48h-72c0-25.648-20.232-46.592-45.56-47.88l4.4-16.12h66.92 l99.608-45.976l4.992,13.976h21.64V415.816z M451.28,339.496h-10.36l-34.288-96h12.648v-16h-152v16h13.528l-2.184,8H235.28v-16 h16v-16h-80v16h16v16h-96v232h-40v-288h400V339.496z M451.28,179.496h-400v-55.312l200-64.28l200,64.288V179.496z M251.28,43.088L31.368,113.776L22.56,96.168l228.72-76.24L480,96.168l-8.808,17.608L251.28,43.088z" />
                                             <rect x="243.28" y="91.496" width="16" height="16" />
                                             <rect x="275.28" y="91.496" width="16" height="16" />
                                             <rect x="211.28" y="91.496" width="16" height="16" />
@@ -179,10 +187,10 @@
         <div class="app-main">
 
             {{-- Mobile header --}}
-            <header class="mobile-header ">
+            <header class="mobile-header">
                 <button class="header-icon-btn" onclick="toggleSidebar()" aria-label="Menu">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
+                        stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
                         <line x1="3" y1="6" x2="21" y2="6" />
                         <line x1="3" y1="12" x2="21" y2="12" />
                         <line x1="3" y1="18" x2="21" y2="18" />
@@ -221,30 +229,25 @@
                 <div class="header-actions">
 
                     {{-- Dark mode toggle --}}
-                    <button class="header-icon-btn" onclick="toggleDark()" title="{{ __('Toggle dark mode') }}">
-                        <svg id="iconMoon" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
-                            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+                    <button x-data variant="segmented" x-model="$flux.appearance"
+                        class="cursor-pointer rounded-lg p-2 text-stone-500 transition-colors hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800"
+                        :aria-label="darkMode ? 'Dark Mode' : 'Light Mode'" @click="darkMode = !darkMode">
+                        <svg x-show="!darkMode" class="h-5 w-5" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
                         </svg>
-                        <svg id="iconSun" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
-                            class="w-5 h-5 hidden">
-                            <circle cx="12" cy="12" r="5" />
-                            <line x1="12" y1="1" x2="12" y2="3" />
-                            <line x1="12" y1="21" x2="12" y2="23" />
-                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                            <line x1="1" y1="12" x2="3" y2="12" />
-                            <line x1="21" y1="12" x2="23" y2="12" />
-                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                        <svg x-show="darkMode" class="h-5 w-5" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                         </svg>
                     </button>
 
                     {{-- Notifications --}}
                     <button class="header-icon-btn" title="{{ __('Notifikasi') }}">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"
-                            stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
+                            stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
                             <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
                             <path d="M13.73 21a2 2 0 01-3.46 0" />
                         </svg>

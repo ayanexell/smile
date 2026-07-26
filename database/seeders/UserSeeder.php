@@ -44,6 +44,7 @@ class UserSeeder extends Seeder
             'email' => 'superadmin@example.com',
             'no_wa' => '087654456765',
             'password' => Hash::make('password'),
+            'profile_status' => false,
         ]);
 
         // Create Admins
