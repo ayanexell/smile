@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('inventaris', function (Blueprint $table) {
             $table->id('id_inventaris');
-            $table->unsignedBigInteger('departemen_id');
+            $table->unsignedBigInteger('user_id');
             $table->string('nama_barang');
             $table->integer('jumlah');
             $table->enum('kondisi', ['baik', 'rusak']);
@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('warna');
             $table->boolean('dpt_dipinjam');
             $table->timestamps();
-            $table->foreign('departemen_id')->references('id_departemen')->on('departemens')->onDelete('cascade');
+            $table->foreign('user_id')->references('id_user')->on('users')->onDelete('cascade');
         });
     }
 

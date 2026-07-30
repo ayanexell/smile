@@ -18,6 +18,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::livewire('inventaris', 'admin.manage-inventaris')->name('inventaris');
         Route::livewire('peminjaman', 'admin.manage-peminjaman')->name('peminjaman');
     });
+    Route::prefix('dashboard/koordinator')->name('koordinator.')->group(function () {
+        Route::livewire('inventaris', 'koordinator.inventaris.manage-inventaris')->name('inventaris');
+    });
 });
 
 require __DIR__.'/settings.php';
