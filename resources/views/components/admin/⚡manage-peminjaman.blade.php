@@ -79,20 +79,20 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
 
 <div>
     {{-- ── PAGE HEADER ── --}}
-    <div class="bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 px-5 py-3.5">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    <div class="border-b border-stone-200 bg-white px-5 py-3.5 dark:border-stone-800 dark:bg-stone-900">
+        <div class="mx-auto flex max-w-7xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <div class="flex items-center gap-2 mb-0.5">
+                <div class="mb-0.5 flex items-center gap-2">
                     <span
-                        class="font-mono text-[9px] tracking-widest uppercase text-sage-600 dark:text-sage-400">Manajemen</span>
+                        class="text-sage-600 dark:text-sage-400 font-mono text-[9px] uppercase tracking-widest">Manajemen</span>
                 </div>
                 <h1 class="font-display text-xl font-semibold text-stone-800 dark:text-stone-100">Daftar Peminjaman</h1>
-                <p class="text-xs text-stone-500 dark:text-stone-400 mt-0.5">Kelola semua peminjaman sistem SMILE</p>
+                <p class="mt-0.5 text-xs text-stone-500 dark:text-stone-400">Kelola semua peminjaman sistem SMILE</p>
             </div>
         </div>
     </div>
 
-    <div class="max-w-7xl mt-2 space-y-2 mx-auto">
+    <div class="mx-auto mt-2 max-w-7xl space-y-2">
 
         {{-- ── FLASH MESSAGE ── --}}
         @if (session()->has('success'))
@@ -101,26 +101,22 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                 x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
                 x-transition:leave="transition ease-in duration-200"
                 x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-4"
-                class="fixed top-5 left-1/2 -translate-x-1/2 z-[9999] w-full max-w-sm px-4" style="display: none;">
+                class="fixed left-1/2 top-5 z-[9999] w-full max-w-sm -translate-x-1/2 px-4" style="display: none;">
                 <div
-                    class="flex items-center gap-2.5 pl-3 pr-2.5 py-2
-                        bg-white dark:bg-stone-900
-                        border border-emerald-100 dark:border-emerald-950/60
-                        rounded-lg shadow-xl shadow-stone-200/50 dark:shadow-none select-none">
+                    class="flex select-none items-center gap-2.5 rounded-lg border border-emerald-100 bg-white py-2 pl-3 pr-2.5 shadow-xl shadow-stone-200/50 dark:border-emerald-950/60 dark:bg-stone-900 dark:shadow-none">
                     <div class="flex-shrink-0 text-emerald-500 dark:text-emerald-400">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5"
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                     </div>
-                    <div class="flex-1 text-[11px] font-medium text-stone-700 dark:text-stone-300 leading-normal">
+                    <div class="flex-1 text-[11px] font-medium leading-normal text-stone-700 dark:text-stone-300">
                         {{ session('success') }}
                     </div>
                     <button @click="show = false"
-                        class="flex-shrink-0 p-1 text-stone-400 hover:text-stone-600 dark:hover:text-stone-200
-                               rounded transition-colors focus:outline-none">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        class="flex-shrink-0 rounded p-1 text-stone-400 transition-colors hover:text-stone-600 focus:outline-none dark:hover:text-stone-200">
+                        <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
@@ -130,25 +126,18 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
 
 
         {{-- ── FILTER BAR ── --}}
-        <div class="bg-white dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 px-3 py-3">
-            <div class="flex flex-col sm:flex-row gap-2">
+        <div class="rounded-xl border border-stone-200 bg-white px-3 py-3 dark:border-stone-800 dark:bg-stone-900">
+            <div class="flex flex-col gap-2 sm:flex-row">
 
                 {{-- Search --}}
                 <div class="relative flex-1">
-                    <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5
-                            text-stone-400 dark:text-stone-500 pointer-events-none"
+                    <svg class="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-stone-400 dark:text-stone-500"
                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
                     </svg>
                     <input wire:model.live="search" type="text" placeholder="Cari nama peminjam, nama barang..."
-                        class="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg
-                              border border-stone-200 dark:border-stone-700
-                              bg-stone-50 dark:bg-stone-800
-                              text-stone-800 dark:text-stone-100
-                              placeholder:text-stone-400 dark:placeholder:text-stone-500
-                              focus:outline-none focus:ring-1 focus:ring-sage-500 focus:border-transparent
-                              transition" />
+                        class="focus:ring-sage-500 w-full rounded-lg border border-stone-200 bg-stone-50 py-1.5 pl-8 pr-3 text-xs text-stone-800 transition placeholder:text-stone-400 focus:border-transparent focus:outline-none focus:ring-1 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-100 dark:placeholder:text-stone-500" />
                 </div>
 
             </div>
@@ -157,60 +146,53 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
 
         {{-- ── TABLE CARD ── --}}
         <div
-            class="bg-white dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 overflow-hidden px-4">
+            class="overflow-hidden rounded-xl border border-stone-200 bg-white px-4 dark:border-stone-800 dark:bg-stone-900">
 
             {{-- Meta --}}
-            <div class="py-2 border-b border-stone-100 dark:border-stone-800 flex items-center justify-between">
-                <span class="text-[10px] font-mono text-stone-400 dark:text-stone-500 uppercase tracking-wider">
+            <div class="flex items-center justify-between border-b border-stone-100 py-2 dark:border-stone-800">
+                <span class="font-mono text-[10px] uppercase tracking-wider text-stone-400 dark:text-stone-500">
                     {{ $peminjamans->count() }} peminjaman ditemukan
                 </span>
             </div>
 
             {{-- Tabel --}}
-            <div class="overflow-x-auto border dark:border-stone-800 rounded-xl bg-white dark:bg-stone-900 shadow-sm">
-                <table class="w-full text-[11px] text-left border-collapse">
+            <div class="overflow-x-auto rounded-xl border bg-white shadow-sm dark:border-stone-800 dark:bg-stone-900">
+                <table class="w-full border-collapse text-left text-[11px]">
                     <thead>
                         <tr
-                            class="bg-stone-50 dark:bg-stone-800/50
-                               border-b border-stone-200 dark:border-stone-800
-                               text-stone-500 dark:text-stone-400
-                               font-semibold uppercase tracking-wider">
-                            <th class="px-2.5 py-1.5 w-6 text-center">#</th>
+                            class="border-b border-stone-200 bg-stone-50 font-semibold uppercase tracking-wider text-stone-500 dark:border-stone-800 dark:bg-stone-800/50 dark:text-stone-400">
+                            <th class="w-6 px-2.5 py-1.5 text-center">#</th>
                             <th class="px-2.5 py-1.5">Barang</th>
                             <th class="px-2.5 py-1.5">Peminjam</th>
                             <th class="px-2.5 py-1.5">Tgl. Peminjaman</th>
                             <th class="px-2.5 py-1.5">Tgl. Pengembalian</th>
                             <th class="px-2.5 py-1.5 text-center">Jumlah</th>
                             <th class="px-2.5 py-1.5 text-center">Status</th>
-                            <th class="px-2.5 py-1.5 text-right w-20">Aksi</th>
+                            <th class="w-20 px-2.5 py-1.5 text-right">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-stone-100 dark:divide-stone-800/60">
                         @forelse ($peminjamans as $peminjaman)
                             <tr wire:key="peminjaman-{{ $peminjaman->id_peminjaman }}"
-                                class="hover:bg-stone-50 dark:hover:bg-stone-800/30 transition-colors group">
+                                class="group transition-colors hover:bg-stone-50 dark:hover:bg-stone-800/30">
 
                                 {{-- No --}}
-                                <td class="px-2.5 py-1.5 text-stone-400 dark:text-stone-600 font-mono text-center">
+                                <td class="px-2.5 py-1.5 text-center font-mono text-stone-400 dark:text-stone-600">
                                     {{ $loop->iteration + ($peminjamans->currentPage() - 1) * $peminjamans->perPage() }}
                                 </td>
 
                                 {{-- Gambar + Nama Barang + Departemen --}}
                                 <td class="px-2.5 py-1.5">
-                                    <div class="flex items-center gap-2 max-w-[180px] sm:max-w-xs">
+                                    <div class="flex max-w-[180px] items-center gap-2 sm:max-w-xs">
                                         {{-- Thumbnail gambar atau placeholder --}}
                                         @if ($peminjaman->inventaris->img_path)
                                             <img src="{{ Storage::url($peminjaman->inventaris->img_path) }}"
                                                 alt="{{ $peminjaman->inventaris->nama_barang }}"
-                                                class="w-7 h-7 rounded-lg object-cover flex-shrink-0
-                                                    border border-stone-200 dark:border-stone-700" />
+                                                class="h-7 w-7 flex-shrink-0 rounded-lg border border-stone-200 object-cover dark:border-stone-700" />
                                         @else
                                             <div
-                                                class="w-7 h-7 rounded-lg flex-shrink-0
-                                                    bg-sage-100 dark:bg-sage-900/40
-                                                    border border-stone-200 dark:border-stone-700
-                                                    flex items-center justify-center">
-                                                <svg class="w-3.5 h-3.5 text-sage-500 dark:text-sage-400" fill="none"
+                                                class="bg-sage-100 dark:bg-sage-900/40 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg border border-stone-200 dark:border-stone-700">
+                                                <svg class="text-sage-500 dark:text-sage-400 h-3.5 w-3.5" fill="none"
                                                     stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                         stroke-width="2"
@@ -220,18 +202,18 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                         @endif
 
                                         <div class="truncate">
-                                            <div class="font-medium text-stone-800 dark:text-stone-200 truncate">
+                                            <div class="truncate font-medium text-stone-800 dark:text-stone-200">
                                                 {{ $peminjaman->inventaris->nama_barang }}
                                             </div>
-                                            <div class="text-[10px] text-stone-400 dark:text-stone-500 truncate">
-                                                {{ $peminjaman->inventaris->departemen->nama_departemen ?? '-' }}
+                                            <div class="truncate text-[10px] text-stone-400 dark:text-stone-500">
+                                                {{ $peminjaman->inventaris->user->departemen->nama_departemen ?? '-' }}
                                             </div>
                                         </div>
                                     </div>
                                 </td>
 
                                 {{-- Nama Peminjam --}}
-                                <td class="px-2.5 py-1.5 text-stone-500 dark:text-stone-400 truncate">
+                                <td class="truncate px-2.5 py-1.5 text-stone-500 dark:text-stone-400">
                                     {{ $peminjaman->user->nama_lengkap ?? '-' }}
                                 </td>
 
@@ -278,7 +260,7 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                         };
                                     @endphp
                                     <span
-                                        class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-medium {{ $cls }}">
+                                        class="{{ $cls }} inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium">
                                         {{ $lbl }}
                                     </span>
                                 </td>
@@ -290,12 +272,9 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
 
                                             {{-- Tombol titik tiga --}}
                                             <button @click="open = !open" @click.outside="open = false"
-                                                class="cursor-pointer p-1 rounded-md
-                                                       text-stone-400 hover:text-stone-700 dark:hover:text-stone-200
-                                                       hover:bg-stone-100 dark:hover:bg-stone-800
-                                                       transition-colors focus:outline-none"
+                                                class="cursor-pointer rounded-md p-1 text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-700 focus:outline-none dark:hover:bg-stone-800 dark:hover:text-stone-200"
                                                 title="Menu Aksi">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                <svg class="h-4 w-4" fill="none" stroke="currentColor"
                                                     stroke-width="2" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                         d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
@@ -309,23 +288,16 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                                 x-transition:leave="transition ease-in duration-75"
                                                 x-transition:leave-start="transform opacity-100 scale-100"
                                                 x-transition:leave-end="transform opacity-0 scale-95"
-                                                class="absolute right-0 mt-1 w-36 origin-top-right rounded-md
-                                                    border border-stone-200 dark:border-stone-800
-                                                    bg-white dark:bg-stone-900
-                                                    shadow-lg ring-1 ring-black ring-opacity-5
-                                                    focus:outline-none z-30"
+                                                class="absolute right-0 z-30 mt-1 w-36 origin-top-right rounded-md border border-stone-200 bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:border-stone-800 dark:bg-stone-900"
                                                 style="display: none;">
-                                                <div class="p-1 space-y-0.5">
+                                                <div class="space-y-0.5 p-1">
 
                                                     {{-- Accept --}}
                                                     <button
                                                         x-on:click="
                                                         $wire.acceptPeminjaman({{ $peminjaman->id_peminjaman }})"
-                                                        class="cursor-pointer w-full flex items-center gap-2 px-2.5 py-1.5
-                                                        text-xs text-green-500 dark:text-green-400
-                                                        hover:bg-green-50 dark:hover:bg-green-950/30
-                                                        rounded transition-colors text-left">
-                                                        <svg fill="currentColor" class="w-3.5 h-3.5"
+                                                        class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-green-500 transition-colors hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-950/30">
+                                                        <svg fill="currentColor" class="h-3.5 w-3.5"
                                                             viewBox="0 0 24 24" id="check-mark-circle-2"
                                                             xmlns="http://www.w3.org/2000/svg" class="icon line">
                                                             <path id="primary"
@@ -343,11 +315,8 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                                     <button
                                                         x-on:click="
                                                         $wire.declinePeminjaman({{ $peminjaman->id_peminjaman }})"
-                                                        class="cursor-pointer w-full flex items-center gap-2 px-2.5 py-1.5
-                                                        text-xs text-rose-600 dark:text-rose-400
-                                                        hover:bg-rose-50 dark:hover:bg-rose-950/40
-                                                        rounded transition-colors text-left">
-                                                        <svg class="w-3.5 h-3.5 color-rose-600" viewBox="0 0 24 24"
+                                                        class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-rose-600 transition-colors hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/40">
+                                                        <svg class="color-rose-600 h-3.5 w-3.5" viewBox="0 0 24 24"
                                                             role="img" xmlns="http://www.w3.org/2000/svg"
                                                             aria-labelledby="cancelIconTitle" stroke="currentColor"
                                                             stroke-width="1" stroke-linecap="square"
@@ -364,11 +333,8 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                                     <button
                                                         x-on:click="
                                                             $wire.pendingPeminjaman({{ $peminjaman->id_peminjaman }})"
-                                                        class="cursor-pointer w-full flex items-center gap-2 px-2.5 py-1.5
-                                                            text-xs text-orange-500 dark:text-orange-400
-                                                            hover:bg-orange-50 dark:hover:bg-orange-950/40
-                                                            rounded transition-colors text-left">
-                                                        <svg class="w-3 h-3 color-orange-400" fill="currentColor"
+                                                        class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-orange-500 transition-colors hover:bg-orange-50 dark:text-orange-400 dark:hover:bg-orange-950/40">
+                                                        <svg class="color-orange-400 h-3 w-3" fill="currentColor"
                                                             xmlns="http://www.w3.org/2000/svg"
                                                             shape-rendering="geometricPrecision"
                                                             text-rendering="geometricPrecision"
@@ -383,11 +349,8 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                                     <button
                                                         x-on:click="
                                                             $wire.returnPeminjaman({{ $peminjaman->id_peminjaman }})"
-                                                        class="cursor-pointer w-full flex items-center gap-2 px-2.5 py-1.5
-                                                            text-xs text-blue-600 dark:text-blue-400
-                                                            hover:bg-blue-50 dark:hover:bg-blue-950/40
-                                                            rounded transition-colors text-left">
-                                                        <svg fill="currentColor" class="w-3 h-3" version="1.1"
+                                                        class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-blue-600 transition-colors hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-950/40">
+                                                        <svg fill="currentColor" class="h-3 w-3" version="1.1"
                                                             id="Capa_1" xmlns="http://www.w3.org/2000/svg"
                                                             xmlns:xlink="http://www.w3.org/1999/xlink"
                                                             viewBox="0 0 384.97 384.97" xml:space="preserve">
@@ -415,11 +378,8 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                                     <button
                                                         wire:click="confirmDelete({{ $peminjaman->id_peminjaman }})"
                                                         @click="open = false"
-                                                        class="cursor-pointer w-full flex items-center gap-2 px-2.5 py-1.5
-                                                               text-xs text-rose-600 dark:text-rose-400
-                                                               hover:bg-rose-50 dark:hover:bg-rose-950/40
-                                                               rounded transition-colors text-left">
-                                                        <svg class="w-3.5 h-3.5 text-rose-400" fill="none"
+                                                        class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-rose-600 transition-colors hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/40">
+                                                        <svg class="h-3.5 w-3.5 text-rose-400" fill="none"
                                                             stroke="currentColor" stroke-width="2"
                                                             viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -440,7 +400,7 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                             <tr>
                                 <td colspan="8" class="px-2.5 py-10 text-center">
                                     <div class="flex flex-col items-center gap-2 text-stone-400">
-                                        <svg class="w-8 h-8 text-stone-300 dark:text-stone-700" fill="none"
+                                        <svg class="h-8 w-8 text-stone-300 dark:text-stone-700" fill="none"
                                             stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                                 d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
@@ -458,41 +418,41 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
             </div>
 
             {{-- Pagination --}}
-            <div class="px-4 py-3 border-t border-stone-100 dark:border-stone-800">
+            <div class="border-t border-stone-100 px-4 py-3 dark:border-stone-800">
                 {{ $peminjamans->links('pagination::tailwind') }}
             </div>
 
         </div>
         {{-- ── DELETE MODAL ── --}}
         @if ($showDeleteModal)
-            <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 dark:bg-black/60 backdrop-blur-sm"
+            <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm dark:bg-black/60"
                 wire:click.self="$set('showDeleteModal', false)">
                 <div
-                    class="bg-white dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 shadow-2xl w-full max-w-xs p-5">
+                    class="w-full max-w-xs rounded-xl border border-stone-200 bg-white p-5 shadow-2xl dark:border-stone-800 dark:bg-stone-900">
                     <div class="flex items-start gap-3">
                         <div
-                            class="flex-shrink-0 w-8 h-8 rounded-full bg-red-50 dark:bg-red-950 flex items-center justify-center">
-                            <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor"
+                            class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-red-50 dark:bg-red-950">
+                            <svg class="h-4 w-4 text-red-500" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
                             </svg>
                         </div>
                         <div class="flex-1">
-                            <h3 class="text-sm font-semibold text-stone-800 dark:text-stone-100 mb-0.5">Hapus
+                            <h3 class="mb-0.5 text-sm font-semibold text-stone-800 dark:text-stone-100">Hapus
                                 Peminjaman</h3>
                             <p class="text-xs text-stone-500 dark:text-stone-400">Data peminjaman akan dihapus permanen
                                 dari
                                 sistem.</p>
                         </div>
                     </div>
-                    <div class="flex gap-2 mt-5">
+                    <div class="mt-5 flex gap-2">
                         <button wire:click="$set('showDeleteModal', false)"
-                            class="flex-1 px-3 py-2 text-xs font-medium rounded-lg border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors">
+                            class="flex-1 rounded-lg border border-stone-200 px-3 py-2 text-xs font-medium text-stone-700 transition-colors hover:bg-stone-50 dark:border-stone-700 dark:text-stone-300 dark:hover:bg-stone-800">
                             Batal
                         </button>
                         <button wire:click="deletePeminjaman"
-                            class="flex-1 px-3 py-2 text-xs font-semibold rounded-lg bg-red-500 hover:bg-red-600 text-white transition-colors">
+                            class="flex-1 rounded-lg bg-red-500 px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-red-600">
                             Ya, Hapus
                         </button>
                     </div>

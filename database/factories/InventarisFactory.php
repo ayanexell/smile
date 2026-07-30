@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 use App\Models\Peminjaman;
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Inventaris>
+ * @extends Factory<\App\Models\Inventaris>
  */
 class InventarisFactory extends Factory
 {
@@ -34,7 +34,7 @@ class InventarisFactory extends Factory
         // $departemen = Departemens::factory()->create();
 
         return [
-            // Jangan set default departemen_id, biarkan null atau set manual
+            // Jangan set default user_id, biarkan null atau set manual
             'nama_barang' => $namaBarang,
             'jumlah' => fake()->numberBetween(1, 50),
             'kondisi' => fake()->randomElement(['baik', 'rusak']),
@@ -48,10 +48,10 @@ class InventarisFactory extends Factory
     /**
      * Set inventaris with specific departemen.
      */
-    public function ownedBy(Departemens $departemen): static
+    public function ownedBy(User $user): static
     {
         return $this->state(fn (array $attributes) => [
-            'departemen_id' => $departemen->id_departemen,
+            'user_id' => $user->id_user,
         ]);
     }
 

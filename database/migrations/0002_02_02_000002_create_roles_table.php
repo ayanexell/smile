@@ -1,3 +1,4 @@
+use App\Models\Roles;
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -21,6 +22,7 @@ return new class extends Migration
         $roles = [
             ['nama_role' => 'Super Admin'],
             ['nama_role' => 'Admin'],
+            ['nama_role' => 'Koordinator'],
             ['nama_role' => 'User'],
         ];
 

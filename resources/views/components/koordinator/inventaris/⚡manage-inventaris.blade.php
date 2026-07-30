@@ -16,10 +16,32 @@ new class extends Component {
         $this->dispatch('edit-inventaris', $id);
     }
 
+    public function deleteInventaris(Inventaris $inventaris)
+    {
+        try {
+            $inventaris->delete();
+            session('success', 'Inventaris berhasil dihapus!');
+        } catch (Exception $e) {
+            Log::log('error', $e->getMessage());
+            session('error', 'Gagal menghapus Inventaris' . $e->getMessage());
+        }
+    }
+
     public function render()
     {
-        $inventaris = Inventaris::query()->when($this->search, fn($q) => $q->where('nama', 'like', "%{$this->search}%")->orWhere('tipe', 'like', "%{$this->search}%"))->when($this->filterKondisi, fn($q) => $q->where('kondisi', $this->filterKondisi))->when($this->filterTipe, fn($q) => $q->where('tipe', $this->filterTipe))->when($this->filterDptDipinjam, fn($q) => $q->where('dpt_dipinjam', $this->filterDptDipinjam))->latest()->paginate(10);
-        // dd($inventaris);
+        $user = Auth::user();
+        $inventaris = $user
+            ->inventaris()
+            ->when($this->search, function ($q) {
+                $q->where(function ($sub) {
+                    $sub->where('nama', 'like', "%{$this->search}%")->orWhere('tipe', 'like', "%{$this->search}%");
+                });
+            })
+            ->when($this->filterKondisi, fn($q) => $q->where('kondisi', $this->filterKondisi))
+            ->when($this->filterTipe, fn($q) => $q->where('tipe', $this->filterTipe))
+            ->when($this->filterDptDipinjam, fn($q) => $q->where('dpt_dipinjam', $this->filterDptDipinjam))
+            ->latest()
+            ->paginate(10);
         return $this->view([
             'inventaris' => $inventaris,
         ]);
@@ -191,9 +213,6 @@ new class extends Component {
                                             <div class="truncate font-medium text-stone-800 dark:text-stone-200">
                                                 {{ $item->nama_barang }}
                                             </div>
-                                            <div class="truncate text-[10px] text-stone-400 dark:text-stone-500">
-                                                Oleh: {{ $item->user->departemen?->nama_departemen ?? 'P2AL' }}
-                                            </div>
                                         </div>
                                     </div>
                                 </td>
@@ -308,9 +327,9 @@ new class extends Component {
                                                     {{-- Detail --}}
                                                     <button
                                                         x-on:click="
-                                                        $flux.modal('detail-inventaris-modal').show();
-                                                        $wire.lihatDetail({{ $item->id }});
-                                                        open = false;"
+                                                            $flux.modal('detail-inventaris-modal').show();
+                                                            $wire.lihatDetail({{ $item->id }});
+                                                            open = false;"
                                                         class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-stone-600 transition-colors hover:bg-stone-50 dark:text-stone-400 dark:hover:bg-stone-800/60">
                                                         <svg class="h-3.5 w-3.5 text-stone-400" fill="none"
                                                             stroke="currentColor" stroke-width="2"
@@ -326,9 +345,9 @@ new class extends Component {
                                                     {{-- Edit --}}
                                                     <button
                                                         x-on:click="
-                                                        $flux.modal('edit-inventaris-modal').show();
-                                                        $wire.editInventaris({{ $item->id_inventaris }});
-                                                        open = false;"
+                                                            $flux.modal('edit-inventaris-modal').show();
+                                                            $wire.editInventaris({{ $item->id_inventaris }});
+                                                            open = false;"
                                                         class="text-sage-600 dark:text-sage-400 hover:bg-sage-50 dark:hover:bg-sage-950/30 flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs transition-colors">
                                                         <svg class="text-sage-500 h-3.5 w-3.5" fill="none"
                                                             stroke="currentColor" stroke-width="2"
@@ -342,8 +361,9 @@ new class extends Component {
                                                     <flux:separator />
 
                                                     {{-- Hapus --}}
-                                                    <button wire:click="confirmDelete({{ $item->id }})"
+                                                    <button wire:click="deleteInventaris({{ $item->id_inventaris }})"
                                                         @click="open = false"
+                                                        wire:confirm="Apakah anda yakin ingin menghapus inventaris ini?"
                                                         class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-rose-600 transition-colors hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/40">
                                                         <svg class="h-3.5 w-3.5 text-rose-400" fill="none"
                                                             stroke="currentColor" stroke-width="2"
@@ -389,6 +409,6 @@ new class extends Component {
             </div>
 
         </div>
-        <livewire:admin.inventaris.add-inventaris />
+        <livewire:koordinator.inventaris.add-inventaris />
     </div>
 </div>

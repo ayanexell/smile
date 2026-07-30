@@ -7,6 +7,7 @@ use App\Models\Departemens;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
+use App\Models\Roles;
 class InventarisSeeder extends Seeder
 {
     /**
@@ -14,16 +15,16 @@ class InventarisSeeder extends Seeder
      */
     public function run(): void
     {
-        $departemens = Departemens::all();
+        $users = User::onlyKoordinators()->get();
 
-        // Create inventaris for each departemen
-        foreach ($departemens as $departemen) {
-            // Each departemen has 3-7 inventaris items
+        // Create inventaris for each user
+        foreach ($users as $user) {
+            // Each user has 3-7 inventaris items
             $count = rand(3, 7);
 
             Inventaris::factory()
                 ->count($count)
-                ->ownedBy($departemen)
+                ->ownedBy($user)
                 ->create();
         }
 
