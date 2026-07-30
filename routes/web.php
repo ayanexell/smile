@@ -10,16 +10,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
 
     Route::prefix('dashboard/admin')->name('admin.')->group(function () {
-        Route::livewire('admins', 'admin.manage-admins')->name('admins');
-        Route::livewire('koordinators', 'admin.manage-koordinators')->name('koordinators');
-        Route::livewire('users', 'admin.manage-users')->name('users');
+        Route::livewire('admins', 'admin.manage-admins')->name('admins')->middleware('SuperAdmin');
+        Route::middleware('SuperAdminAndAdmin')->group(function(){
+            Route::livewire('koordinators', 'admin.manage-koordinators')->name('koordinators');
+            Route::livewire('users', 'admin.manage-users')->name('users');
 
-        Route::livewire('departemens', 'admin.manage-departemen')->name('departemens');
-        Route::livewire('inventaris', 'admin.manage-inventaris')->name('inventaris');
-        Route::livewire('peminjaman', 'admin.manage-peminjaman')->name('peminjaman');
+            Route::livewire('departemens', 'admin.manage-departemen')->name('departemens');
+            Route::livewire('inventaris', 'admin.manage-inventaris')->name('inventaris');
+            Route::livewire('peminjaman', 'admin.manage-peminjaman')->name('peminjaman');
+        });
     });
     Route::prefix('dashboard/koordinator')->name('koordinator.')->group(function () {
-        Route::livewire('inventaris', 'koordinator.inventaris.manage-inventaris')->name('inventaris');
+        Route::middleware('Koordinator')->group(function (){
+            Route::livewire('inventaris', 'koordinator.inventaris.manage-inventaris')->name('inventaris');
+        });
     });
 });
 

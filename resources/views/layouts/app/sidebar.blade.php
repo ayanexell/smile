@@ -48,6 +48,22 @@
                     {{-- Label Grup Menu --}}
                     <div class="sidebar-group-label">{{ __('Administrator') }}</div>
 
+                    {{-- Departemen --}}
+                    <a href="{{ route('admin.departemens') }}" wire:navigate
+                        class="sidebar-item {{ request()->routeIs('admin.departemens') ? 'active' : '' }} flex w-full cursor-pointer items-center justify-between py-1.5 text-left text-xs transition-colors">
+                        <div class="flex items-center gap-2.5">
+                            {{-- Ikon Departemens --}}
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke-width="1.5" stroke="currentColor"
+                                class="h-3.5 w-3.5 flex-shrink-0 text-stone-400 group-[.active]:text-current dark:text-stone-500">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 21h7.5V10.75M2.25 21h1.5m18 0h-18M2.25 9l4.5-1.636M18.75 3l-1.5.545m0 6.205 3 1m1.5.5-1.5-.5M6.75 7.364V3h-3v18m3-13.636 10.5-3.819" />
+                            </svg>
+
+                            <span class="font-medium">{{ __('Departemens') }}</span>
+                        </div>
+                    </a>
+
                     {{-- User Navigasi --}}
                     <div>
                         {{-- Dropdown Trigger (User) --}}
@@ -77,17 +93,19 @@
                         <div x-show="open" x-collapse class="mt-0.5 flex flex-col space-y-0.5 pl-4 pr-1"
                             style="display: none;">
 
-                            {{-- Admin --}}
-                            <a href="{{ route('admin.admins') }}" wire:navigate
-                                class="sidebar-item {{ request()->routeIs('admin.admins') ? 'active' : '' }} flex items-center gap-2 py-1 pl-3 text-[11px]">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.8" stroke="currentColor"
-                                    class="h-3.5 w-3.5 flex-shrink-0 text-stone-400 group-[.active]:text-current dark:text-stone-500">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-                                </svg>
-                                <span>{{ __('Admin') }}</span>
-                            </a>
+                            @can('isSuperAdmin')
+                                {{-- Admin --}}
+                                <a href="{{ route('admin.admins') }}" wire:navigate
+                                    class="sidebar-item {{ request()->routeIs('admin.admins') ? 'active' : '' }} flex items-center gap-2 py-1 pl-3 text-[11px]">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.8" stroke="currentColor"
+                                        class="h-3.5 w-3.5 flex-shrink-0 text-stone-400 group-[.active]:text-current dark:text-stone-500">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                                    </svg>
+                                    <span>{{ __('Admin') }}</span>
+                                </a>
+                            @endcan
 
                             {{-- Koordinator --}}
                             <a href="{{ route('admin.koordinators') }}" wire:navigate
@@ -116,21 +134,6 @@
                         </div>
                     </div>
 
-                    {{-- Departemen --}}
-                    <a href="{{ route('admin.departemens') }}" wire:navigate
-                        class="sidebar-item {{ request()->routeIs('admin.departemens') ? 'active' : '' }} flex w-full cursor-pointer items-center justify-between py-1.5 text-left text-xs transition-colors">
-                        <div class="flex items-center gap-2.5">
-                            {{-- Ikon Departemens --}}
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                stroke-width="1.5" stroke="currentColor"
-                                class="h-3.5 w-3.5 flex-shrink-0 text-stone-400 group-[.active]:text-current dark:text-stone-500">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 21h7.5V10.75M2.25 21h1.5m18 0h-18M2.25 9l4.5-1.636M18.75 3l-1.5.545m0 6.205 3 1m1.5.5-1.5-.5M6.75 7.364V3h-3v18m3-13.636 10.5-3.819" />
-                            </svg>
-
-                            <span class="font-medium">{{ __('Departemens') }}</span>
-                        </div>
-                    </a>
                     {{-- Inventaris --}}
                     <a href="{{ route('admin.inventaris') }}" wire:navigate
                         class="sidebar-item {{ request()->routeIs('admin.inventaris') ? 'active' : '' }} flex w-full cursor-pointer items-center justify-between py-1.5 text-left text-xs transition-colors">
