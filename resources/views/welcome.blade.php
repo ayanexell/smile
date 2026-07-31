@@ -194,13 +194,9 @@
                                 {{ __('Dashboard') }}
                             </a>
                         @endauth
-                        <a href="#fitur"
+                        <a href="{{ route('list-inventaris') }}"
                             class="hover:border-sage-300 dark:hover:border-sage-600 hover:text-sage-700 dark:hover:text-sage-300 inline-flex items-center justify-center gap-2.5 rounded-xl border border-stone-200 bg-white px-5 py-2 font-medium text-stone-700 transition-all duration-200 hover:-translate-y-0.5 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-300">
-                            {{ __('Jelajahi Fitur') }}
-                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 9l-7 7-7-7" />
-                            </svg>
+                            {{ __('Jelajahi Inventaris') }}
                         </a>
                     </div>
                 </div>

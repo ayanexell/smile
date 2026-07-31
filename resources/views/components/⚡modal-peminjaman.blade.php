@@ -77,7 +77,7 @@ new #[Layout('layouts.guest')] class extends Component {
                 <div class="border-b border-stone-100 bg-stone-50 px-5 py-3 dark:border-stone-800 dark:bg-stone-800/50">
                     <p class="text-xs font-medium text-stone-800 dark:text-stone-200">{{ $inventaris->nama_barang }}</p>
                     <p class="text-[10px] text-stone-500 dark:text-stone-400">
-                        {{ $inventaris->departemen->nama_departemen }}</p>
+                        {{ $inventaris->user->departemen->nama_departemen }}</p>
                 </div>
 
                 {{-- Form Tanggal --}}

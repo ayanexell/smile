@@ -165,7 +165,7 @@ new class extends Component {
                 </select>
 
                 {{-- Tombol Tambah --}}
-                <button @click="$dispatch('add-inventaris-modal')"
+                <button x-data x-on:click="$dispatch('open-inventaris-modal')" x-cloak
                     class="bg-sage-600 dark:bg-sage-500 hover:bg-sage-700 dark:hover:bg-sage-400 hover:shadow-sage-600/20 inline-flex shrink-0 cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-medium text-white shadow-sm transition-all hover:shadow">
                     <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
