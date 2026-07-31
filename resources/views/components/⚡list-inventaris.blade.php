@@ -12,7 +12,7 @@ new #[Layout('layouts.guest')] #[Title('List Inventaris')] class extends Compone
     public function render()
     {
         $inventaris = Inventaris::onlyDipinjamkan()
-            ->with('departemen')
+            ->with('user.departemen')
             ->when($this->search, function ($query) {
                 $query->where('nama_barang', 'like', '%' . $this->search . '%')->orWhere('tipe', 'like', '%' . $this->search . '%');
             })

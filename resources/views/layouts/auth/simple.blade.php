@@ -5,7 +5,7 @@
     @include('partials.head')
 </head>
 
-<body class="bg-white antialiased dark:bg-linear-to-b dark:from-neutral-950 dark:to-neutral-900">
+<body class="dark:bg-linear-to-b bg-white antialiased dark:from-neutral-950 dark:to-neutral-900">
     {{ $slot }}
 
     @persist('toast')

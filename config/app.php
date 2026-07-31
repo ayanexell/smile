@@ -123,7 +123,8 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
     'fonnte' => [
-        'token' => env('TOKEN_FONNTE')
+        'token' => env('TOKEN_FONNTE'),
+        'endpoint' => 'https://api.fonnte.com/send'
     ]
 
 ];

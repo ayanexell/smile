@@ -5,6 +5,8 @@ use App\Models\Peminjaman;
 use Livewire\WithPagination;
 use Illuminate\Support\Carbon;
 use Livewire\Attributes\Title;
+use App\Actions\SendWhatsapp;
+use Illuminate\Support\Facades\Validator;
 
 new #[Title('Manajemen Peminjaman')] class extends Component {
     use WithPagination;
@@ -44,16 +46,10 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
         session()->flash('success', 'Peminjaman berhasil dikembalikan ke status pending.');
     }
 
-    public function confirmDelete(Peminjaman $peminjaman)
+    public function deletePeminjaman(Peminjaman $id)
     {
-        $this->peminjaman = $peminjaman;
-        $this->showDeleteModal = true;
-    }
-
-    public function deletePeminjaman()
-    {
-        $this->peminjaman->delete();
-        $this->reset('peminjaman', 'showDeleteModal');
+        $id->delete();
+        $this->reset('peminjaman');
         session()->flash('success', 'Peminjaman berhasil dihapus.');
     }
 
@@ -73,6 +69,43 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
         return $this->view([
             'peminjamans' => $peminjamans,
         ]);
+    }
+
+    public function openChat(Peminjaman $peminjaman)
+    {
+        $this->peminjaman = $peminjaman;
+    }
+
+    public function sendWhatsAppMessage($target, $message)
+    {
+        // Validasi input
+        $validator = Validator::make(
+            [
+                'target' => $target,
+                'message' => $message,
+            ],
+            [
+                'target' => 'required|string|min:9',
+                'message' => 'required|string',
+            ],
+        );
+
+        if ($validator->fails()) {
+            $this->dispatch('wa-error', message: $validator->errors()->first());
+            return;
+        }
+
+        try {
+            // Panggil Action untuk mengirim pesan
+            $wa = new SendWhatsapp($target, $message);
+            $wa->send(); // Jika gagal akan throw Exception
+
+            // Dispatch event sukses ke Alpine
+            $this->dispatch('wa-message-sent', message: 'Pesan WhatsApp berhasil dikirim.');
+        } catch (\Exception $e) {
+            // Kirim pesan error ke modal Alpine
+            $this->dispatch('wa-error', message: 'Error: ' . $e->getMessage());
+        }
     }
 
     public function export()
@@ -106,10 +139,10 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                 x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
                 x-transition:leave="transition ease-in duration-200"
                 x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-4"
-                class="fixed left-1/2 top-5 z-[9999] w-full max-w-sm -translate-x-1/2 px-4" style="display: none;">
+                class="z-9999 fixed left-1/2 top-5 w-full max-w-sm -translate-x-1/2 px-4" style="display: none;">
                 <div
                     class="flex select-none items-center gap-2.5 rounded-lg border border-emerald-100 bg-white py-2 pl-3 pr-2.5 shadow-xl shadow-stone-200/50 dark:border-emerald-950/60 dark:bg-stone-900 dark:shadow-none">
-                    <div class="flex-shrink-0 text-emerald-500 dark:text-emerald-400">
+                    <div class="shrink-0 text-emerald-500 dark:text-emerald-400">
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -120,7 +153,7 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                         {{ session('success') }}
                     </div>
                     <button @click="show = false"
-                        class="flex-shrink-0 rounded p-1 text-stone-400 transition-colors hover:text-stone-600 focus:outline-none dark:hover:text-stone-200">
+                        class="shrink-0 rounded p-1 text-stone-400 transition-colors hover:text-stone-600 focus:outline-none dark:hover:text-stone-200">
                         <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -244,15 +277,15 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
 
                                 {{-- Gambar + Nama Barang + Departemen --}}
                                 <td class="px-2.5 py-1.5">
-                                    <div class="flex max-w-[180px] items-center gap-2 sm:max-w-xs">
+                                    <div class="max-w-45 flex items-center gap-2 sm:max-w-xs">
                                         {{-- Thumbnail gambar atau placeholder --}}
                                         @if ($peminjaman->inventaris->img_path)
                                             <img src="{{ Storage::url($peminjaman->inventaris->img_path) }}"
                                                 alt="{{ $peminjaman->inventaris->nama_barang }}"
-                                                class="h-7 w-7 flex-shrink-0 rounded-lg border border-stone-200 object-cover dark:border-stone-700" />
+                                                class="h-7 w-7 shrink-0 rounded-lg border border-stone-200 object-cover dark:border-stone-700" />
                                         @else
                                             <div
-                                                class="bg-sage-100 dark:bg-sage-900/40 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg border border-stone-200 dark:border-stone-700">
+                                                class="bg-sage-100 dark:bg-sage-900/40 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-stone-200 dark:border-stone-700">
                                                 <svg class="text-sage-500 dark:text-sage-400 h-3.5 w-3.5" fill="none"
                                                     stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -435,10 +468,25 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
 
                                                     <flux:separator />
 
+                                                    {{-- Chat Whatsapp --}}
+                                                    <button x-data
+                                                        x-on:click="$dispatch('open-wa-modal', {
+                                                            id: {{ $peminjaman->id_peminjaman }},
+                                                            defaultTarget: '{{ $peminjaman->user->no_wa ?? '' }}'
+                                                        })"
+                                                        class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-green-600 transition-colors hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-950/40">
+                                                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"
+                                                            xmlns="http://www.w3.org/2000/svg">
+                                                            <path
+                                                                d="M17.6 6.31999C16.8669 5.58141 15.9943 4.99596 15.033 4.59767C14.0716 4.19938 13.0406 3.99622 12 3.99999C10.6089 4.00135 9.24248 4.36819 8.03771 5.06377C6.83294 5.75935 5.83208 6.75926 5.13534 7.96335C4.4386 9.16745 4.07046 10.5335 4.06776 11.9246C4.06507 13.3158 4.42793 14.6832 5.12 15.89L4 20L8.2 18.9C9.35975 19.5452 10.6629 19.8891 11.99 19.9C14.0997 19.9001 16.124 19.0668 17.6222 17.5816C19.1205 16.0965 19.9715 14.0796 19.99 11.97C19.983 10.9173 19.7682 9.87634 19.3581 8.9068C18.948 7.93725 18.3505 7.05819 17.6 6.31999ZM12 18.53C10.8177 18.5308 9.65701 18.213 8.64 17.61L8.4 17.46L5.91 18.12L6.57 15.69L6.41 15.44C5.55925 14.0667 5.24174 12.429 5.51762 10.8372C5.7935 9.24545 6.64361 7.81015 7.9069 6.80322C9.1702 5.79628 10.7589 5.28765 12.3721 5.37368C13.9853 5.4597 15.511 6.13441 16.66 7.26999C17.916 8.49818 18.635 10.1735 18.66 11.93C18.6442 13.6859 17.9355 15.3645 16.6882 16.6006C15.441 17.8366 13.756 18.5301 12 18.53ZM15.61 13.59C15.41 13.49 14.44 13.01 14.26 12.95C14.08 12.89 13.94 12.85 13.81 13.05C13.6144 13.3181 13.404 13.5751 13.18 13.82C13.07 13.96 12.95 13.97 12.75 13.82C11.6097 13.3694 10.6597 12.5394 10.06 11.47C9.85 11.12 10.26 11.14 10.64 10.39C10.6681 10.3359 10.6827 10.2759 10.6827 10.215C10.6827 10.1541 10.6681 10.0941 10.64 10.04C10.64 9.93999 10.19 8.95999 10.03 8.56999C9.87 8.17999 9.71 8.23999 9.58 8.22999H9.19C9.08895 8.23154 8.9894 8.25465 8.898 8.29776C8.8066 8.34087 8.72546 8.403 8.66 8.47999C8.43562 8.69817 8.26061 8.96191 8.14676 9.25343C8.03291 9.54495 7.98287 9.85749 8 10.17C8.0627 10.9181 8.34443 11.6311 8.81 12.22C9.6622 13.4958 10.8301 14.5293 12.2 15.22C12.9185 15.6394 13.7535 15.8148 14.58 15.72C14.8552 15.6654 15.1159 15.5535 15.345 15.3915C15.5742 15.2296 15.7667 15.0212 15.91 14.78C16.0428 14.4856 16.0846 14.1583 16.03 13.84C15.94 13.74 15.81 13.69 15.61 13.59Z"
+                                                                fill="currentColor" />
+                                                        </svg>
+                                                        Chat
+                                                    </button>
+
                                                     {{-- Hapus --}}
-                                                    <button
-                                                        wire:click="confirmDelete({{ $peminjaman->id_peminjaman }})"
-                                                        @click="open = false"
+                                                    <button x-data
+                                                        x-on:click="$dispatch('open-delete-modal', { id: {{ $peminjaman->id_peminjaman }} })"
                                                         class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-rose-600 transition-colors hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/40">
                                                         <svg class="h-3.5 w-3.5 text-rose-400" fill="none"
                                                             stroke="currentColor" stroke-width="2"
@@ -484,41 +532,126 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
             </div>
 
         </div>
-        {{-- ── DELETE MODAL ── --}}
-        @if ($showDeleteModal)
-            <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm dark:bg-black/60"
-                wire:click.self="$set('showDeleteModal', false)">
-                <div
-                    class="w-full max-w-xs rounded-xl border border-stone-200 bg-white p-5 shadow-2xl dark:border-stone-800 dark:bg-stone-900">
-                    <div class="flex items-start gap-3">
-                        <div
-                            class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-red-50 dark:bg-red-950">
-                            <svg class="h-4 w-4 text-red-500" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-                            </svg>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="mb-0.5 text-sm font-semibold text-stone-800 dark:text-stone-100">Hapus
-                                Peminjaman</h3>
-                            <p class="text-xs text-stone-500 dark:text-stone-400">Data peminjaman akan dihapus permanen
-                                dari
-                                sistem.</p>
-                        </div>
+        {{-- Modal Hapus --}}
+        <div x-data="{
+            show: false,
+            idPeminjaman: null,
+            init() {
+                window.addEventListener('open-delete-modal', (e) => {
+                    this.idPeminjaman = e.detail.id;
+                    this.show = true;
+                });
+            },
+            hapus() {
+                $wire.deletePeminjaman(this.idPeminjaman)
+                    .then(() => { this.show = false; });
+            }
+        }" x-show="show" x-transition.opacity
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm dark:bg-black/60"
+            x-cloak>
+            <div class="w-full max-w-xs rounded-xl border border-stone-200 bg-white p-5 shadow-2xl dark:border-stone-800 dark:bg-stone-900"
+                @click.outside="show = false">
+                <div class="flex items-start gap-3">
+                    <div
+                        class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-red-50 dark:bg-red-950">
+                        <svg class="h-4 w-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                        </svg>
                     </div>
-                    <div class="mt-5 flex gap-2">
-                        <button wire:click="$set('showDeleteModal', false)"
-                            class="flex-1 rounded-lg border border-stone-200 px-3 py-2 text-xs font-medium text-stone-700 transition-colors hover:bg-stone-50 dark:border-stone-700 dark:text-stone-300 dark:hover:bg-stone-800">
-                            Batal
-                        </button>
-                        <button wire:click="deletePeminjaman"
-                            class="flex-1 rounded-lg bg-red-500 px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-red-600">
-                            Ya, Hapus
-                        </button>
+                    <div class="flex-1">
+                        <h3 class="mb-0.5 text-sm font-semibold text-stone-800 dark:text-stone-100">Hapus Peminjaman
+                        </h3>
+                        <p class="text-xs text-stone-500 dark:text-stone-400">Data peminjaman akan dihapus permanen
+                            dari sistem.</p>
                     </div>
                 </div>
+                <div class="mt-5 flex gap-2">
+                    <button @click="show = false"
+                        class="flex-1 cursor-pointer rounded-lg border border-stone-200 px-3 py-2 text-xs font-medium text-stone-700 transition-colors hover:bg-stone-50 dark:border-stone-700 dark:text-stone-300 dark:hover:bg-stone-800">
+                        Batal
+                    </button>
+                    <button @click="hapus()"
+                        class="flex-1 cursor-pointer rounded-lg bg-red-500 px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-red-600">
+                        Ya, Hapus
+                    </button>
+                </div>
             </div>
-        @endif
+        </div>
+
+        <div x-data="{
+            show: false,
+            target: '',
+            message: '',
+            errorMessage: '',
+            idPeminjaman: null,
+            init() {
+                window.addEventListener('open-wa-modal', (e) => {
+                    this.idPeminjaman = e.detail.id;
+                    this.target = e.detail.defaultTarget || '';
+                    this.message = '';
+                    this.errorMessage = ''; // reset error setiap kali buka
+                    this.show = true;
+                });
+        
+                // Event sukses dari Livewire
+                window.addEventListener('wa-message-sent', (e) => {
+                    this.show = false;
+                    // Opsional: tampilkan toast sukses global
+                    alert(e.detail.message); // atau integrasi dengan notifikasi lain
+                });
+        
+                // Event error dari Livewire
+                window.addEventListener('wa-error', (e) => {
+                    this.errorMessage = e.detail.message;
+                });
+            },
+            submit() {
+                this.errorMessage = ''; // reset error sebelum kirim
+                $wire.sendWhatsAppMessage(this.target, this.message);
+            }
+        }" x-show="show" x-transition.opacity
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 text-xs" x-cloak
+            style="font-family: 'Cascadia Code', monospace;">
+            <div
+                class="w-full max-w-xs rounded-md border border-emerald-100 bg-white p-4 shadow-xl dark:border-emerald-900 dark:bg-gray-800">
+                <h3 class="mb-3 text-sm font-semibold text-emerald-800 dark:text-emerald-400">
+                    Kirim Pesan WhatsApp
+                </h3>
+
+                {{-- Pesan Error --}}
+                <template x-if="errorMessage">
+                    <div class="mb-3 rounded border border-red-300 bg-red-50 px-2 py-1.5 text-xs text-red-700 dark:border-red-800 dark:bg-red-900/30 dark:text-red-400"
+                        x-text="errorMessage">
+                    </div>
+                </template>
+
+                {{-- Target --}}
+                <div class="mb-3">
+                    <label class="mb-1 block text-xs text-gray-600 dark:text-gray-300">Nomor Tujuan</label>
+                    <input type="text" x-model="target" placeholder="62812xxxxxx"
+                        class="w-full rounded border border-gray-300 px-2 py-1.5 text-xs focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+                </div>
+
+                {{-- Pesan --}}
+                <div class="mb-3">
+                    <label class="mb-1 block text-xs text-gray-600 dark:text-gray-300">Pesan</label>
+                    <textarea x-model="message" rows="2" placeholder="Tulis pesan..."
+                        class="w-full rounded border border-gray-300 px-2 py-1.5 text-xs focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"></textarea>
+                </div>
+
+                {{-- Tombol --}}
+                <div class="flex justify-end gap-1.5">
+                    <button @click="show = false"
+                        class="rounded bg-gray-200 px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-300 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500">
+                        Batal
+                    </button>
+                    <button @click="submit()"
+                        class="rounded bg-emerald-600 px-3 py-1.5 text-xs text-white hover:bg-emerald-700 focus:ring-2 focus:ring-emerald-400 focus:ring-offset-1">
+                        Kirim
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
