@@ -2,6 +2,10 @@
 
 use Livewire\Component;
 use App\Models\Inventaris;
+use App\Exports\InventarisExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Carbon\Carbon;
+use App\Models\LaporanInventaris;
 
 new class extends Component {
     use Livewire\WithPagination;
@@ -44,7 +48,34 @@ new class extends Component {
             ->paginate(10);
         return $this->view([
             'inventaris' => $inventaris,
+            'user' => $user,
         ]);
+    }
+
+    public function buatLaporan()
+    {
+        $user = Auth::user();
+        $month = Carbon::now()->format('M'); // hasil: "Jul", "Aug", dll.
+        $filename = $user->departemen->singkatan . '-inventaris.xlsx';
+        $folderPath = 'export-inventaris/' . $month;
+        $fullPath = $folderPath . '/' . $filename;
+        try {
+            LaporanInventaris::create([
+                'user_id' => $user->id_user,
+                'laporan_path' => $fullPath,
+                'bulan' => $month,
+                'status' => 'pending',
+            ]);
+            session()->flash('success', 'Berhasil menyimpan data laporan bulanan!');
+            return Excel::store(new InventarisExport($user), $fullPath);
+            // return Excel::download(new InventarisExport($user), $fullPath);
+        } catch (Exception $e) {
+            Log::error('Gagal membuat laporan: ' . $e->getMessage());
+            if (Storage::exists($fullPath)) {
+                Storage::delete($fullPath);
+            }
+            session()->flash('error', 'Gagal menyimpan database: ' . $e->getMessage());
+        }
     }
 };
 ?>
@@ -59,7 +90,8 @@ new class extends Component {
                         class="text-sage-600 dark:text-sage-400 font-mono text-[9px] uppercase tracking-widest">Manajemen</span>
                 </div>
                 <h1 class="font-display text-xl font-semibold text-stone-800 dark:text-stone-100">Daftar Inventaris</h1>
-                <p class="mt-0.5 text-xs text-stone-500 dark:text-stone-400">Kelola semua inventaris sistem SMILE</p>
+                <p class="mt-0.5 text-xs text-stone-500 dark:text-stone-400">Kelola semua inventaris
+                    {{ $user->departemen->nama_departemen }}</p>
             </div>
         </div>
     </div>
@@ -145,9 +177,14 @@ new class extends Component {
                     <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
-                    Tambah Barang
+                    Barang
                 </button>
 
+                {{-- Tombol Tambah --}}
+                <button wire:click="buatLaporan"
+                    class="inline-flex shrink-0 cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-lg bg-green-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition-all hover:bg-green-700 hover:shadow hover:shadow-green-600/20 dark:bg-green-500 dark:hover:bg-green-400">
+                    Laporan
+                </button>
             </div>
         </div>
 

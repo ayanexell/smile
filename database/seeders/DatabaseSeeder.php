@@ -16,7 +16,6 @@ class DatabaseSeeder extends Seeder
             DepartemenSeeder::class,
             UserSeeder::class,
             InventarisSeeder::class,
-            LaporanSeeder::class,
             PeminjamanSeeder::class,
         ]);
     }

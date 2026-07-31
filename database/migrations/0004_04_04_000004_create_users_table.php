@@ -30,7 +30,7 @@ return new class extends Migration
             $table->boolean('profile_status');
             $table->rememberToken();
             $table->timestamps();
-            $table->foreign('role_id')->references('id_role')->on('roles')->onDelete('cascade');
+            $table->foreign('role_id')->references('id_role')->on('roles');
             $table->foreign('departemen_id')->references('id_departemen')->on('departemens')->onDelete('set null');
         });
 
