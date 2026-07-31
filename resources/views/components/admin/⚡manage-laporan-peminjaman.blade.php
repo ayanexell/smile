@@ -2,9 +2,7 @@
 
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\User;
-use App\Models\Roles;
-use App\Models\Departemens;
+use App\Models\LaporanInventaris;
 use Livewire\Attributes\Computed;
 
 new class extends Component {
@@ -12,41 +10,12 @@ new class extends Component {
 
     public string $search = '';
     public string $filterGender = '';
-    public bool $showDeleteModal = false;
-    public ?int $deleteTargetId = null;
-
-    public function updatingSearch(): void
-    {
-        $this->resetPage();
-    }
-    public function updatingFilterGender(): void
-    {
-        $this->resetPage();
-    }
-
-    public function confirmDelete(int $id): void
-    {
-        $this->deleteTargetId = $id;
-        $this->showDeleteModal = true;
-    }
-
-    public function deleteUser(): void
-    {
-        User::findOrFail($this->deleteTargetId)->delete();
-        $this->showDeleteModal = false;
-        $this->deleteTargetId = null;
-        session()->flash('success', 'User berhasil dihapus.');
-    }
-
-    public function updateUser($id)
-    {
-        $this->dispatch('edit-user', id: $id);
-    }
 
     #[Computed]
-    public function users()
+    public function laporanInventaris()
     {
-        return User::onlyUsers()
+        dd('Belum Selesai');
+        return LaporanInventaris::with('user')
             ->when(
                 $this->search,
                 fn($q) => $q
@@ -63,7 +32,7 @@ new class extends Component {
 
 <div class="min-h-screen bg-stone-100 dark:bg-stone-950">
 
-    <x-page-header title="Daftar User" leading="Kelola semua akun User sistem SMILE" />
+    <x-page-header title="Daftar Laporan Peminjaman" leading="Kelola semua Laporan Peminjaman sistem SMILE" />
 
     <div class="mx-auto mt-2 max-w-7xl space-y-2">
 
@@ -147,7 +116,7 @@ new class extends Component {
             {{-- Table meta --}}
             <div class="flex items-center justify-between border-b border-stone-100 py-2 dark:border-stone-800">
                 <span class="font-mono text-[10px] uppercase tracking-wider text-stone-400 dark:text-stone-500">
-                    {{ $this->users->total() }} {{ __('pengguna ditemukan') }}
+                    {{ $this->laporanInventaris->total() }} {{ __('pengguna ditemukan') }}
                 </span>
                 {{-- Full-Screen Loading Overlay --}}
             </div>
@@ -171,13 +140,13 @@ new class extends Component {
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-stone-100 dark:divide-stone-800/60">
-                        @forelse ($this->users as $user)
+                        @forelse ($this->laporanInventaris as $user)
                             <tr wire:key="user-{{ $user->id_user }}"
                                 class="group transition-colors hover:bg-stone-50 dark:hover:bg-stone-800/30">
 
                                 {{-- No --}}
                                 <td class="px-2.5 py-1.5 text-center font-mono text-stone-400 dark:text-stone-600">
-                                    {{ $loop->iteration + ($this->users->currentPage() - 1) * $this->users->perPage() }}
+                                    {{ $loop->iteration + ($this->laporanInventaris->currentPage() - 1) * $this->laporanInventaris->perPage() }}
                                 </td>
 
                                 {{-- Nama, Avatar + Email (Digabung agar hemat space) --}}
@@ -348,46 +317,9 @@ new class extends Component {
 
             {{-- Pagination --}}
             <div class="border-t border-stone-100 px-4 py-3 dark:border-stone-800">
-                {{ $this->users->links('pagination::tailwind') }}
+                {{ $this->laporanInventaris->links('pagination::tailwind') }}
             </div>
         </div>
 
     </div>
-
-    <livewire:admin.users.edit-user />
-
-    {{-- ── DELETE MODAL ── --}}
-    @if ($showDeleteModal)
-        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm dark:bg-black/60"
-            wire:click.self="$set('showDeleteModal', false)">
-            <div
-                class="w-full max-w-xs rounded-xl border border-stone-200 bg-white p-5 shadow-2xl dark:border-stone-800 dark:bg-stone-900">
-                <div class="flex items-start gap-3">
-                    <div
-                        class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-red-50 dark:bg-red-950">
-                        <svg class="h-4 w-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-                        </svg>
-                    </div>
-                    <div class="flex-1">
-                        <h3 class="mb-0.5 text-sm font-semibold text-stone-800 dark:text-stone-100">Hapus Pengguna</h3>
-                        <p class="text-xs text-stone-500 dark:text-stone-400">Data pengguna akan dihapus permanen dari
-                            sistem.</p>
-                    </div>
-                </div>
-                <div class="mt-5 flex gap-2">
-                    <button wire:click="$set('showDeleteModal', false)"
-                        class="flex-1 rounded-lg border border-stone-200 px-3 py-2 text-xs font-medium text-stone-700 transition-colors hover:bg-stone-50 dark:border-stone-700 dark:text-stone-300 dark:hover:bg-stone-800">
-                        Batal
-                    </button>
-                    <button wire:click="deleteUser"
-                        class="flex-1 rounded-lg bg-red-500 px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-red-600">
-                        Ya, Hapus
-                    </button>
-                </div>
-            </div>
-        </div>
-    @endif
-
 </div>

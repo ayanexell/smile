@@ -9,7 +9,8 @@ new class extends Component {
     use WithPagination;
 
     public string $search = '';
-    public string $filterGender = '';
+    public string $status = '';
+    public $perPage = 10;
     public $user;
 
     public function mount()
@@ -20,17 +21,21 @@ new class extends Component {
     #[Computed]
     public function laporanInventaris()
     {
-        return LaporanInventaris::with('user')
-            ->when(
-                $this->search,
-                fn($q) => $q
-                    ->where('nama_lengkap', 'like', "%{$this->search}%")
-                    ->orWhere('nik', 'like', "%{$this->search}%")
-                    ->orWhere('email', 'like', "%{$this->search}%"),
-            )
-            ->when($this->filterGender, fn($q) => $q->where('jenis_kelamin', $this->filterGender))
+        $departemenId = $this->user->departemen_id;
+        return LaporanInventaris::query()
+            ->whereHas('user', function ($query) use ($departemenId) {
+                $query->where('departemen_id', $departemenId);
+            })
+            ->when($this->search, function ($query) {
+                $query->where(function ($q) {
+                    $q->where('bulan', 'like', '%' . $this->search . '%');
+                });
+            })
+            ->when($this->status, function ($query) {
+                $query->where('status', $this->status);
+            })
             ->latest()
-            ->paginate(10);
+            ->paginate($this->perPage);
     }
 
     public function downloadFile($path)
@@ -58,29 +63,16 @@ new class extends Component {
 ?>
 
 <div class="min-h-screen bg-stone-100 dark:bg-stone-950">
-    {{-- ── PAGE HEADER ── --}}
-    <div class="border-b border-stone-200 bg-white px-5 py-3.5 dark:border-stone-800 dark:bg-stone-900">
-        <div class="mx-auto flex max-w-7xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-                <div class="mb-0.5 flex items-center gap-2">
-                    <span
-                        class="text-sage-600 dark:text-sage-400 font-mono text-[9px] uppercase tracking-widest">Manajemen</span>
-                </div>
-                <h1 class="font-display text-xl font-semibold text-stone-800 dark:text-stone-100">Laporan Inventaris</h1>
-                <p class="mt-0.5 text-xs text-stone-500 dark:text-stone-400">Kelola semua Laporan Invenataris untuk
-                    {{ $this->user->departemen->nama_departemen }}</p>
-            </div>
-        </div>
-    </div>
+    <x-page-header title="Laporan Inventaris" leading="Kelola semua Laporan Invenataris untuk"
+        departemen="{{ Auth::user()->departemen->nama_departemen }}" />
 
     <div class="mx-auto mt-2 max-w-7xl space-y-2">
 
         {{-- ── FLASH MESSAGE ── --}}
         @if (session()->has('success'))
             <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 4000)" x-show="show"
-                x-transition:enter="transition ease-out duration-300"
-                x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
-                x-transition:leave="transition ease-in duration-200"
+                x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 -translate-y-4"
+                x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-200"
                 x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-4"
                 class="z-9999 fixed left-1/2 top-5 w-full max-w-sm -translate-x-1/2 px-4" style="display: none;">
 
@@ -125,26 +117,29 @@ new class extends Component {
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
                     </svg>
-                    <input wire:model.live.debounce.300ms="search" type="text"
-                        placeholder="Cari nama, NIK, atau email…"
+                    <input wire:model.live.debounce.300ms="search" type="text" placeholder="Cari bulan"
                         class="focus:ring-sage-500 w-full rounded-lg border border-stone-200 bg-stone-50 py-1.5 pl-8 pr-3 text-xs text-stone-800 transition placeholder:text-stone-400 focus:border-transparent focus:outline-none focus:ring-1 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-100 dark:placeholder:text-stone-500" />
                 </div>
 
-                {{-- Filter Gender --}}
-                <select wire:model.live="filterGender"
+                {{-- Per Page --}}
+                <select wire:model.live="perPage"
                     class="focus:ring-sage-500 rounded-lg border border-stone-200 bg-stone-50 px-2.5 py-1.5 text-xs text-stone-700 transition focus:outline-none focus:ring-1 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-300">
-                    <option value="">{{ __('Semua Gender') }}</option>
-                    <option value="laki-laki">{{ __('Laki-laki') }}</option>
-                    <option value="perempuan">{{ __('Perempuan') }}</option>
+                    <option value="">{{ __('Per Page') }}</option>
+                    <option value="5">{{ __('5') }}</option>
+                    <option value="10">{{ __('10') }}</option>
+                    <option value="15">{{ __('15') }}</option>
+                    <option value="20">{{ __('20') }}</option>
+                    <option value="30">{{ __('30') }}</option>
                 </select>
 
-                <a href="#"
-                    class="bg-sage-600 hover:bg-sage-700 dark:bg-sage-500 dark:hover:bg-sage-600 inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-xs font-semibold text-white shadow-sm transition-colors">
-                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                    </svg>
-                    Tambah User
-                </a>
+                {{-- Filter Status --}}
+                <select wire:model.live="status"
+                    class="focus:ring-sage-500 rounded-lg border border-stone-200 bg-stone-50 px-2.5 py-1.5 text-xs text-stone-700 transition focus:outline-none focus:ring-1 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-300">
+                    <option value="">{{ __('Semua Status') }}</option>
+                    <option value="pending">{{ __('Menunggu') }}</option>
+                    <option value="diterima">{{ __('Diterima') }}</option>
+                    <option value="ditolak">{{ __('Ditolak') }}</option>
+                </select>
 
             </div>
         </div>
