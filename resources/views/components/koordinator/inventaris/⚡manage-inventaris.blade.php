@@ -15,6 +15,11 @@ new class extends Component {
     public $filterTipe = '';
     public $filterDptDipinjam = '';
 
+    public function mount()
+    {
+        Carbon::setLocale('id');
+    }
+
     public function editInventaris($id)
     {
         $this->dispatch('edit-inventaris', $id);
@@ -55,7 +60,7 @@ new class extends Component {
     public function buatLaporan()
     {
         $user = Auth::user();
-        $month = Carbon::now()->format('M'); // hasil: "Jul", "Aug", dll.
+        $month = Carbon::now()->translatedFormat('F');
         $filename = $user->departemen->singkatan . '-inventaris.xlsx';
         $folderPath = 'export-inventaris/' . $month;
         $fullPath = $folderPath . '/' . $filename;
