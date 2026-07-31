@@ -11,15 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('laporans', function (Blueprint $table) {
-            $table->id('id_laporan');
+        Schema::create('laporan_inventaris', function (Blueprint $table) {
+            $table->id('id_laporan_inventaris');
             $table->unsignedBigInteger('user_id');
-            $table->string('judul_laporan');
-            $table->string('month');
-            $table->string('file_path');
+            $table->string('laporan_path');
+            $table->string('bulan');
             $table->string('status');
+            $table->foreign('user_id')->references('id_user')->on('users');
             $table->timestamps();
-            $table->foreign('user_id')->references('id_user')->on('users')->onDelete('cascade');
         });
     }
 
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('laporans');
+        Schema::dropIfExists('laporan_inventaris');
     }
 };

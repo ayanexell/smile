@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use App\Models\User;
 use App\Models\Inventaris;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 #[Fillable(['user_id', 'inventaris_id', 'tgl_peminjaman', 'tgl_pengembalian', 'status', 'hibah', 'lambat'])]
 class Peminjaman extends Model
 {

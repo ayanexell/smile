@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('warna');
             $table->boolean('dpt_dipinjam');
             $table->timestamps();
-            $table->foreign('user_id')->references('id_user')->on('users')->onDelete('cascade');
+            $table->foreign('user_id')->references('id_user')->on('users');
         });
     }
 

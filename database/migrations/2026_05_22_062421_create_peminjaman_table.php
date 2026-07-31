@@ -22,8 +22,8 @@ return new class extends Migration
             $table->integer('hibah');
             $table->boolean('lambat');
             $table->timestamps();
-            $table->foreign('user_id')->references('id_user')->on('users')->onDelete('cascade');
-            $table->foreign('inventaris_id')->references('id_inventaris')->on('inventaris')->onDelete('cascade');
+            $table->foreign('user_id')->references('id_user')->on('users');
+            $table->foreign('inventaris_id')->references('id_inventaris')->on('inventaris');
         });
     }
 

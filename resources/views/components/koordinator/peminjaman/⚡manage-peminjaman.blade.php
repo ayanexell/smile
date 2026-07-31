@@ -9,6 +9,7 @@ use Livewire\Attributes\Title;
 new #[Title('Manajemen Peminjaman')] class extends Component {
     use WithPagination;
     public $search = '';
+    public $status;
     public $peminjaman;
     public $showDeleteModal = false;
 
@@ -23,7 +24,7 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
     public function declinePeminjaman(Peminjaman $peminjaman)
     {
         $peminjaman->update([
-            'status' => 'declined',
+            'status' => 'ditolak',
         ]);
         session()->flash('success', 'Peminjaman berhasil ditolak.');
     }
@@ -39,9 +40,9 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
     public function pendingPeminjaman(Peminjaman $peminjaman)
     {
         $peminjaman->update([
-            'status' => 'pending',
+            'status' => 'menunggu',
         ]);
-        session()->flash('success', 'Peminjaman berhasil dikembalikan ke status pending.');
+        session()->flash('success', 'Peminjaman berhasil dikembalikan ke status Menunggu.');
     }
 
     public function confirmDelete(Peminjaman $peminjaman)
@@ -59,25 +60,36 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
 
     public function render()
     {
-        $peminjamans = Peminjaman::with(['user', 'inventaris'])
-            ->when($this->search, function ($query) {
-                $query
-                    ->whereHas('user', function ($q) {
-                        $q->where('nama_lengkap', 'like', '%' . $this->search . '%');
-                    })
-                    ->orWhereHas('inventaris', function ($q) {
-                        $q->where('nama_barang', 'like', '%' . $this->search . '%');
-                    });
+        $user = Auth::user();
+        $departemenId = $user->departemen_id;
+        $peminjamans = Peminjaman::query()
+            ->whereHas('inventaris.user', function ($query) use ($departemenId) {
+                $query->where('departemen_id', $departemenId);
             })
+            ->when($this->search, function ($query) {
+                $query->where(function ($q) {
+                    $q->whereHas('inventaris', function ($sub) {
+                        $sub->where('nama_barang', 'like', '%' . $this->search . '%');
+                    })->orWhereHas('user', function ($sub) {
+                        $sub->where('nama_lengkap', 'like', '%' . $this->search . '%');
+                    });
+                });
+            })
+            ->when($this->status, function ($query) {
+                $query->where('status', $this->status);
+            })
+            ->latest()
             ->paginate(10);
         return $this->view([
             'peminjamans' => $peminjamans,
+            'user' => $user,
         ]);
     }
 };
 ?>
 
 <div>
+    {{-- {{ dd($peminjamans) }} --}}
     {{-- ── PAGE HEADER ── --}}
     <div class="border-b border-stone-200 bg-white px-5 py-3.5 dark:border-stone-800 dark:bg-stone-900">
         <div class="mx-auto flex max-w-7xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -87,7 +99,8 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                         class="text-sage-600 dark:text-sage-400 font-mono text-[9px] uppercase tracking-widest">Manajemen</span>
                 </div>
                 <h1 class="font-display text-xl font-semibold text-stone-800 dark:text-stone-100">Daftar Peminjaman</h1>
-                <p class="mt-0.5 text-xs text-stone-500 dark:text-stone-400">Kelola semua peminjaman sistem SMILE</p>
+                <p class="mt-0.5 text-xs text-stone-500 dark:text-stone-400">Kelola semua peminjaman
+                    {{ $user->departemen->nama_departemen }}</p>
             </div>
         </div>
     </div>
@@ -136,10 +149,19 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
                     </svg>
-                    <input wire:model.live.debounce.200ms="search" type="text"
+                    <input wire:model.live.debounce.100ms="search" type="text"
                         placeholder="Cari nama peminjam, nama barang..."
                         class="focus:ring-sage-500 w-full rounded-lg border border-stone-200 bg-stone-50 py-1.5 pl-8 pr-3 text-xs text-stone-800 transition placeholder:text-stone-400 focus:border-transparent focus:outline-none focus:ring-1 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-100 dark:placeholder:text-stone-500" />
                 </div>
+                {{-- Filter Status --}}
+                <select wire:model.live="status"
+                    class="focus:ring-sage-500 rounded-lg border border-stone-200 bg-stone-50 px-2.5 py-1.5 text-xs text-stone-700 transition focus:outline-none focus:ring-1 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-300">
+                    <option value="">Semua Status</option>
+                    <option value="menunggu">Menunggu</option>
+                    <option value="ditolak">Ditolak</option>
+                    <option value="dipinjam">Dipinjam</option>
+                    <option value="dikembalikan">Dikembalikan</option>
+                </select>
 
             </div>
         </div>

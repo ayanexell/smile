@@ -23,6 +23,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('dashboard/koordinator')->name('koordinator.')->group(function () {
         Route::middleware('Koordinator')->group(function (){
             Route::livewire('inventaris', 'koordinator.inventaris.manage-inventaris')->name('inventaris');
+            Route::livewire('peminjaman', 'koordinator.peminjaman.manage-peminjaman')->name('peminjaman');
+            Route::livewire('laporan-inventaris', 'koordinator.laporan.manage-laporan')->name('laporan-inventaris');
         });
     });
 });
