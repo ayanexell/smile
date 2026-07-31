@@ -17,7 +17,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::livewire('departemens', 'admin.manage-departemen')->name('departemens');
             Route::livewire('inventaris', 'admin.manage-inventaris')->name('inventaris');
             Route::livewire('peminjaman', 'admin.manage-peminjaman')->name('peminjaman');
-            Route::livewire('laporan', 'admin.manage-laporan')->name('laporan-inventaris');
+            Route::livewire('laporan-inventaris', 'admin.manage-laporan-inventaris')->name('laporan-inventaris');
+            Route::livewire('laporan-peminjaman', 'admin.manage-laporan-peminjaman')->name('laporan-peminjaman');
         });
     });
     Route::prefix('dashboard/koordinator')->name('koordinator.')->group(function () {
