@@ -28,6 +28,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::livewire('laporan-inventaris', 'koordinator.laporan.manage-laporan')->name('laporan-inventaris');
         });
     });
+
+    Route::prefix('dashboard/user')->name('user.')->group(function () {
+        Route::middleware('User')->group(function (){
+            Route::livewire('peminjaman-user', 'user.manage-peminjaman')->name('peminjaman');
+        });
+    });
 });
 
 require __DIR__.'/settings.php';
