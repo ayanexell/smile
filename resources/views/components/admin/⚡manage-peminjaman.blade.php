@@ -5,7 +5,7 @@ use App\Models\Peminjaman;
 use Livewire\WithPagination;
 use Illuminate\Support\Carbon;
 use Livewire\Attributes\Title;
-use App\Actions\SendWhatsapp;
+use App\Actions\WhatsappAction;
 use Illuminate\Support\Facades\Validator;
 
 new #[Title('Manajemen Peminjaman')] class extends Component {
@@ -25,7 +25,7 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
     public function declinePeminjaman(Peminjaman $peminjaman)
     {
         $peminjaman->update([
-            'status' => 'declined',
+            'status' => 'ditolak',
         ]);
         session()->flash('success', 'Peminjaman berhasil ditolak.');
     }
@@ -97,7 +97,7 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
 
         try {
             // Panggil Action untuk mengirim pesan
-            $wa = new SendWhatsapp($target, $message);
+            $wa = new WhatsappAction($target, $message);
             $wa->send(); // Jika gagal akan throw Exception
 
             // Dispatch event sukses ke Alpine

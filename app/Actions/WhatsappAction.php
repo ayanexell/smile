@@ -7,15 +7,17 @@ use Illuminate\Http\Client\Response;
 use Exception;
 
 use Illuminate\Support\Facades\Log;
-class SendWhatsapp
+class WhatsappAction
 {
     protected string $target;
     protected string $message;
+    protected int $delay = 0;
 
-    public function __construct(string $target, string $message)
+    public function __construct(string $target, string $message, int $delay = 0)
     {
         $this->target = $target;
         $this->message = $message;
+        $this->delay = $delay;
     }
 
     /**
@@ -30,15 +32,21 @@ class SendWhatsapp
             $response = Http::withHeaders([
                 'Authorization' => config('app.fonnte.token'),
             ])->post(config('app.fonnte.endpoint'), [
-                        'target' => $this->target,
+                        'target' => $this->target,   // contoh: 628123456789
                         'message' => $this->message,
-                    ]);
+                        'delay' => $this->delay
+                    ])->json();
 
-            $result = $response->json();
+            // $response = Http::post(env('WAHA_URL') . '/api/sendText', [
+            //     'session' => env('WAHA_SESSION'),
+            //     'chatId' => $this->target . '@c.us', // Format nomor: 628xxxxxxxxxx@c.us
+            //     'text' => $this->message,
+            // ]);
+            // dd($response);
 
-            if (!$result['status']) {
-                $errorMsg = $result['message'] ?? 'Gagal mengirim pesan WhatsApp.';
-                throw new Exception($errorMsg, $response->status());
+            if (!$response['status']) {
+                $errorMsg = $response['message'] ?? 'Gagal mengirim pesan WhatsApp.';
+                throw new Exception($errorMsg, $response['status']);
             }
 
             return $response;

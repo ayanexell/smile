@@ -11,8 +11,6 @@ new class extends Component {
 
     public string $search = '';
     public string $filterGender = '';
-    public bool $showDeleteModal = false;
-    public ?int $deleteTargetId = null;
 
     public function updatingSearch(): void
     {
@@ -23,17 +21,9 @@ new class extends Component {
         $this->resetPage();
     }
 
-    public function confirmDelete(int $id): void
+    public function deleteAdmin(User $id): void
     {
-        $this->deleteTargetId = $id;
-        $this->showDeleteModal = true;
-    }
-
-    public function deleteAdmin(): void
-    {
-        User::findOrFail($this->deleteTargetId)->delete();
-        $this->showDeleteModal = false;
-        $this->deleteTargetId = null;
+        $id->delete();
         session()->flash('success', 'User berhasil dihapus.');
     }
 
@@ -103,8 +93,8 @@ new class extends Component {
                     <option value="perempuan">Perempuan</option>
                 </select>
 
-                <a href="#"
-                    class="bg-sage-600 hover:bg-sage-700 dark:bg-sage-500 dark:hover:bg-sage-600 inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-xs font-semibold text-white shadow-sm transition-colors">
+                <a x-data x-on:click="$dispatch('add-admin-modal')"
+                    class="bg-sage-600 hover:bg-sage-700 dark:bg-sage-500 dark:hover:bg-sage-600 inline-flex cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-xs font-semibold text-white shadow-sm transition-colors">
                     <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
@@ -237,11 +227,10 @@ new class extends Component {
                                                 <div class="space-y-0.5 p-1">
 
                                                     {{-- Edit --}}
-                                                    <button
-                                                        x-on:click="
-                                                            $flux.modal('edit-admin-modal').show();
-                                                            $wire.updateAdmin({{ $user->id_user }});
-                                                            open = false;"
+                                                    <button x-data
+                                                        x-on:click="$dispatch('edit-admin-modal', {
+                                                            userId: {{ $user->id_user }},
+                                                        })"
                                                         @click="open = false"
                                                         class="text-sage-600 dark:text-sage-400 hover:bg-sage-50 dark:hover:bg-sage-950/30 flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs transition-colors">
                                                         <svg class="text-sage-500 h-3.5 w-3.5" fill="none"
@@ -256,7 +245,8 @@ new class extends Component {
                                                     <flux:separator />
 
                                                     {{-- Hapus --}}
-                                                    <button wire:click="confirmDelete({{ $user->id_user }})"
+                                                    <button x-data
+                                                        x-on:click="$dispatch('open-delete-modal', { id: {{ $user->id_user }} })"
                                                         @click="open = false"
                                                         class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40">
                                                         <svg class="h-3.5 w-3.5 text-red-400" fill="none"
@@ -296,40 +286,53 @@ new class extends Component {
 
     </div>
 
-    <livewire:admin.admins.edit-admin />"
+    <livewire:admin.admins.add-admin />
+    <livewire:admin.admins.edit-admin />
 
-    {{-- ── DELETE MODAL ── --}}
-    @if ($showDeleteModal)
-        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm dark:bg-black/60"
-            wire:click.self="$set('showDeleteModal', false)">
-            <div
-                class="w-full max-w-xs rounded-xl border border-stone-200 bg-white p-5 shadow-2xl dark:border-stone-800 dark:bg-stone-900">
-                <div class="flex items-start gap-3">
-                    <div
-                        class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-red-50 dark:bg-red-950">
-                        <svg class="h-4 w-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-                        </svg>
-                    </div>
-                    <div class="flex-1">
-                        <h3 class="mb-0.5 text-sm font-semibold text-stone-800 dark:text-stone-100">Hapus Admin</h3>
-                        <p class="text-xs text-stone-500 dark:text-stone-400">Data Admin akan dihapus permanen dari
-                            sistem.</p>
-                    </div>
+    {{-- Modal Hapus --}}
+    <div x-data="{
+        show: false,
+        idUser: null,
+        init() {
+            window.addEventListener('open-delete-modal', (e) => {
+                this.idUser = e.detail.id;
+                this.show = true;
+            });
+        },
+        hapus() {
+            $wire.deleteAdmin(this.idUser)
+                .then(() => { this.show = false; });
+        }
+    }" x-show="show" x-transition.opacity
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm dark:bg-black/60"
+        x-cloak>
+        <div class="w-full max-w-xs rounded-xl border border-stone-200 bg-white p-5 shadow-2xl dark:border-stone-800 dark:bg-stone-900"
+            @click.outside="show = false">
+            <div class="flex items-start gap-3">
+                <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-red-50 dark:bg-red-950">
+                    <svg class="h-4 w-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                    </svg>
                 </div>
-                <div class="mt-5 flex gap-2">
-                    <button wire:click="$set('showDeleteModal', false)"
-                        class="flex-1 rounded-lg border border-stone-200 px-3 py-2 text-xs font-medium text-stone-700 transition-colors hover:bg-stone-50 dark:border-stone-700 dark:text-stone-300 dark:hover:bg-stone-800">
-                        Batal
-                    </button>
-                    <button wire:click="deleteAdmin"
-                        class="flex-1 rounded-lg bg-red-500 px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-red-600">
-                        Ya, Hapus
-                    </button>
+                <div class="flex-1">
+                    <h3 class="mb-0.5 text-sm font-semibold text-stone-800 dark:text-stone-100">Hapus Peminjaman
+                    </h3>
+                    <p class="text-xs text-stone-500 dark:text-stone-400">Data peminjaman akan dihapus permanen
+                        dari sistem.</p>
                 </div>
             </div>
+            <div class="mt-5 flex gap-2">
+                <button @click="show = false"
+                    class="flex-1 cursor-pointer rounded-lg border border-stone-200 px-3 py-2 text-xs font-medium text-stone-700 transition-colors hover:bg-stone-50 dark:border-stone-700 dark:text-stone-300 dark:hover:bg-stone-800">
+                    Batal
+                </button>
+                <button @click="hapus()"
+                    class="flex-1 cursor-pointer rounded-lg bg-red-500 px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-red-600">
+                    Ya, Hapus
+                </button>
+            </div>
         </div>
-    @endif
+    </div>
 
 </div>
