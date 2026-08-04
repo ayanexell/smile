@@ -32,17 +32,10 @@ class WhatsappAction
             $response = Http::withHeaders([
                 'Authorization' => config('app.fonnte.token'),
             ])->post(config('app.fonnte.endpoint'), [
-                        'target' => $this->target,   // contoh: 628123456789
+                        'target' => $this->target,
                         'message' => $this->message,
                         'delay' => $this->delay
                     ])->json();
-
-            // $response = Http::post(env('WAHA_URL') . '/api/sendText', [
-            //     'session' => env('WAHA_SESSION'),
-            //     'chatId' => $this->target . '@c.us', // Format nomor: 628xxxxxxxxxx@c.us
-            //     'text' => $this->message,
-            // ]);
-            // dd($response);
 
             if (!$response['status']) {
                 $errorMsg = $response['message'] ?? 'Gagal mengirim pesan WhatsApp.';

@@ -41,8 +41,7 @@ new class extends Component {
                 <div
                     class="flex select-none items-center gap-2.5 rounded-lg border border-emerald-100 bg-white py-2 pl-3 pr-2.5 shadow-xl shadow-stone-200/50 dark:border-emerald-950/60 dark:bg-stone-900 dark:shadow-none">
                     <div class="shrink-0 text-emerald-500 dark:text-emerald-400">
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5"
-                            viewBox="0 0 24 24">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
@@ -95,7 +94,7 @@ new class extends Component {
                 </select>
 
                 {{-- Tombol Tambah --}}
-                <button @click="$dispatch('add-inventaris-modal')"
+                <button x-data x-on:click="$dispatch('add-inventaris-modal')"
                     class="bg-sage-600 dark:bg-sage-500 hover:bg-sage-700 dark:hover:bg-sage-400 hover:shadow-sage-600/20 inline-flex shrink-0 cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-medium text-white shadow-sm transition-all hover:shadow">
                     <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -148,16 +147,14 @@ new class extends Component {
                                     <div class="max-w-45 flex items-center gap-2 sm:max-w-xs">
                                         {{-- Thumbnail gambar atau placeholder --}}
                                         @if ($item->img_path)
-                                            <img src="{{ Storage::url($item->img_path) }}"
-                                                alt="{{ $item->nama_barang }}"
+                                            <img src="{{ Storage::url($item->img_path) }}" alt="{{ $item->nama_barang }}"
                                                 class="h-7 w-7 shrink-0 rounded-lg border border-stone-200 object-cover dark:border-stone-700" />
                                         @else
                                             <div
                                                 class="bg-sage-100 dark:bg-sage-900/40 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-stone-200 dark:border-stone-700">
                                                 <svg class="text-sage-500 dark:text-sage-400 h-3.5 w-3.5" fill="none"
                                                     stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2"
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                         d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                                                 </svg>
                                             </div>
@@ -175,8 +172,7 @@ new class extends Component {
                                 </td>
 
                                 {{-- Tipe --}}
-                                <td
-                                    class="hidden truncate px-2.5 py-1.5 text-stone-500 sm:table-cell dark:text-stone-400">
+                                <td class="hidden truncate px-2.5 py-1.5 text-stone-500 sm:table-cell dark:text-stone-400">
                                     {{ $item->tipe ?? '-' }}
                                 </td>
 
@@ -205,8 +201,7 @@ new class extends Component {
                                             default => ['—', 'bg-stone-100 dark:bg-stone-800 text-stone-400'],
                                         };
                                     @endphp
-                                    <span
-                                        class="{{ $cls }} inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium">
+                                    <span class="{{ $cls }} inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium">
                                         {{ $lbl }}
                                     </span>
                                 </td>
@@ -219,8 +214,7 @@ new class extends Component {
                                             <span
                                                 class="h-3 w-3 shrink-0 rounded-full border border-stone-300 dark:border-stone-600"
                                                 style="background-color: {{ $item->warna }};"></span>
-                                            <span
-                                                class="max-w-20 truncate capitalize text-stone-500 dark:text-stone-400">
+                                            <span class="max-w-20 truncate capitalize text-stone-500 dark:text-stone-400">
                                                 {{ $item->warna }}
                                             </span>
                                         </div>
@@ -234,20 +228,18 @@ new class extends Component {
                                     @if ($item->dpt_dipinjam)
                                         <span
                                             class="inline-flex items-center gap-1 text-[10px] font-medium text-emerald-600 dark:text-emerald-400">
-                                            <svg class="h-3 w-3" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    stroke-width="2.5" d="M5 13l4 4L19 7" />
+                                            <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                                    d="M5 13l4 4L19 7" />
                                             </svg>
                                             Ya
                                         </span>
                                     @else
                                         <span
                                             class="inline-flex items-center gap-1 text-[10px] font-medium text-stone-400 dark:text-stone-600">
-                                            <svg class="h-3 w-3" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
+                                            <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                                    d="M6 18L18 6M6 6l12 12" />
                                             </svg>
                                             Tidak
                                         </span>
@@ -263,8 +255,8 @@ new class extends Component {
                                             <button @click="open = !open" @click.outside="open = false"
                                                 class="cursor-pointer rounded-md p-1 text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-700 focus:outline-none dark:hover:bg-stone-800 dark:hover:text-stone-200"
                                                 title="Menu Aksi">
-                                                <svg class="h-4 w-4" fill="none" stroke="currentColor"
-                                                    stroke-width="2" viewBox="0 0 24 24">
+                                                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2"
+                                                    viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                         d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
                                                 </svg>
@@ -282,15 +274,13 @@ new class extends Component {
                                                 <div class="space-y-0.5 p-1">
 
                                                     {{-- Detail --}}
-                                                    <button
-                                                        x-on:click="
-                                                        $flux.modal('detail-inventaris-modal').show();
-                                                        $wire.lihatDetail({{ $item->id }});
-                                                        open = false;"
+                                                    <button x-on:click="
+                                                            $flux.modal('detail-inventaris-modal').show();
+                                                            $wire.lihatDetail({{ $item->id }});
+                                                            open = false;"
                                                         class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-stone-600 transition-colors hover:bg-stone-50 dark:text-stone-400 dark:hover:bg-stone-800/60">
                                                         <svg class="h-3.5 w-3.5 text-stone-400" fill="none"
-                                                            stroke="currentColor" stroke-width="2"
-                                                            viewBox="0 0 24 24">
+                                                            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                                 d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178z" />
                                                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -300,15 +290,13 @@ new class extends Component {
                                                     </button>
 
                                                     {{-- Edit --}}
-                                                    <button
-                                                        x-on:click="
-                                                        $flux.modal('edit-inventaris-modal').show();
-                                                        $wire.editInventaris({{ $item->id_inventaris }});
-                                                        open = false;"
+                                                    <button x-on:click="
+                                                            $flux.modal('edit-inventaris-modal').show();
+                                                            $wire.editInventaris({{ $item->id_inventaris }});
+                                                            open = false;"
                                                         class="text-sage-600 dark:text-sage-400 hover:bg-sage-50 dark:hover:bg-sage-950/30 flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs transition-colors">
                                                         <svg class="text-sage-500 h-3.5 w-3.5" fill="none"
-                                                            stroke="currentColor" stroke-width="2"
-                                                            viewBox="0 0 24 24">
+                                                            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                                 d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
                                                         </svg>
@@ -322,8 +310,7 @@ new class extends Component {
                                                         @click="open = false"
                                                         class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-rose-600 transition-colors hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/40">
                                                         <svg class="h-3.5 w-3.5 text-rose-400" fill="none"
-                                                            stroke="currentColor" stroke-width="2"
-                                                            viewBox="0 0 24 24">
+                                                            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                                 d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                                                         </svg>

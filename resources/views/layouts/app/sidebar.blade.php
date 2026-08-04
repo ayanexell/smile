@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' }" :class="{ 'dark': darkMode }"
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
+    x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' }" :class="{ 'dark': darkMode }"
     x-init="$watch('darkMode', val => localStorage.setItem('darkMode', val))">
 
 <head>
@@ -15,12 +16,9 @@
 
             {{-- Logo --}}
             <a href="{{ route('dashboard') }}" wire:navigate
-                class="flex shrink-0 items-center gap-2.5 border-b border-stone-200 px-5 py-3 no-underline dark:border-stone-800">
+                class="flex shrink-0 items-center gap-2.5 border-b border-stone-200 px-5 h-[53px] no-underline dark:border-stone-800">
                 <div class="sidebar-logo-icon">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                    </svg>
+                    <img src="{{ asset('assets/logo.webp') }}" alt="Logo" class="w-8" />
                 </div>
                 <div class="min-w-0">
                     <div class="sidebar-logo-name">SMILE</div>
@@ -44,7 +42,8 @@
                     </a>
                 </div>
 
-                <div class="sidebar-group" x-data="{ open: {{ request()->routeIs(['admin.*', 'koordinator.*', 'user.*']) ? 'true' : 'false' }} }">
+                <div class="sidebar-group"
+                    x-data="{ open: {{ request()->routeIs(['admin.*', 'koordinator.*', 'user.*']) ? 'true' : 'false' }} }">
 
                     @can('isSuperAdminAndAdmin')
                         {{-- Label Grup Menu --}}
@@ -54,8 +53,8 @@
                             class="sidebar-item {{ request()->routeIs('admin.departemens') ? 'active' : '' }} flex w-full cursor-pointer items-center justify-between py-1.5 text-left text-xs transition-colors">
                             <div class="flex items-center gap-2.5">
                                 {{-- Ikon Departemens --}}
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor"
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                    stroke="currentColor"
                                     class="h-3.5 w-3.5 shrink-0 text-stone-400 group-[.active]:text-current dark:text-stone-500">
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 21h7.5V10.75M2.25 21h1.5m18 0h-18M2.25 9l4.5-1.636M18.75 3l-1.5.545m0 6.205 3 1m1.5.5-1.5-.5M6.75 7.364V3h-3v18m3-13.636 10.5-3.819" />
@@ -140,8 +139,7 @@
                             class="sidebar-item {{ request()->routeIs('admin.inventaris') ? 'active' : '' }} flex w-full cursor-pointer items-center justify-between py-1.5 text-left text-xs transition-colors">
                             <div class="flex items-center gap-2.5">
                                 {{-- Ikon Inventaris --}}
-                                <svg width="800px" height="800px" viewBox="0 0 20 20"
-                                    xmlns="http://www.w3.org/2000/svg">
+                                <svg class="w-3.5 h-3.5" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                     <path fill-rule="evenodd"
                                         d="M20 9c0 .55-.45 1-1 1h-2v2c0 .55-.45 1-1 1s-1-.45-1-1v-2h-2c-.55 0-1-.45-1-1s.45-1 1-1h2V6c0-.55.45-1 1-1s1 .45 1 1v2h2c.55 0 1 .45 1 1zM4 8h3V3H4v5zm-2 9h5v-7H2v7zm14-2c-.55 0-1 .45-1 1v1H9V6h3c.55 0 1-.45 1-1s-.45-1-1-1H9V2c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v6H1c-.55 0-1 .45-1 1v9c0 .55.45 1 1 1h15c.55 0 1-.45 1-1v-2c0-.55-.45-1-1-1z"
                                         fill="currentColor" />
@@ -156,8 +154,7 @@
                             class="sidebar-item {{ request()->routeIs('admin.peminjaman') ? 'active' : '' }} flex w-full cursor-pointer items-center justify-between py-1.5 text-left text-xs transition-colors">
                             <div class="flex items-center gap-2.5">
                                 {{-- Ikon Peminjamans --}}
-                                <svg fill="currentColor" version="1.1" id="Layer_1"
-                                    xmlns="http://www.w3.org/2000/svg"
+                                <svg fill="currentColor" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
                                     class="{{ request()->routeIs('admin.peminjaman') ? 'w-3.5 h-3.5' : '' }} h-3 w-3"
                                     xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 502.56 502.56"
                                     xml:space="preserve">
@@ -220,8 +217,7 @@
                             class="sidebar-item {{ request()->routeIs('koordinator.peminjaman') ? 'active' : '' }} flex w-full cursor-pointer items-center justify-between py-1.5 text-left text-xs transition-colors">
                             <div class="flex items-center gap-2.5">
                                 {{-- Ikon Peminjamans --}}
-                                <svg fill="currentColor" version="1.1" id="Layer_1"
-                                    xmlns="http://www.w3.org/2000/svg"
+                                <svg fill="currentColor" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
                                     class="{{ request()->routeIs('koordinator.peminjaman') ? 'w-3.5 h-3.5' : '' }} h-3 w-3"
                                     xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 502.56 502.56"
                                     xml:space="preserve">
@@ -271,8 +267,7 @@
                             class="sidebar-item {{ request()->routeIs('user.peminjaman') ? 'active' : '' }} flex w-full cursor-pointer items-center justify-between py-1.5 text-left text-xs transition-colors">
                             <div class="flex items-center gap-2.5">
                                 {{-- Ikon Peminjamans --}}
-                                <svg fill="currentColor" version="1.1" id="Layer_1"
-                                    xmlns="http://www.w3.org/2000/svg"
+                                <svg fill="currentColor" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
                                     class="{{ request()->routeIs('user.peminjaman') ? 'w-3.5 h-3.5' : '' }} h-3 w-3"
                                     xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 502.56 502.56"
                                     xml:space="preserve">
@@ -310,8 +305,8 @@
             {{-- Mobile header --}}
             <header class="mobile-header">
                 <button class="header-icon-btn" onclick="toggleSidebar()" aria-label="Menu">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" class="h-5 w-5">
                         <line x1="3" y1="6" x2="21" y2="6" />
                         <line x1="3" y1="12" x2="21" y2="12" />
                         <line x1="3" y1="18" x2="21" y2="18" />
@@ -353,13 +348,11 @@
                     <button x-data variant="segmented" x-model="$flux.appearance"
                         class="cursor-pointer rounded-lg p-2 text-stone-500 transition-colors hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800"
                         :aria-label="darkMode ? 'Dark Mode' : 'Light Mode'" @click="darkMode = !darkMode">
-                        <svg x-show="!darkMode" class="h-5 w-5" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24">
+                        <svg x-show="!darkMode" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
                         </svg>
-                        <svg x-show="darkMode" class="h-5 w-5" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24">
+                        <svg x-show="darkMode" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                         </svg>
@@ -394,9 +387,9 @@
     </div>
 
     @persist('toast')
-        <flux:toast.group>
-            <flux:toast />
-        </flux:toast.group>
+    <flux:toast.group>
+        <flux:toast />
+    </flux:toast.group>
     @endpersist
 
     @fluxScripts
@@ -407,20 +400,20 @@
             document.getElementById('sidebarOverlay').classList.toggle('open');
         }
 
-        // function toggleDark() {
-        //     const isDark = document.documentElement.classList.toggle('dark');
-        //     localStorage.setItem('theme', isDark ? 'dark' : 'light');
-        //     document.getElementById('iconSun').classList.toggle('hidden', isDark);
-        // }
+        function toggleDark() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            document.getElementById('iconSun').classList.toggle('hidden', isDark);
+        }
 
-        // // Inisialisasi tema
-        // (function() {
-        //     const saved = localStorage.getItem('theme');
-        //     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        //     const isDark = saved === 'dark' || (!saved && prefersDark);
-        //     document.documentElement.classList.toggle('dark', isDark);
-        //     document.getElementById('iconSun').classList.toggle('hidden', isDark);
-        // })();
+        // Inisialisasi tema
+        (function () {
+            const saved = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const isDark = saved === 'dark' || (!saved && prefersDark);
+            document.documentElement.classList.toggle('dark', isDark);
+            document.getElementById('iconSun').classList.toggle('hidden', isDark);
+        })();
     </script>
 
 </body>

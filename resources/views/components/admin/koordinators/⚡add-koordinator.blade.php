@@ -3,28 +3,31 @@
 use Livewire\Component;
 use App\Livewire\Forms\UserForm;
 use App\Models\User;
+use App\Models\Roles;
 use Illuminate\Validation\ValidationException;
 
 new class extends Component {
     public UserForm $form;
-    public $user;
+    public $departemens;
+    public ?User $user;
 
-    public function editAdmin(User $userId)
+    public function create()
     {
-        $this->user = $userId;
-        $this->form->setUser($userId);
+        $roleId = Roles::where('nama_role', 'Koordinator')->value('id_role');
+        try {
+            $this->form->store($roleId, $this->form->departemen_id);
+            session()->flash('success', 'Koordinator berhasil ditambahkan.');
+            $this->dispatch('added-success', message: 'Koordinator berhasil ditambahkan.');
+        } catch (ValidationException $e) {
+            // Tangani kesalahan jika terjadi
+            session()->flash('error', 'Terjadi kesalahan saat membuat koordinator: ' . $e->getMessage());
+            $this->dispatch('added-error', message: 'Terjadi kesalahan saat membuat koordinator: ' . $e->getMessage());
+        }
     }
 
-    public function updateAdmin()
+    public function mount()
     {
-        try {
-            $this->form->update();
-            session()->flash('success', 'Informasi pengguna berhasil diperbarui.');
-            $this->dispatch('update-success', ['message' => 'Informasi pengguna berhasil diperbarui.']);
-        } catch (ValidationException $e) {
-            // Tangani error validasi jika diperlukan
-            $this->dispatch('update-error', ['message' => 'Terjadi kesalahan saat memperbarui data: ' . $e->getMessage()]);
-        }
+        $this->departemens = \App\Models\Departemens::all();
     }
 };
 ?>
@@ -36,39 +39,38 @@ new class extends Component {
         errorMessage: '',
         idPeminjaman: null,
         init() {
-            window.addEventListener('edit-admin-modal', (e) => {
+            window.addEventListener('add-koordinator-modal', (e) => {
                 this.message = '';
-                $wire.editAdmin(e.detail.userId);
                 this.errorMessage = ''; // reset error setiap kali buka
                 this.show = true;
             });
 
             // Event sukses dari Livewire
-            window.addEventListener('update-success', (e) => {
+            window.addEventListener('added-success', (e) => {
                 this.show = false;
                 this.successMessage = e.detail.message;
             });
 
             // Event error dari Livewire
-            window.addEventListener('update-error', (e) => {
+            window.addEventListener('added-error', (e) => {
                 this.errorMessage = e.detail.message;
             });
         },
     }" x-show="show" x-transition.opacity
         class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-3 text-xs sm:p-4" x-cloak
         @click.self="show = false">
-        {{-- Form Submit diarahkan ke method updateAdmin di komponen Livewire --}}
+        {{-- Form Submit diarahkan ke method create di komponen Livewire --}}
         <div class="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-lg bg-white shadow-xl dark:bg-stone-900"
             @click.stop>
-            <form wire:submit.prevent="updateAdmin" class="relative space-y-3 p-4">
+            <form wire:submit.prevent="create" class="relative space-y-3 p-4">
 
                 {{-- Header Modal --}}
                 <div>
                     <h3 class="text-sm font-semibold text-stone-800 dark:text-stone-100">
-                        {{ __('Ubah Informasi Pengguna') }}
+                        {{ __('Tambah Koordinator') }}
                     </h3>
                     <p class="mt-0.5 text-[11px] leading-normal text-stone-500 dark:text-stone-400">
-                        {{ __('Perbarui data detail akun dan profil user yang terpilih.') }}
+                        {{ __('Tambahkan data detail akun dan profil koordinator baru.') }}
                     </p>
                 </div>
 
@@ -86,7 +88,7 @@ new class extends Component {
 
                 <div class="relative">
                     {{-- Indikator Loading khusus saat method create berjalan --}}
-                    <div wire:loading wire:target="editAdmin"
+                    <div wire:loading wire:target="create"
                         class="absolute inset-0 z-50 flex items-center justify-center rounded-md bg-white/60 backdrop-blur-[0.5px] dark:bg-stone-900/60">
                         <div
                             class="flex items-center gap-1.5 rounded-md border border-stone-100 bg-white px-2.5 py-1.5 shadow-sm dark:border-stone-700 dark:bg-stone-800">
@@ -97,13 +99,13 @@ new class extends Component {
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V12H4z"></path>
                             </svg>
                             <span class="text-[10px] font-medium text-stone-600 dark:text-stone-300">
-                                {{ __('Menyimpan data...') }}
+                                {{ __('Mengambil data...') }}
                             </span>
                         </div>
                     </div>
 
                     {{-- Indikator Loading khusus saat method create berjalan --}}
-                    <div wire:loading wire:target="updateAdmin"
+                    <div wire:loading wire:target="create"
                         class="absolute inset-0 z-50 flex items-center justify-center rounded-md bg-white/60 backdrop-blur-[0.5px] dark:bg-stone-900/60">
                         <div
                             class="flex items-center gap-1.5 rounded-md border border-stone-100 bg-white px-2.5 py-1.5 shadow-sm dark:border-stone-700 dark:bg-stone-800">
@@ -200,6 +202,25 @@ new class extends Component {
                             </div>
                         </div>
 
+                        {{-- Departemen --}}
+                        <div>
+                            <label class="mb-0.5 block text-[11px] font-medium text-stone-600 dark:text-stone-400">
+                                {{ __('Departemen') }}
+                            </label>
+                            <select wire:model="form.departemen_id" required
+                                class="focus:border-sage-500 focus:ring-sage-500 w-full rounded-md border border-stone-200 bg-stone-50 px-2.5 py-1.5 text-xs text-stone-800 focus:outline-none focus:ring-1 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-100">
+                                <option value="">{{ __('Pilih...') }}</option>
+                                @foreach ($departemens as $departemen)
+                                    <option value="{{ $departemen->id_departemen }}">
+                                        {{ $departemen->nama_departemen }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('form.departemen_id')
+                                <p class="mt-0.5 text-[10px] text-red-500">{{ $message }}</p>
+                            @enderror
+                        </div>
+
                         {{-- Baris 4: Pekerjaan --}}
                         <div>
                             <label class="mb-0.5 block text-[11px] font-medium text-stone-600 dark:text-stone-400">
@@ -208,6 +229,18 @@ new class extends Component {
                             <input wire:model="form.pekerjaan" type="text" placeholder="Contoh: Staff Administrasi"
                                 class="focus:border-sage-500 focus:ring-sage-500 w-full rounded-md border border-stone-200 bg-stone-50 px-2.5 py-1.5 text-xs text-stone-800 placeholder:text-stone-400 focus:outline-none focus:ring-1 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-100" />
                             @error('form.pekerjaan')
+                                <p class="mt-0.5 text-[10px] text-red-500">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        {{-- Password --}}
+                        <div>
+                            <label class="mb-0.5 block text-[11px] font-medium text-stone-600 dark:text-stone-400">
+                                {{ __('Password') }}
+                            </label>
+                            <input wire:model="form.password" type="password" placeholder="Minimal 8 karakter" required
+                                class="focus:border-sage-500 focus:ring-sage-500 w-full rounded-md border border-stone-200 bg-stone-50 px-2.5 py-1.5 text-xs text-stone-800 placeholder:text-stone-400 focus:outline-none focus:ring-1 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-100" />
+                            @error('form.password')
                                 <p class="mt-0.5 text-[10px] text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
@@ -235,7 +268,7 @@ new class extends Component {
                     </button>
 
                     {{-- Tombol simpan otomatis disabled saat data sedang dimuat --}}
-                    <button type="submit" wire:loading.attr="disabled" wire:target="editAdmin"
+                    <button type="submit" wire:loading.attr="disabled" wire:target="editKoordinator"
                         class="cursor-pointer bg-sage-600 hover:bg-sage-700 focus:ring-sage-500 dark:bg-sage-500 dark:hover:bg-sage-600 rounded-md px-3 py-1.5 text-xs font-medium text-white transition focus:outline-none focus:ring-2 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-60">
                         {{ __('Perbarui Data') }}
                     </button>

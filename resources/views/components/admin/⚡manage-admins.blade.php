@@ -80,8 +80,7 @@ new class extends Component {
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
                     </svg>
-                    <input wire:model.live.debounce.300ms="search" type="text"
-                        placeholder="Cari nama, NIK, atau email…"
+                    <input wire:model.live.debounce.300ms="search" type="text" placeholder="Cari nama, NIK, atau email…"
                         class="focus:ring-sage-500 w-full rounded-lg border border-stone-200 bg-stone-50 py-1.5 pl-8 pr-3 text-xs text-stone-800 transition placeholder:text-stone-400 focus:border-transparent focus:outline-none focus:ring-1 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-100 dark:placeholder:text-stone-500" />
                 </div>
 
@@ -115,8 +114,7 @@ new class extends Component {
                 </span>
                 <div wire:loading class="text-sage-600 dark:text-sage-400 flex items-center gap-1 text-[11px]">
                     <svg class="h-3 w-3 animate-spin" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                            stroke-width="4" />
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
                     </svg>
                     {{ __('Memuat…') }}
@@ -135,7 +133,7 @@ new class extends Component {
                             <th class="hidden px-2.5 py-1.5 md:table-cell">{{ __('Tgl. Lahir') }}</th>
                             <th class="hidden w-10 px-2.5 py-1.5 text-center sm:table-cell">{{ __('JK') }}</th>
                             <th class="hidden px-2.5 py-1.5 xl:table-cell">{{ __('Alamat') }}</th>
-                            <th class="hidden px-2.5 py-1.5 lg:table-cell">{{ __('Pekerjaan') }}</th>
+                            <th class="hidden px-2.5 py-1.5 lg:table-cell">{{ __('Jabatan') }}</th>
                             <th class="w-20 px-2.5 py-1.5 text-right">{{ __('Aksi') }}</th>
                         </tr>
                     </thead>
@@ -157,7 +155,8 @@ new class extends Component {
                                         </div>
                                         <div class="truncate">
                                             <div class="truncate font-medium text-stone-800 dark:text-stone-200">
-                                                {{ $user->nama_lengkap }}</div>
+                                                {{ $user->nama_lengkap }}
+                                            </div>
                                             <div class="truncate text-[10px] text-stone-400 dark:text-stone-500"
                                                 title="{{ $user->email }}">{{ $user->email }}</div>
                                         </div>
@@ -165,8 +164,7 @@ new class extends Component {
                                 </td>
 
                                 {{-- NIK (Sembunyi di HP) --}}
-                                <td
-                                    class="hidden px-2.5 py-1.5 font-mono text-stone-500 sm:table-cell dark:text-stone-400">
+                                <td class="hidden px-2.5 py-1.5 font-mono text-stone-500 sm:table-cell dark:text-stone-400">
                                     {{ $user->nik }}
                                 </td>
 
@@ -194,8 +192,7 @@ new class extends Component {
                                 </td>
 
                                 {{-- Pekerjaan (Hanya tampil di desktop) --}}
-                                <td
-                                    class="hidden truncate px-2.5 py-1.5 text-stone-500 lg:table-cell dark:text-stone-400">
+                                <td class="hidden truncate px-2.5 py-1.5 text-stone-500 lg:table-cell dark:text-stone-400">
                                     {{ __($user->pekerjaan) }}
                                 </td>
 
@@ -208,8 +205,8 @@ new class extends Component {
                                             <button @click="open = !open" @click.outside="open = false"
                                                 class="cursor-pointer rounded-md p-1 text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-700 focus:outline-none dark:hover:bg-stone-800 dark:hover:text-stone-200"
                                                 title="Menu Aksi">
-                                                <svg class="h-4 w-4" fill="none" stroke="currentColor"
-                                                    stroke-width="2" viewBox="0 0 24 24">
+                                                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2"
+                                                    viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                         d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
                                                 </svg>
@@ -227,15 +224,12 @@ new class extends Component {
                                                 <div class="space-y-0.5 p-1">
 
                                                     {{-- Edit --}}
-                                                    <button x-data
-                                                        x-on:click="$dispatch('edit-admin-modal', {
-                                                            userId: {{ $user->id_user }},
-                                                        })"
-                                                        @click="open = false"
+                                                    <button x-data x-on:click="$dispatch('edit-admin-modal', {
+                                                                                                userId: {{ $user->id_user }},
+                                                                                            })" @click="open = false"
                                                         class="text-sage-600 dark:text-sage-400 hover:bg-sage-50 dark:hover:bg-sage-950/30 flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs transition-colors">
                                                         <svg class="text-sage-500 h-3.5 w-3.5" fill="none"
-                                                            stroke="currentColor" stroke-width="2"
-                                                            viewBox="0 0 24 24">
+                                                            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                                 d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
                                                         </svg>
@@ -250,8 +244,7 @@ new class extends Component {
                                                         @click="open = false"
                                                         class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40">
                                                         <svg class="h-3.5 w-3.5 text-red-400" fill="none"
-                                                            stroke="currentColor" stroke-width="2"
-                                                            viewBox="0 0 24 24">
+                                                            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                                 d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                                                         </svg>
@@ -288,51 +281,7 @@ new class extends Component {
 
     <livewire:admin.admins.add-admin />
     <livewire:admin.admins.edit-admin />
-
-    {{-- Modal Hapus --}}
-    <div x-data="{
-        show: false,
-        idUser: null,
-        init() {
-            window.addEventListener('open-delete-modal', (e) => {
-                this.idUser = e.detail.id;
-                this.show = true;
-            });
-        },
-        hapus() {
-            $wire.deleteAdmin(this.idUser)
-                .then(() => { this.show = false; });
-        }
-    }" x-show="show" x-transition.opacity
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm dark:bg-black/60"
-        x-cloak>
-        <div class="w-full max-w-xs rounded-xl border border-stone-200 bg-white p-5 shadow-2xl dark:border-stone-800 dark:bg-stone-900"
-            @click.outside="show = false">
-            <div class="flex items-start gap-3">
-                <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-red-50 dark:bg-red-950">
-                    <svg class="h-4 w-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-                    </svg>
-                </div>
-                <div class="flex-1">
-                    <h3 class="mb-0.5 text-sm font-semibold text-stone-800 dark:text-stone-100">Hapus Peminjaman
-                    </h3>
-                    <p class="text-xs text-stone-500 dark:text-stone-400">Data peminjaman akan dihapus permanen
-                        dari sistem.</p>
-                </div>
-            </div>
-            <div class="mt-5 flex gap-2">
-                <button @click="show = false"
-                    class="flex-1 cursor-pointer rounded-lg border border-stone-200 px-3 py-2 text-xs font-medium text-stone-700 transition-colors hover:bg-stone-50 dark:border-stone-700 dark:text-stone-300 dark:hover:bg-stone-800">
-                    Batal
-                </button>
-                <button @click="hapus()"
-                    class="flex-1 cursor-pointer rounded-lg bg-red-500 px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-red-600">
-                    Ya, Hapus
-                </button>
-            </div>
-        </div>
-    </div>
+    <x-modal-hapus modal_name="open-delete-modal" action_hapus="deleteAdmin" title="Hapus Admin"
+        description="Data admin akan dihapus permanen dari sistem." />
 
 </div>
