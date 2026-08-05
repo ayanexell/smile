@@ -122,9 +122,10 @@ return [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
-    'fonnte' => [
-        'token' => env('TOKEN_FONNTE'),
-        'endpoint' => 'https://api.fonnte.com/send'
+    'goowa' => [
+        'device_id' => env('GOOWA_DEVICE_ID', 'SMILE'),
+        'endpoint' => env('GOOWA_ENDPOINT', 'http://localhost:3000/send/message'),
+        'credentials' => env('GOOWA_CREDENTIALS', 'admin:admin'),
     ]
 
 ];

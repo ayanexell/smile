@@ -5,8 +5,9 @@ use Livewire\WithPagination;
 use App\Models\User;
 use App\Models\Roles;
 use App\Models\Departemens;
+use Livewire\Attributes\Title;
 
-new class extends Component {
+new #[Title('Manage Koordinator')] class extends Component {
     use WithPagination;
 
     public string $search = '';
@@ -62,6 +63,25 @@ new class extends Component {
 
     <div class="mx-auto mt-2 max-w-7xl space-y-2">
 
+        <div x-data="{ show: true }" x-show="show"
+            class="flex select-none items-center gap-2.5 rounded-lg border border-amber-200 bg-amber-50 py-2 pl-3 pr-2.5 text-amber-700 shadow-xl shadow-stone-200/50 dark:border-amber-900/60 dark:bg-amber-950/30 dark:text-amber-300 dark:shadow-none">
+            <div class="shrink-0">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+            </div>
+            <div class="flex-1 text-[9px] font-medium leading-normal">
+                <span>Harap diperhatikan bahwa menghapus akun Koordinator dapat menyebabkan semua Inventaris yang
+                    berhubungan dengan akun tersebut akan dihapus secara permanen. </span>
+            </div>
+            <button @click="show = false"
+                class="shrink-0 rounded p-1 text-stone-400 transition-colors hover:text-stone-600 dark:hover:text-stone-200">
+                <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
         {{-- ── FLASH MESSAGE ── --}}
         @if (session('success'))
             <div
@@ -84,7 +104,8 @@ new class extends Component {
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
                     </svg>
-                    <input wire:model.live.debounce.300ms="search" type="text" placeholder="Cari nama, NIK, atau email…"
+                    <input wire:model.live.debounce.300ms="search" type="text"
+                        placeholder="Cari nama, NIK, atau email…"
                         class="focus:ring-sage-500 w-full rounded-lg border border-stone-200 bg-stone-50 py-1.5 pl-8 pr-3 text-xs text-stone-800 transition placeholder:text-stone-400 focus:border-transparent focus:outline-none focus:ring-1 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-100 dark:placeholder:text-stone-500" />
                 </div>
 
@@ -106,7 +127,7 @@ new class extends Component {
                 </select>
 
                 <a x-data x-on:click="$dispatch('add-koordinator-modal')"
-                    class="cursor-pointer bg-sage-600 hover:bg-sage-700 dark:bg-sage-500 dark:hover:bg-sage-600 inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-xs font-semibold text-white shadow-sm transition-colors">
+                    class="bg-sage-600 hover:bg-sage-700 dark:bg-sage-500 dark:hover:bg-sage-600 inline-flex cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-xs font-semibold text-white shadow-sm transition-colors">
                     <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
@@ -127,7 +148,8 @@ new class extends Component {
                 </span>
                 <div wire:loading class="text-sage-600 dark:text-sage-400 flex items-center gap-1 text-[11px]">
                     <svg class="h-3 w-3 animate-spin" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                            stroke-width="4" />
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
                     </svg>
                     {{ __('Memuat…') }}
@@ -178,7 +200,8 @@ new class extends Component {
                                 </td>
 
                                 {{-- NIK (Sembunyi di HP) --}}
-                                <td class="hidden px-2.5 py-1.5 font-mono text-stone-500 sm:table-cell dark:text-stone-400">
+                                <td
+                                    class="hidden px-2.5 py-1.5 font-mono text-stone-500 sm:table-cell dark:text-stone-400">
                                     {{ $user->nik }}
                                 </td>
 
@@ -198,9 +221,11 @@ new class extends Component {
                                 {{-- Gender (Dipersingkat) --}}
                                 <td class="hidden px-2.5 py-1.5 text-center sm:table-cell">
                                     @if ($user->jenis_kelamin === 'laki-laki')
-                                        <span class="font-semibold text-blue-600 dark:text-blue-400" title="Laki-laki">L</span>
+                                        <span class="font-semibold text-blue-600 dark:text-blue-400"
+                                            title="Laki-laki">L</span>
                                     @else
-                                        <span class="font-semibold text-pink-600 dark:text-pink-400" title="Perempuan">P</span>
+                                        <span class="font-semibold text-pink-600 dark:text-pink-400"
+                                            title="Perempuan">P</span>
                                     @endif
                                 </td>
 
@@ -211,7 +236,8 @@ new class extends Component {
                                 </td>
 
                                 {{-- Pekerjaan (Hanya tampil di desktop) --}}
-                                <td class="hidden truncate px-2.5 py-1.5 text-stone-500 lg:table-cell dark:text-stone-400">
+                                <td
+                                    class="hidden truncate px-2.5 py-1.5 text-stone-500 lg:table-cell dark:text-stone-400">
                                     {{ __($user->pekerjaan) }}
                                 </td>
 
@@ -224,8 +250,8 @@ new class extends Component {
                                             <button @click="open = !open" @click.outside="open = false"
                                                 class="cursor-pointer rounded-md p-1 text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-700 focus:outline-none dark:hover:bg-stone-800 dark:hover:text-stone-200"
                                                 title="Menu Aksi">
-                                                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2"
-                                                    viewBox="0 0 24 24">
+                                                <svg class="h-4 w-4" fill="none" stroke="currentColor"
+                                                    stroke-width="2" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                         d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
                                                 </svg>
@@ -243,13 +269,15 @@ new class extends Component {
                                                 <div class="space-y-0.5 p-1">
 
                                                     {{-- Edit --}}
-                                                    <button x-data x-on:click="$dispatch('edit-koordinator-modal', {
+                                                    <button x-data
+                                                        x-on:click="$dispatch('edit-koordinator-modal', {
                                                                                                                             userId: {{ $user->id_user }},
                                                                                                                         })"
                                                         @click="open = false"
                                                         class="text-sage-600 dark:text-sage-400 hover:bg-sage-50 dark:hover:bg-sage-950/30 flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs transition-colors">
                                                         <svg class="text-sage-500 h-3.5 w-3.5" fill="none"
-                                                            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                            stroke="currentColor" stroke-width="2"
+                                                            viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                                 d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
                                                         </svg>
@@ -264,7 +292,8 @@ new class extends Component {
                                                         @click="open = false"
                                                         class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40">
                                                         <svg class="h-3.5 w-3.5 text-red-400" fill="none"
-                                                            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                            stroke="currentColor" stroke-width="2"
+                                                            viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                                 d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                                                         </svg>

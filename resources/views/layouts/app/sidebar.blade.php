@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
-    x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' }" :class="{ 'dark': darkMode }"
-    x-init="$watch('darkMode', val => localStorage.setItem('darkMode', val))">
+    x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' }" :class="{ 'dark': darkMode }">
 
 <head>
     @include('partials.head')
@@ -400,20 +399,20 @@
             document.getElementById('sidebarOverlay').classList.toggle('open');
         }
 
-        function toggleDark() {
-            const isDark = document.documentElement.classList.toggle('dark');
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
-            document.getElementById('iconSun').classList.toggle('hidden', isDark);
-        }
+        // function toggleDark() {
+        //     const isDark = document.documentElement.classList.toggle('dark');
+        //     localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        //     document.getElementById('iconSun').classList.toggle('hidden', isDark);
+        // }
 
         // Inisialisasi tema
-        (function () {
-            const saved = localStorage.getItem('theme');
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            const isDark = saved === 'dark' || (!saved && prefersDark);
-            document.documentElement.classList.toggle('dark', isDark);
-            document.getElementById('iconSun').classList.toggle('hidden', isDark);
-        })();
+        // (function () {
+        //     const saved = localStorage.getItem('theme');
+        //     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        //     const isDark = saved === 'dark' || (!saved && prefersDark);
+        //     document.documentElement.classList.toggle('dark', isDark);
+        //     document.getElementById('iconSun').classList.toggle('hidden', isDark);
+        // })();
     </script>
 
 </body>

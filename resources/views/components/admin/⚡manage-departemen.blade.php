@@ -2,8 +2,9 @@
 
 use Livewire\Component;
 use App\Models\Departemens;
+use Livewire\Attributes\Title;
 
-new class extends Component {
+new #[Title('Manage Departemen')] class extends Component {
     public $search = '';
     public $nama_departemen;
     public $singkatan;

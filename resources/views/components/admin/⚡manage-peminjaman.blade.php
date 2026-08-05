@@ -116,19 +116,7 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
 ?>
 
 <div>
-    {{-- ── PAGE HEADER ── --}}
-    <div class="border-b border-stone-200 bg-white px-5 py-3.5 dark:border-stone-800 dark:bg-stone-900">
-        <div class="mx-auto flex max-w-7xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-                <div class="mb-0.5 flex items-center gap-2">
-                    <span
-                        class="text-sage-600 dark:text-sage-400 font-mono text-[9px] uppercase tracking-widest">Manajemen</span>
-                </div>
-                <h1 class="font-display text-xl font-semibold text-stone-800 dark:text-stone-100">Daftar Peminjaman</h1>
-                <p class="mt-0.5 text-xs text-stone-500 dark:text-stone-400">Kelola semua peminjaman sistem SMILE</p>
-            </div>
-        </div>
-    </div>
+    <x-page-header title="Daftar Peminjaman" subtitle="Kelola semua peminjaman sistem SMILE" />
 
     <div class="mx-auto mt-2 max-w-7xl space-y-2">
 
@@ -142,7 +130,8 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                 <div
                     class="flex select-none items-center gap-2.5 rounded-lg border border-emerald-100 bg-white py-2 pl-3 pr-2.5 shadow-xl shadow-stone-200/50 dark:border-emerald-950/60 dark:bg-stone-900 dark:shadow-none">
                     <div class="shrink-0 text-emerald-500 dark:text-emerald-400">
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5"
+                            viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
@@ -286,7 +275,8 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                                 class="bg-sage-100 dark:bg-sage-900/40 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-stone-200 dark:border-stone-700">
                                                 <svg class="text-sage-500 dark:text-sage-400 h-3.5 w-3.5" fill="none"
                                                     stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
                                                         d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                                                 </svg>
                                             </div>
@@ -350,7 +340,8 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                             default => ['—', 'bg-stone-100 dark:bg-stone-800 text-stone-400'],
                                         };
                                     @endphp
-                                    <span class="{{ $cls }} inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium">
+                                    <span
+                                        class="{{ $cls }} inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium">
                                         {{ $lbl }}
                                     </span>
                                 </td>
@@ -364,8 +355,8 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                             <button @click="open = !open" @click.outside="open = false"
                                                 class="cursor-pointer rounded-md p-1 text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-700 focus:outline-none dark:hover:bg-stone-800 dark:hover:text-stone-200"
                                                 title="Menu Aksi">
-                                                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2"
-                                                    viewBox="0 0 24 24">
+                                                <svg class="h-4 w-4" fill="none" stroke="currentColor"
+                                                    stroke-width="2" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                         d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
                                                 </svg>
@@ -387,9 +378,9 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                                         x-on:click="
                                                                                     $wire.acceptPeminjaman({{ $peminjaman->id_peminjaman }})"
                                                         class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-green-500 transition-colors hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-950/30">
-                                                        <svg fill="currentColor" class="h-3.5 w-3.5" viewBox="0 0 24 24"
-                                                            id="check-mark-circle-2" xmlns="http://www.w3.org/2000/svg"
-                                                            class="icon line">
+                                                        <svg fill="currentColor" class="h-3.5 w-3.5"
+                                                            viewBox="0 0 24 24" id="check-mark-circle-2"
+                                                            xmlns="http://www.w3.org/2000/svg" class="icon line">
                                                             <path id="primary"
                                                                 d="M20.94,11A8.26,8.26,0,0,1,21,12a9,9,0,1,1-9-9,8.83,8.83,0,0,1,4,1"
                                                                 style="fill: none; stroke: rgb(3, 251, 44); stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.5;">
@@ -409,8 +400,8 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                                         <svg class="color-rose-600 h-3.5 w-3.5" viewBox="0 0 24 24"
                                                             role="img" xmlns="http://www.w3.org/2000/svg"
                                                             aria-labelledby="cancelIconTitle" stroke="currentColor"
-                                                            stroke-width="1" stroke-linecap="square" stroke-linejoin="miter"
-                                                            fill="none">
+                                                            stroke-width="1" stroke-linecap="square"
+                                                            stroke-linejoin="miter" fill="none">
                                                             <title id="cancelIconTitle">Cancel</title>
                                                             <path
                                                                 d="M15.5355339 15.5355339L8.46446609 8.46446609M15.5355339 8.46446609L8.46446609 15.5355339" />
@@ -440,8 +431,8 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                                         x-on:click="
                                                                                         $wire.returnPeminjaman({{ $peminjaman->id_peminjaman }})"
                                                         class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-blue-600 transition-colors hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-950/40">
-                                                        <svg fill="currentColor" class="h-3 w-3" version="1.1" id="Capa_1"
-                                                            xmlns="http://www.w3.org/2000/svg"
+                                                        <svg fill="currentColor" class="h-3 w-3" version="1.1"
+                                                            id="Capa_1" xmlns="http://www.w3.org/2000/svg"
                                                             xmlns:xlink="http://www.w3.org/1999/xlink"
                                                             viewBox="0 0 384.97 384.97" xml:space="preserve">
                                                             <g>
@@ -465,7 +456,8 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                                     <flux:separator />
 
                                                     {{-- Chat Whatsapp --}}
-                                                    <button x-data x-on:click="$dispatch('open-wa-modal', {
+                                                    <button x-data
+                                                        x-on:click="$dispatch('open-wa-modal', {
                                                                                         id: {{ $peminjaman->id_peminjaman }},
                                                                                         defaultTarget: '{{ $peminjaman->user->no_wa ?? '' }}'
                                                                                     })"
@@ -484,7 +476,8 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                                         x-on:click="$dispatch('open-delete-modal', { id: {{ $peminjaman->id_peminjaman }} })"
                                                         class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-rose-600 transition-colors hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/40">
                                                         <svg class="h-3.5 w-3.5 text-rose-400" fill="none"
-                                                            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                            stroke="currentColor" stroke-width="2"
+                                                            viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                                 d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                                                         </svg>
@@ -622,13 +615,13 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
 
                 <div class="relative">
                     <div wire:loading wire:target="sendWhatsAppMessage"
-                        class="pt-10 absolute inset-0 z-50 flex items-center justify-center rounded-md bg-white/60 backdrop-blur-[0.5px] dark:bg-stone-900/60">
+                        class="absolute inset-0 z-50 flex items-center justify-center rounded-md bg-white/60 pt-10 backdrop-blur-[0.5px] dark:bg-stone-900/60">
                         <div
                             class="flex items-center gap-1.5 rounded-md border border-stone-100 bg-white px-2.5 py-1.5 shadow-sm dark:border-stone-700 dark:bg-stone-800">
                             <svg class="text-sage-600 dark:text-sage-400 h-3.5 w-3.5 animate-spin" fill="none"
                                 viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                    stroke-width="4"></circle>
+                                <circle class="opacity-25" cx="12" cy="12" r="10"
+                                    stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V12H4z"></path>
                             </svg>
                             <span class="text-[10px] font-medium text-stone-600 dark:text-stone-300">
