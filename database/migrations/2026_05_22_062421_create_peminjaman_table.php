@@ -18,8 +18,8 @@ return new class extends Migration {
             $table->datetime('tgl_pengembalian');
             $table->integer('jumlah');
             $table->string('status');
-            $table->integer('hibah');
-            $table->boolean('lambat');
+            $table->integer('hibah')->nullable();
+            $table->boolean('lambat')->nullable();
             $table->timestamps();
             $table->foreign('user_id')->references('id_user')->on('users');
             $table->foreign('inventaris_id')->references('id_inventaris')->on('inventaris');

@@ -118,7 +118,18 @@ new #[Title('Manajemen Peminjaman User')] class extends Component {
                     <option value="dipinjam">Dipinjam</option>
                     <option value="dikembalikan">Dikembalikan</option>
                 </select>
-
+                {{-- Button List Inventaris --}}
+                <a href="{{ route('list-inventaris') }}"
+                    class="dark:bg-green-20 flex cursor-pointer items-center gap-2 rounded bg-green-100 px-2.5 py-1.5 text-left text-xs text-green-600 transition-colors dark:text-green-400 dark:hover:bg-green-300 dark:hover:text-white">
+                    <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                            d="M20 9c0 .55-.45 1-1 1h-2v2c0 .55-.45 1-1 1s-1-.45-1-1v-2h-2c-.55 0-1-.45-1-1s.45-1 1-1h2V6c0-.55.45-1 1-1s1 .45 1 1v2h2c.55 0 1 .45 1 1zM4 8h3V3H4v5zm-2 9h5v-7H2v7zm14-2c-.55 0-1 .45-1 1v1H9V6h3c.55 0 1-.45 1-1s-.45-1-1-1H9V2c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v6H1c-.55 0-1 .45-1 1v9c0 .55.45 1 1 1h15c.55 0 1-.45 1-1v-2c0-.55-.45-1-1-1z"
+                            fill="currentColor" />
+                    </svg>
+                    <span wire:loading.remove wire:target="downloadPdf">
+                        Inventaris
+                    </span>
+                </a>
             </div>
         </div>
 

@@ -8,7 +8,7 @@ use App\Models\User;
 use App\Models\Inventaris;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-#[Fillable(['user_id', 'inventaris_id', 'tgl_peminjaman', 'tgl_pengembalian', 'status', 'hibah', 'lambat'])]
+#[Fillable(['user_id', 'inventaris_id', 'tgl_peminjaman', 'tgl_pengembalian', 'jumlah', 'status', 'hibah', 'lambat'])]
 class Peminjaman extends Model
 {
     protected $table = 'peminjaman';

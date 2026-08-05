@@ -121,8 +121,8 @@ new #[Layout('layouts.guest')] #[Title('List Inventaris')] class extends Compone
                         {{-- Tombol Ajukan Peminjaman --}}
                         <div class="mt-auto border-t border-stone-100 pt-3 dark:border-stone-800">
                             @auth
-                                <button @click="$dispatch('openModalPeminjaman', { id: {{ $item->id_inventaris }} })"
-                                    @if (!$item->dpt_dipinjam) disabled @endif
+                                <button x-data
+                                    x-on:click="$dispatch('modal-peminjaman-user', { id: {{ $item->id_inventaris }} })"
                                     class="from-sage-600 to-sage-500 hover:from-sage-700 hover:to-sage-600 bg-linear-to-r group relative flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl px-4 py-2 text-xs font-semibold text-white shadow-md transition-all duration-200 hover:shadow-lg disabled:cursor-not-allowed disabled:from-stone-300 disabled:to-stone-300 disabled:opacity-70 dark:disabled:from-stone-700 dark:disabled:to-stone-700">
                                     <svg class="h-4 w-4 transition-transform group-hover:scale-110" fill="none"
                                         stroke="currentColor" viewBox="0 0 24 24">
