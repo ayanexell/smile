@@ -55,16 +55,34 @@ new #[Title('Manage Users')] class extends Component {
 ?>
 
 <div class="min-h-screen bg-stone-100 dark:bg-stone-950">
-
     <x-page-header title="Daftar User" leading="Kelola semua akun User sistem SMILE" />
 
+    <div x-data="{ show: true }" x-show="show"
+        class="mt-2 flex select-none items-center gap-2.5 rounded-lg border border-amber-200 bg-amber-50 py-2 pl-3 pr-2.5 text-amber-700 shadow-xl shadow-stone-200/50 dark:border-amber-900/60 dark:bg-amber-950/30 dark:text-amber-300 dark:shadow-none">
+        <div class="shrink-0">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+        </div>
+        <div class="flex-1 text-[11px] font-medium leading-normal">
+            <span>{{ __('Demi menjaga kredibilitas data, harap diperhatikan bahwa menghapus akun Pengguna dapat menyebabkan semua data Peminjaman yang diajukan akan dihapus secara permanen dari sistem. Sebelum menghapus pastikan Pengguna belum pernah mengajukan peminjaman ke dalam sistem. Hubungi Super Admin untuk informasi lebih lanjut') }}</span>
+        </div>
+        <button @click="show = false"
+            class="shrink-0 rounded p-1 text-stone-400 transition-colors hover:text-stone-600 dark:hover:text-stone-200">
+            <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+    </div>
     <div class="mx-auto mt-2 max-w-7xl space-y-2">
 
         {{-- ── FLASH MESSAGE ── --}}
         @if (session()->has('success'))
             <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 4000)" x-show="show"
-                x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 -translate-y-4"
-                x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-200"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
+                x-transition:leave="transition ease-in duration-200"
                 x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-4"
                 class="z-9999 fixed left-1/2 top-5 w-full max-w-sm -translate-x-1/2 px-4" style="display: none;">
 
@@ -310,7 +328,7 @@ new #[Title('Manage Users')] class extends Component {
                                                     {{-- Hapus --}}
                                                     <button x-data
                                                         x-on:click="$dispatch('open-delete-modal', { id: {{ $user->id_user }} })"
-                                                        @click="open = false" @click="open = false"
+                                                        @click="open = false"
                                                         class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40">
                                                         <svg class="h-3.5 w-3.5 text-red-400" fill="none"
                                                             stroke="currentColor" stroke-width="2"

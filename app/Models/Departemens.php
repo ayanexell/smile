@@ -8,7 +8,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\Inventaris;
 
-#[Fillable('nama_departemen', 'singkatan')]
+#[Fillable('nama_departemen', 'singkatan', 'deskripsi')]
 class Departemens extends Model
 {
     use HasFactory;

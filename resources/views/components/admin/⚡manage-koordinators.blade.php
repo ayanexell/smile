@@ -71,9 +71,8 @@ new #[Title('Manage Koordinator')] class extends Component {
                         d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
                 </svg>
             </div>
-            <div class="flex-1 text-[9px] font-medium leading-normal">
-                <span>Harap diperhatikan bahwa menghapus akun Koordinator dapat menyebabkan semua Inventaris yang
-                    berhubungan dengan akun tersebut akan dihapus secara permanen. </span>
+            <div class="flex-1 text-[11px] font-medium leading-normal">
+                <span>{{ __('Harap diperhatikan bahwa menghapus akun Koordinator dapat menyebabkan semua Inventaris yang berhubungan dengan akun tersebut akan dihapus secara permanen dari sistem. Sebelum menghapus pastikan Koordinator belum pernah menyimpan inventaris ke dalam sistem. Hubungi Super Admin untuk informasi lebih lanjut') }}</span>
             </div>
             <button @click="show = false"
                 class="shrink-0 rounded p-1 text-stone-400 transition-colors hover:text-stone-600 dark:hover:text-stone-200">

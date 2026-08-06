@@ -1,4 +1,4 @@
-<x-layouts::auth :title="__('Masuk — SMILE')">
+<x-layouts::auth :title="__('Masuk')">
     <div class="flex h-screen items-center justify-center bg-stone-100 p-4 sm:p-6 lg:p-8 dark:bg-stone-950">
         {{-- Card Utama --}}
         <div
@@ -21,7 +21,8 @@
 
                 {{-- Logo --}}
                 <div class="relative z-10 flex items-center gap-3">
-                    <div class="dark:bg-sage-600 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl shadow-lg p-1">
+                    <div
+                        class="dark:bg-sage-600 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl p-1 shadow-lg">
                         <img src="{{ asset('assets/logo.webp') }}" alt="Logo" class="w-9" />
                     </div>
                     <div>
@@ -191,9 +192,21 @@
                         </div>
 
                         {{-- Submit --}}
-                        <button type="submit"
+                        <button type="submit" wire:loading.attr="disabled" wire:target="login.store"
                             class="bg-sage-600 dark:bg-sage-500 hover:bg-sage-700 dark:hover:bg-sage-400 hover:shadow-sage-600/20 focus:ring-sage-500 flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 active:translate-y-0 dark:focus:ring-offset-stone-950">
-                            Masuk ke Sistem
+                            {{-- Teks normal --}}
+                            <span wire:loading.remove wire:target="login.store">{{ __('Masuk') }}</span>
+                            {{-- Spinner saat loading --}}
+                            <span wire:loading wire:target="login.store">
+                                <svg class="inline h-3 w-3 animate-spin text-white" xmlns="http://www.w3.org/2000/svg"
+                                    fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10"
+                                        stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                                </svg>
+                                {{ __('Memproses...') }}
+                            </span>
                         </button>
                     </form>
 

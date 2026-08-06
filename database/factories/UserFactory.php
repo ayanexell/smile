@@ -50,50 +50,50 @@ class UserFactory extends Factory
      */
     public function unverified(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'email_verified_at' => null,
         ]);
     }
 
     // State methods untuk set role dan departemen
-public function superAdmin(): static
-{
-    return $this->state(function (array $attributes) {
-        $role = Roles::where('nama_role', 'Super Admin')->first();
-        return ['role_id' => $role->id_role];
-    });
-}
+    public function superAdmin(): static
+    {
+        return $this->state(function (array $attributes) {
+            $role = Roles::where('nama_role', 'Super Admin')->first();
+            return ['role_id' => $role->id_role];
+        });
+    }
 
-public function koordinator(): static
-{
-    return $this->state(function (array $attributes) {
-        $role = Roles::where('nama_role', 'Koordinator')->first();
-        return ['role_id' => $role->id_role];
-    });
-}
+    public function koordinator(): static
+    {
+        return $this->state(function (array $attributes) {
+            $role = Roles::where('nama_role', 'Koordinator')->first();
+            return ['role_id' => $role->id_role];
+        });
+    }
 
-public function admin(): static
-{
-    return $this->state(function (array $attributes) {
-        $role = Roles::where('nama_role', 'Admin')->first();
-        return ['role_id' => $role->id_role];
-    });
-}
+    public function admin(): static
+    {
+        return $this->state(function (array $attributes) {
+            $role = Roles::where('nama_role', 'Admin')->first();
+            return ['role_id' => $role->id_role];
+        });
+    }
 
-public function regularUser(): static
-{
-    return $this->state(function (array $attributes) {
-        $role = Roles::where('nama_role', 'User')->first();
-        return ['role_id' => $role->id_role];
-    });
-}
+    public function regularUser(): static
+    {
+        return $this->state(function (array $attributes) {
+            $role = Roles::where('nama_role', 'User')->first();
+            return ['role_id' => $role->id_role];
+        });
+    }
 
     /**
      * Set user with specific departemen.
      */
     public function withDepartemen(string $singkatan): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'departemen_id' => Departemens::factory()->{$singkatan}(),
         ]);
     }
@@ -103,7 +103,7 @@ public function regularUser(): static
      */
     public function withoutDepartemen(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'departemen_id' => null,
         ]);
     }
@@ -113,14 +113,14 @@ public function regularUser(): static
      */
     public function lakiLaki(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'jenis_kelamin' => 'laki-laki',
         ]);
     }
 
     public function perempuan(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'jenis_kelamin' => 'perempuan',
         ]);
     }

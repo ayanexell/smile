@@ -16,6 +16,16 @@ new #[Title('Manage Inventaris')] class extends Component {
         $this->dispatch('edit-inventaris', $id);
     }
 
+    public function deleteInventaris(Inventaris $id)
+    {
+        try {
+            $id->delete();
+            session()->flash('success', 'Data inventaris berhasil dihapus!');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Gagal menghapus data: ' . $e->getMessage());
+        }
+    }
+
     public function render()
     {
         $inventaris = Inventaris::query()->when($this->search, fn($q) => $q->where('nama', 'like', "%{$this->search}%")->orWhere('tipe', 'like', "%{$this->search}%"))->when($this->filterKondisi, fn($q) => $q->where('kondisi', $this->filterKondisi))->when($this->filterDptDipinjam, fn($q) => $q->where('dpt_dipinjam', $this->filterDptDipinjam))->latest()->paginate(10);
@@ -148,7 +158,7 @@ new #[Title('Manage Inventaris')] class extends Component {
                                 <td class="px-2.5 py-1.5">
                                     <div class="max-w-45 flex items-center gap-2 sm:max-w-xs">
                                         {{-- Thumbnail gambar atau placeholder --}}
-                                        @if ($item->img_path)
+                                        @if ($item->img_path && Storage::exists($item->img_path))
                                             <img src="{{ Storage::url($item->img_path) }}"
                                                 alt="{{ $item->nama_barang }}"
                                                 class="h-7 w-7 shrink-0 rounded-lg border border-stone-200 object-cover dark:border-stone-700" />
@@ -282,30 +292,11 @@ new #[Title('Manage Inventaris')] class extends Component {
                                                 style="display: none;">
                                                 <div class="space-y-0.5 p-1">
 
-                                                    {{-- Detail --}}
-                                                    <button
-                                                        x-on:click="
-                                                            $flux.modal('detail-inventaris-modal').show();
-                                                            $wire.lihatDetail({{ $item->id }});
-                                                            open = false;"
-                                                        class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-stone-600 transition-colors hover:bg-stone-50 dark:text-stone-400 dark:hover:bg-stone-800/60">
-                                                        <svg class="h-3.5 w-3.5 text-stone-400" fill="none"
-                                                            stroke="currentColor" stroke-width="2"
-                                                            viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178z" />
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                        </svg>
-                                                        Detail
-                                                    </button>
-
                                                     {{-- Edit --}}
                                                     <button
                                                         x-on:click="
-                                                            $flux.modal('edit-inventaris-modal').show();
-                                                            $wire.editInventaris({{ $item->id_inventaris }});
-                                                            open = false;"
+                                                            $dispatch('edit-inventaris-modal', {id: {{ $item->id_inventaris }}})"
+                                                        @click="open = false";
                                                         class="text-sage-600 dark:text-sage-400 hover:bg-sage-50 dark:hover:bg-sage-950/30 flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs transition-colors">
                                                         <svg class="text-sage-500 h-3.5 w-3.5" fill="none"
                                                             stroke="currentColor" stroke-width="2"
@@ -319,7 +310,8 @@ new #[Title('Manage Inventaris')] class extends Component {
                                                     <flux:separator />
 
                                                     {{-- Hapus --}}
-                                                    <button wire:click="confirmDelete({{ $item->id }})"
+                                                    <button x-data
+                                                        x-on:click="$dispatch('delete-inventaris-modal', {id: {{ $item->id_inventaris }}})"
                                                         @click="open = false"
                                                         class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-rose-600 transition-colors hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/40">
                                                         <svg class="h-3.5 w-3.5 text-rose-400" fill="none"
@@ -367,5 +359,8 @@ new #[Title('Manage Inventaris')] class extends Component {
 
         </div>
         <livewire:admin.inventaris.add-inventaris />
+        <livewire:admin.inventaris.edit-inventaris />
+        <x-modal-hapus modal_name="delete-inventaris-modal" action_hapus="deleteInventaris" title="Hapus Inventaris"
+            description="Data inventaris akan dihapus permanen dari sistem." />
     </div>
 </div>

@@ -1,6 +1,7 @@
 <?php
-
+use Illuminate\Support\Facades\Log;
 use App\Models\Departemens;
+
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Roles;

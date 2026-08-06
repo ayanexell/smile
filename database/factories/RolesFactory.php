@@ -3,9 +3,10 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\Roles;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Role>
+ * @extends Factory<Roles>
  */
 class RolesFactory extends Factory
 {
@@ -26,7 +27,7 @@ class RolesFactory extends Factory
      */
     public function superAdmin(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'nama_role' => 'Super Admin',
         ]);
     }
@@ -36,14 +37,14 @@ class RolesFactory extends Factory
      */
     public function admin(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'nama_role' => 'Admin',
         ]);
     }
 
     public function koordinators(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'nama_role' => 'Koordinator',
         ]);
     }
@@ -55,7 +56,7 @@ class RolesFactory extends Factory
      */
     public function user(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'nama_role' => 'User',
         ]);
     }

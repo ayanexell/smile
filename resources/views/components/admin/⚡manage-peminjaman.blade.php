@@ -7,6 +7,7 @@ use Illuminate\Support\Carbon;
 use Livewire\Attributes\Title;
 use App\Actions\WhatsappAction;
 use Illuminate\Support\Facades\Validator;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 new #[Title('Manajemen Peminjaman')] class extends Component {
     use WithPagination;
@@ -14,11 +15,25 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
     public $peminjaman;
     public $showDeleteModal = false;
 
+    public function sendStatus($peminjaman, $status)
+    {
+        $no_wa = $peminjaman->user->no_wa;
+        $message = "Halo, {{ $peminjaman->user->nama_lengkap }}, " . "peminjaman {{ $peminjaman->inventaris->nama_barang }} yang anda ajukan **{{ $status }}** oleh Admin.\n" . "Silahkan periksa aplikasi dengan masuk dengan akun yang telah anda buat!!\n" . "Harap diperhatikan tanggal pengembalian peminjaman.\n" . "Perlu diperhatikan bahwa segala peminjam memiliki tanggung jawab atas barang yang telah dipinjam.\n\n" . "kunjungi {{ env('APP_URL') }}";
+        try {
+            $action = new WhatsappAction($no_wa, $message);
+            $action->send();
+        } catch (\Exception $e) {
+            Log::error('Terjadi kesalahan saat mengirim pesan status diterima : ' . $e->getMessage());
+            session()->flash('error', 'Terjadi kesalahan saat mengirim pesan: \n\n' . $e->getMessage());
+        }
+    }
+
     public function acceptPeminjaman(Peminjaman $peminjaman)
     {
         $peminjaman->update([
             'status' => 'dipinjam',
         ]);
+        $this->sendStatus($peminjaman, 'Diterima');
         session()->flash('success', 'Peminjaman berhasil diterima.');
     }
 
@@ -27,6 +42,7 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
         $peminjaman->update([
             'status' => 'ditolak',
         ]);
+        $this->sendStatus($peminjaman, 'Ditolak');
         session()->flash('success', 'Peminjaman berhasil ditolak.');
     }
 
@@ -35,6 +51,7 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
         $peminjaman->update([
             'status' => 'dikembalikan',
         ]);
+        $this->sendStatus($peminjaman, 'Dikembalikan');
         session()->flash('success', 'Peminjaman berhasil dikembalikan.');
     }
 
@@ -43,6 +60,7 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
         $peminjaman->update([
             'status' => 'pending',
         ]);
+        $this->sendStatus($peminjaman, 'Pending');
         session()->flash('success', 'Peminjaman berhasil dikembalikan ke status pending.');
     }
 
@@ -51,24 +69,6 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
         $id->delete();
         $this->reset('peminjaman');
         session()->flash('success', 'Peminjaman berhasil dihapus.');
-    }
-
-    public function render()
-    {
-        $peminjamans = Peminjaman::with(['user', 'inventaris'])
-            ->when($this->search, function ($query) {
-                $query
-                    ->whereHas('user', function ($q) {
-                        $q->where('nama_lengkap', 'like', '%' . $this->search . '%');
-                    })
-                    ->orWhereHas('inventaris', function ($q) {
-                        $q->where('nama_barang', 'like', '%' . $this->search . '%');
-                    });
-            })
-            ->paginate(10);
-        return $this->view([
-            'peminjamans' => $peminjamans,
-        ]);
     }
 
     public function openChat(Peminjaman $peminjaman)
@@ -111,6 +111,24 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
     public function export()
     {
         //
+    }
+
+    public function render()
+    {
+        $peminjamans = Peminjaman::with(['user', 'inventaris'])
+            ->when($this->search, function ($query) {
+                $query
+                    ->whereHas('user', function ($q) {
+                        $q->where('nama_lengkap', 'like', '%' . $this->search . '%');
+                    })
+                    ->orWhereHas('inventaris', function ($q) {
+                        $q->where('nama_barang', 'like', '%' . $this->search . '%');
+                    });
+            })
+            ->paginate(10);
+        return $this->view([
+            'peminjamans' => $peminjamans,
+        ]);
     }
 };
 ?>
@@ -266,7 +284,7 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                 <td class="px-2.5 py-1.5">
                                     <div class="max-w-45 flex items-center gap-2 sm:max-w-xs">
                                         {{-- Thumbnail gambar atau placeholder --}}
-                                        @if ($peminjaman->inventaris->img_path)
+                                        @if ($peminjaman->inventaris->img_path && Storage::exists($peminjaman->inventaris->img_path))
                                             <img src="{{ Storage::url($peminjaman->inventaris->img_path) }}"
                                                 alt="{{ $peminjaman->inventaris->nama_barang }}"
                                                 class="h-7 w-7 shrink-0 rounded-lg border border-stone-200 object-cover dark:border-stone-700" />
@@ -580,14 +598,14 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                     this.errorMessage = ''; // reset error setiap kali buka
                     this.show = true;
                 });
-
+        
                 // Event sukses dari Livewire
                 window.addEventListener('wa-message-sent', (e) => {
                     this.show = false;
                     // Opsional: tampilkan toast sukses global
                     alert(e.detail.message); // atau integrasi dengan notifikasi lain
                 });
-
+        
                 // Event error dari Livewire
                 window.addEventListener('wa-error', (e) => {
                     this.errorMessage = e.detail.message;

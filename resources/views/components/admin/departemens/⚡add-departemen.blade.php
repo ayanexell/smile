@@ -6,7 +6,6 @@ use Livewire\Attributes\Title;
 use Livewire\Attributes\Validate;
 
 new #[Title('Kelola Departemen')] class extends Component {
-    public $departemen;
     #[Validate('required|string|max:255')]
     public $nama_departemen;
     #[Validate('required|string|max:255')]
@@ -14,28 +13,20 @@ new #[Title('Kelola Departemen')] class extends Component {
     #[Validate('required|string|max:255')]
     public $deskripsi;
 
-    public function edit(Departemens $departemen)
-    {
-        $this->departemen = $departemen;
-        $this->nama_departemen = $departemen->nama_departemen;
-        $this->singkatan = $departemen->singkatan;
-        $this->deskripsi = $departemen->deskripsi;
-    }
-
-    public function update()
+    public function store()
     {
         $this->validate();
         try {
-            $this->departemen->update([
+            Departemens::create([
                 'nama_departemen' => $this->nama_departemen,
                 'singkatan' => $this->singkatan,
                 'deskripsi' => $this->deskripsi,
             ]);
-            $this->dispatch('update-success', ['message' => 'Data departemen berhasil diupdate!']);
-            session()->flash('success', 'Data departemen berhasil diperbaharui  !');
+            $this->dispatch('add-success', ['message' => 'Data departemen berhasil ditambahkan!']);
+            session()->flash('success', 'Data departemen berhasil ditambahkan!');
             $this->reset('nama_departemen', 'singkatan', 'detail');
         } catch (\Exception $e) {
-            $this->dispatch('update-error', ['message' => 'Error: ' . $e->getMessage()]);
+            $this->dispatch('add-error', ['message' => 'Error: ' . $e->getMessage()]);
         }
     }
 };
@@ -47,21 +38,20 @@ new #[Title('Kelola Departemen')] class extends Component {
         successMessage: '',
         errorMessage: '',
         init() {
-            window.addEventListener('modal-edit-departemen', (e) => {
+            window.addEventListener('modal-add-departemen', () => {
                 this.message = '';
-                $wire.edit(e.detail.id);
                 this.errorMessage = '';
                 this.show = true;
             });
     
             // Event sukses dari Livewire
-            window.addEventListener('update-success', (e) => {
+            window.addEventListener('add-success', (e) => {
                 this.show = false;
                 this.successMessage = e.detail.message;
             });
     
             // Event error dari Livewire
-            window.addEventListener('update-error', (e) => {
+            window.addEventListener('add-error', (e) => {
                 this.errorMessage = e.detail.message;
             });
         },
@@ -71,15 +61,15 @@ new #[Title('Kelola Departemen')] class extends Component {
         {{-- Form Submit diarahkan ke method update di komponen Livewire --}}
         <div class="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-lg bg-white shadow-xl dark:bg-stone-900"
             @click.stop>
-            <form wire:submit.prevent="update" class="relative space-y-3 p-4">
+            <form wire:submit.prevent="store" class="relative space-y-3 p-4">
 
                 {{-- Header Modal --}}
                 <div>
                     <h3 class="text-sm font-semibold text-stone-800 dark:text-stone-100">
-                        {{ __('Ubah Informasi Departemen') }}
+                        {{ __('Tambah Departemen') }}
                     </h3>
                     <p class="mt-0.5 text-[11px] leading-normal text-stone-500 dark:text-stone-400">
-                        {{ __('Perbarui data detail departemen yang terpilih.') }}
+                        {{ __('Tambah data detail departemen untuk sistem anda.') }}
                     </p>
                 </div>
 
@@ -96,25 +86,9 @@ new #[Title('Kelola Departemen')] class extends Component {
                 </div>
 
                 <div class="relative">
-                    {{-- Indikator Loading khusus saat method create berjalan --}}
-                    <div wire:loading wire:target="edit"
-                        class="absolute inset-0 z-50 flex items-center justify-center rounded-md bg-white/60 backdrop-blur-[0.5px] dark:bg-stone-900/60">
-                        <div
-                            class="flex items-center gap-1.5 rounded-md border border-stone-100 bg-white px-2.5 py-1.5 shadow-sm dark:border-stone-700 dark:bg-stone-800">
-                            <svg class="text-sage-600 dark:text-sage-400 h-3.5 w-3.5 animate-spin" fill="none"
-                                viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                    stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V12H4z"></path>
-                            </svg>
-                            <span class="text-[10px] font-medium text-stone-600 dark:text-stone-300">
-                                {{ __('Mengambil data...') }}
-                            </span>
-                        </div>
-                    </div>
 
                     {{-- Indikator Loading khusus saat method create berjalan --}}
-                    <div wire:loading wire:target="update"
+                    <div wire:loading wire:target="store"
                         class="absolute inset-0 z-50 flex items-center justify-center rounded-md bg-white/60 backdrop-blur-[0.5px] dark:bg-stone-900/60">
                         <div
                             class="flex items-center gap-1.5 rounded-md border border-stone-100 bg-white px-2.5 py-1.5 shadow-sm dark:border-stone-700 dark:bg-stone-800">

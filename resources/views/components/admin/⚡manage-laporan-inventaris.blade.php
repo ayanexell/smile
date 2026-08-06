@@ -381,9 +381,7 @@ new #[Title('Kelola Laporan Inventaris')] class extends Component {
                                                     @endcan
                                                     <flux:separator />
                                                     {{-- Hapus --}}
-                                                    <button
-                                                        wire:click="deleteLaporan({{ $laporan->id_laporan_inventaris }})"
-                                                        wire:confirm="Apakah anda yakin ingin menghapus Laporan ini?"
+                                                    <button x-data @click="open = false"
                                                         class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40">
                                                         <svg class="h-3.5 w-3.5 text-red-400" fill="none"
                                                             stroke="currentColor" stroke-width="2"
@@ -419,6 +417,7 @@ new #[Title('Kelola Laporan Inventaris')] class extends Component {
                 {{ $this->laporanInventaris->links('pagination::tailwind') }}
             </div>
         </div>
-
+        <x-modal-hapus modal_name="delete-laporan" action_hapus="deleteLaporan" title="Hapus Laporan"
+            description="Data pengguna akan dihapus permanen dari sistem." />
     </div>
 </div>

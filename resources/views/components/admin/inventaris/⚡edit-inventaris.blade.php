@@ -7,6 +7,7 @@ use Livewire\Attributes\Validate;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use App\Models\Departemens;
 
 new class extends Component {
     use WithFileUploads;
@@ -32,14 +33,21 @@ new class extends Component {
     #[Validate('required|boolean')]
     public $dpt_dipinjam = false; // 2MB max
 
-    #[Validate('nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048')]
+    #[Validate('nullable|image|max:2048')]
     public $img_upload;
 
-    public $analyzing = false;
+    public $departemens;
+    public $inventaris;
+
+    public function mount()
+    {
+        $this->departemens = Departemens::all();
+    }
 
     public function validationAttributes()
     {
         return [
+            'departemen_id' => 'Departemen',
             'nama_barang' => 'Nama Barang',
             'img_upload' => 'Foto Barang', // ubah dari img_path
             'dpt_dipinjam' => 'Status Ketersediaan Pinjam',
@@ -49,6 +57,8 @@ new class extends Component {
     public function messages()
     {
         return [
+            'departemen_id.exists' => 'Departemen yang Anda pilih tidak terdaftar.',
+
             'nama_barang.required' => 'Nama barang wajib diisi.',
             'nama_barang.max' => 'Nama barang tidak boleh lebih dari 255 karakter.',
 
@@ -74,91 +84,60 @@ new class extends Component {
         ];
     }
 
-    public function analyzeImage()
+    public function edit(Inventaris $id)
     {
-        if (!$this->img_upload) {
-            return;
-        }
-
-        $this->analyzing = true;
-
-        try {
-            $response = Http::attach('image', fopen($this->img_upload->getRealPath(), 'r'), $this->img_upload->getClientOriginalName())->post('http://localhost:5000/detect');
-
-            if ($response->successful()) {
-                $data = $response->json();
-                $this->nama_barang = $data['nama_barang'] ?? '';
-                $this->tipe = $data['tipe'] ?? '';
-                $this->warna = $data['warna'] ?? '';
-                $this->kondisi = $data['kondisi'] ?? 'baik';
-                $this->jumlah = 1;
-                session()->flash('notification', [
-                    'type' => 'success',
-                    'message' => 'Analisis berhasil! Form telah terisi otomatis.',
-                ]);
-            } else {
-                session()->flash('notification', [
-                    'type' => 'error',
-                    'message' => 'Gagal menganalisis gambar: ' . $response->body(),
-                ]);
-            }
-        } catch (\Exception $e) {
-            session()->flash('notification', [
-                'type' => 'error',
-                'message' => 'Error koneksi ke API YOLO: ' . $e->getMessage(),
-            ]);
-        }
-
-        $this->analyzing = false;
+        $this->inventaris = $id;
+        $this->nama_barang = $id->nama_barang;
+        $this->jumlah = $id->jumlah;
+        $this->kondisi = $id->kondisi;
+        $this->tipe = $id->tipe;
+        $this->warna = $id->warna;
+        $this->dpt_dipinjam = $id->dpt_dipinjam;
     }
 
-    public function saveInventaris()
+    public function update()
     {
         // 1. Validasi semua input (termasuk img_upload)
         try {
             $this->validate();
         } catch (ValidationException $e) {
-            $this->dispatch('add-error', ['message' => 'Validasi gagal: ' . implode(', ', $e->validator->errors()->all())]);
+            $this->dispatch('edit-error', ['message' => $e->getMessage()]);
             return;
         }
 
         // 2. Simpan file setelah validasi berhasil
         try {
             if ($this->img_upload) {
+                Storage::delete($this->inventaris->img_path);
                 $this->img_path = $this->img_upload->store('inventaris', 'public');
             } else {
-                // Jika tidak ada file, kita beri default atau error
-                throw new \Exception('Gambar wajib diunggah.');
+                $this->img_path = $this->inventaris->img_path;
             }
 
             // 3. Simpan ke database
-            Inventaris::create([
-                'user_id' => Auth::user()->id_user,
+            $this->inventaris->update([
                 'nama_barang' => $this->nama_barang,
                 'jumlah' => $this->jumlah,
                 'kondisi' => $this->kondisi,
                 'tipe' => $this->tipe,
-                'img_path' => $this->img_path,
                 'warna' => $this->warna,
                 'dpt_dipinjam' => $this->dpt_dipinjam,
+                'img_path' => $this->img_path,
             ]);
 
             // 4. Reset form
             $this->reset(['nama_barang', 'jumlah', 'kondisi', 'tipe', 'img_path', 'warna', 'dpt_dipinjam', 'img_upload']);
-            $this->dispatch('add-success', ['message' => 'Inventaris berhasil ditambahkan!']);
+            // Jangan reset departemen_id karena sudah di-mount
+            $this->dispatch('edit-success', ['message' => 'Inventaris berhasil diupdate!']);
             session()->flash('notification', [
                 'type' => 'success',
-                'message' => 'Inventaris berhasil ditambahkan!',
+                'message' => 'Inventaris berhasil diupdate!',
             ]);
 
             // Dispatch event untuk refresh tabel (jika diperlukan)
             $this->dispatch('inventaris-updated');
         } catch (\Exception $e) {
-            $this->dispatch('add-error', ['message' => 'Gagal menyimpan: ' . $e->getMessage()]);
-            session()->flash('notification', [
-                'type' => 'error',
-                'message' => 'Gagal menyimpan: ' . $e->getMessage(),
-            ]);
+            $this->dispatch('edit-error', ['message' => 'Gagal mengupdate: ' . $e->getMessage()]);
         }
     }
 };
@@ -168,17 +147,18 @@ new class extends Component {
     {{-- Overlay Modal --}}
     <div x-data="{
         show: false,
-        successMessage: null,
         errorMessage: null,
+        successMessage: null,
         init() {
-            window.addEventListener('add-inventaris-modal', (e) => {
+            window.addEventListener('edit-inventaris-modal', (e) => {
+                $wire.edit(e.detail.id);
                 this.show = true;
             });
-            window.addEventListener('add-success', (e) => {
+            window.addEventListener('edit-success', (e) => {
                 this.successMessage = e.detail.message;
                 this.show = false;
             });
-            window.addEventListener('add-error', (e) => {
+            window.addEventListener('edit-error', (e) => {
                 this.errorMessage = e.detail.message;
             });
         },
@@ -189,10 +169,26 @@ new class extends Component {
         {{-- Kontainer Modal --}}
         <div class="relative w-full max-w-lg overflow-hidden rounded-xl bg-white shadow-2xl dark:bg-stone-900"
             @click.stop>
-
             {{-- Loading Indicator --}}
-            <div wire:loading wire:target="saveInventaris"
-                class="absolute inset-0 z-50 flex h-full items-center justify-center rounded-md bg-white/60 p-5 backdrop-blur-[0.5px] dark:bg-stone-900/60">
+            <div wire:loading wire:target="edit"
+                class="absolute inset-0 z-50 flex items-center justify-center rounded-md bg-white/60 p-5 backdrop-blur-[0.5px] dark:bg-stone-900/60">
+                <div
+                    class="flex items-center gap-1.5 rounded-md border border-stone-100 bg-white px-2.5 py-1.5 shadow-sm dark:border-stone-700 dark:bg-stone-800">
+                    <svg class="text-sage-600 dark:text-sage-400 h-3.5 w-3.5 animate-spin" fill="none"
+                        viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                            stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V12H4z"></path>
+                    </svg>
+                    <span class="text-[10px] font-medium text-stone-600 dark:text-stone-300">
+                        {{ __('Mengambil data...') }}
+                    </span>
+                </div>
+            </div>
+
+            {{-- Indikator Loading khusus saat method create berjalan --}}
+            <div wire:loading wire:target="update"
+                class="absolute inset-0 z-50 flex items-center justify-center rounded-md bg-white/60 p-5 backdrop-blur-[0.5px] dark:bg-stone-900/60">
                 <div
                     class="flex items-center gap-1.5 rounded-md border border-stone-100 bg-white px-2.5 py-1.5 shadow-sm dark:border-stone-700 dark:bg-stone-800">
                     <svg class="text-sage-600 dark:text-sage-400 h-3.5 w-3.5 animate-spin" fill="none"
@@ -207,97 +203,32 @@ new class extends Component {
                 </div>
             </div>
 
-            {{-- Header --}}
-            <div class="flex items-center justify-between border-b border-stone-200 px-5 py-3 dark:border-stone-800">
-                <h3 class="text-sm font-semibold text-stone-800 dark:text-stone-200">Tambah Inventaris</h3>
-                <button @click="show = false"
-                    class="rounded-md p-1 text-stone-400 transition hover:bg-stone-100 hover:text-stone-600 dark:hover:bg-stone-800 dark:hover:text-stone-200">
-                    <svg class="h-4 w-4 cursor-pointer" fill="none" stroke="currentColor" stroke-width="2"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
-
-            {{-- Notifikasi --}}
-            <div>
-                @if (session()->has('notification'))
-                    @php
-                        $notif = session('notification');
-                        $type = $notif['type'] ?? 'info';
-                        $message = $notif['message'] ?? '';
-
-                        $colors = [
-                            'success' =>
-                                'border-emerald-200 dark:border-emerald-900/60 text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/30',
-                            'error' =>
-                                'border-red-200 dark:border-red-900/60 text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-950/30',
-                            'warning' =>
-                                'border-amber-200 dark:border-amber-900/60 text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/30',
-                            'info' =>
-                                'border-blue-200 dark:border-blue-900/60 text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/30',
-                        ];
-
-                        $icons = [
-                            'success' =>
-                                '<path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />',
-                            'error' =>
-                                '<path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />',
-                            'warning' =>
-                                '<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />',
-                            'info' =>
-                                '<path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />',
-                        ];
-
-                        $colorClass = $colors[$type] ?? $colors['info'];
-                        $iconPath = $icons[$type] ?? $icons['info'];
-                    @endphp
-
-                    <div x-data="{ show: true }" x-init="setTimeout(() => show = false, 4000)" x-show="show"
-                        x-transition:enter="transition ease-out duration-300"
-                        x-transition:enter-start="opacity-0 -translate-y-4"
-                        x-transition:enter-end="opacity-100 translate-y-0"
-                        x-transition:leave="transition ease-in duration-200"
-                        x-transition:leave-start="opacity-100 translate-y-0"
-                        x-transition:leave-end="opacity-0 -translate-y-4"
-                        class="z-9999 fixed left-1/2 top-5 w-full max-w-sm -translate-x-1/2 px-4">
-
-                        <div
-                            class="{{ $colorClass }} flex select-none items-center gap-2.5 rounded-lg border bg-white py-2 pl-3 pr-2.5 shadow-xl shadow-stone-200/50 dark:bg-stone-900 dark:shadow-none">
-                            <div class="shrink-0">
-                                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5"
-                                    viewBox="0 0 24 24">
-                                    {!! $iconPath !!}
-                                </svg>
-                            </div>
-                            <div class="flex-1 text-[11px] font-medium leading-normal">
-                                <span>{{ $message }}</span>
-                            </div>
-                            <button @click="show = false"
-                                class="shrink-0 rounded p-1 text-stone-400 transition-colors hover:text-stone-600 dark:hover:text-stone-200">
-                                <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                @endif
-            </div>
-
             {{-- Body Form --}}
-            <form wire:submit.prevent="saveInventaris" class="relative space-y-2 p-5">
-                <div class="relative space-y-2">
-                    {{-- Pesan Error Global --}}
-                    <div x-show="errorMessage" x-cloak
-                        class="rounded-md border border-red-200 bg-red-50 px-2.5 py-1.5 text-[11px] text-red-700 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-300"
-                        x-text="errorMessage">
-                    </div>
-                    <div x-show="successMessage" x-cloak
-                        class="rounded-md border border-green-200 bg-green-50 px-2.5 py-1.5 text-[11px] text-green-700 dark:border-green-900/50 dark:bg-green-950/30 dark:text-green-300"
-                        x-text="successMessage">
-                    </div>
+            <form wire:submit.prevent="update" class="p-5">
+                {{-- Header --}}
+                <div class="flex items-center justify-between border-b border-stone-200 pb-2 dark:border-stone-800">
+                    <h3 class="text-sm font-semibold text-stone-800 dark:text-stone-200">Edit Inventaris</h3>
+                    <button @click="show = false"
+                        class="rounded-md p-1 text-stone-400 transition hover:bg-stone-100 hover:text-stone-600 dark:hover:bg-stone-800 dark:hover:text-stone-200">
+                        <svg class="h-4 w-4 cursor-pointer" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
 
+                <div class="border-t border-stone-100 dark:border-stone-800"></div>
+
+                {{-- Pesan Error Global --}}
+                <div x-show="errorMessage" x-cloak
+                    class="rounded-md border border-red-200 bg-red-50 px-2.5 py-1.5 text-[11px] text-red-700 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-300"
+                    x-text="errorMessage">
+                </div>
+                <div x-show="successMessage" x-cloak
+                    class="rounded-md border border-green-200 bg-green-50 px-2.5 py-1.5 text-[11px] text-green-700 dark:border-green-900/50 dark:bg-green-950/30 dark:text-green-300"
+                    x-text="successMessage">
+                </div>
+                <div class="mt-1 space-y-2">
                     {{-- Nama Barang --}}
                     <div>
                         <label class="mb-1 block text-[11px] font-medium text-stone-600 dark:text-stone-400">Nama
@@ -396,26 +327,22 @@ new class extends Component {
                                 </div>
                             @endif
 
+                            @if ($img_upload)
+                                <div wire:loading.remove wire:target="img_upload" class="relative inline-block">
+                                    <img src="{{ $img_upload->temporaryUrl() }}"
+                                        class="mx-auto h-24 w-24 rounded-lg border border-stone-200 object-cover shadow-sm dark:border-stone-700"
+                                        onerror="this.style.display='none'">
+                                    <button type="button" wire:click="$set('img_upload', null)"
+                                        class="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] text-white shadow transition-opacity hover:bg-red-600 focus:outline-none">
+                                        ×
+                                    </button>
+                                </div>
+                            @endif
+
                             @error('img_upload')
                                 <p class="mt-2 text-[10px] text-red-500">{{ $message }}</p>
                             @enderror
                         </label>
-                        @if ($img_upload)
-                            {{-- Tombol analisis ulang (opsional) --}}
-                            <div class="mt-2 text-center">
-                                <button type="button" wire:click="analyzeImage" :disabled="$wire.analyzing"
-                                    class="text-sage-600 cursor-pointer text-[10px] hover:underline focus:outline-none">
-                                    Analisis Ulang Gambar dengan AI
-                                </button>
-                            </div>
-                        @endif
-
-                        {{-- Indikator sedang menganalisis --}}
-                        <div wire:loading wire:target="analyzeImage"
-                            class="flex items-center justify-center gap-2 py-2 text-xs text-stone-500">
-                            <svg class="text-sage-500 h-4 w-4 animate-spin" ...>...</svg>
-                            Menganalisis gambar dengan AI...
-                        </div>
                     </div>
 
                     {{-- Dapat Dipinjam (Toggle Switch) --}}
@@ -438,7 +365,7 @@ new class extends Component {
                             class="cursor-pointerrounded-lg border border-stone-200 px-4 py-1.5 text-xs font-medium text-stone-600 transition hover:bg-stone-50 dark:border-stone-700 dark:text-stone-400 dark:hover:bg-stone-800">
                             Batal
                         </button>
-                        <button type="submit" wire:loading.attr="disabled" wire:target="saveInventaris"
+                        <button type="submit" wire:loading.attr="disabled" wire:target="update"
                             class="bg-sage-600 hover:bg-sage-700 focus:ring-sage-500 cursor-pointer rounded-lg px-4 py-1.5 text-xs font-medium text-white transition focus:outline-none focus:ring-2 focus:ring-offset-1">
                             Simpan
                         </button>

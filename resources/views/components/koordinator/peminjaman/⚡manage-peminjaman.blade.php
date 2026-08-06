@@ -192,15 +192,15 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
 
                                 {{-- Gambar + Nama Barang + Departemen --}}
                                 <td class="px-2.5 py-1.5">
-                                    <div class="flex max-w-[180px] items-center gap-2 sm:max-w-xs">
+                                    <div class="max-w-45 flex items-center gap-2 sm:max-w-xs">
                                         {{-- Thumbnail gambar atau placeholder --}}
-                                        @if ($peminjaman->inventaris->img_path)
+                                        @if ($peminjaman->inventaris->img_path && Storage::exists($peminjaman->inventaris->img_path))
                                             <img src="{{ Storage::url($peminjaman->inventaris->img_path) }}"
                                                 alt="{{ $peminjaman->inventaris->nama_barang }}"
-                                                class="h-7 w-7 flex-shrink-0 rounded-lg border border-stone-200 object-cover dark:border-stone-700" />
+                                                class="h-7 w-7 shrink-0 rounded-lg border border-stone-200 object-cover dark:border-stone-700" />
                                         @else
                                             <div
-                                                class="bg-sage-100 dark:bg-sage-900/40 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg border border-stone-200 dark:border-stone-700">
+                                                class="bg-sage-100 dark:bg-sage-900/40 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-stone-200 dark:border-stone-700">
                                                 <svg class="text-sage-500 dark:text-sage-400 h-3.5 w-3.5" fill="none"
                                                     stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round"

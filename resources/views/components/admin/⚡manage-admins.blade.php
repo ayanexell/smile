@@ -282,7 +282,7 @@ new #[Title('Manage Admin')] class extends Component {
 
             {{-- Pagination --}}
             <div class="border-t border-stone-100 px-4 py-3 dark:border-stone-800">
-                {{ $users->links() }}
+                {{ $users->links('pagination::tailwind') }}
             </div>
         </div>
 

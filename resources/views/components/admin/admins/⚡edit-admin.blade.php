@@ -34,21 +34,20 @@ new class extends Component {
         show: false,
         successMessage: '',
         errorMessage: '',
-        idPeminjaman: null,
         init() {
             window.addEventListener('edit-admin-modal', (e) => {
-                this.message = '';
                 $wire.editAdmin(e.detail.userId);
+                this.successMessage = '';
                 this.errorMessage = ''; // reset error setiap kali buka
                 this.show = true;
             });
-
+    
             // Event sukses dari Livewire
             window.addEventListener('update-success', (e) => {
                 this.show = false;
                 this.successMessage = e.detail.message;
             });
-
+    
             // Event error dari Livewire
             window.addEventListener('update-error', (e) => {
                 this.errorMessage = e.detail.message;
@@ -58,8 +57,42 @@ new class extends Component {
         class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-3 text-xs sm:p-4" x-cloak
         @click.self="show = false">
         {{-- Form Submit diarahkan ke method updateAdmin di komponen Livewire --}}
-        <div class="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-lg bg-white shadow-xl dark:bg-stone-900"
+        <div class="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-lg bg-white shadow-xl dark:bg-stone-900"
             @click.stop>
+            {{-- Indikator Loading khusus saat method create berjalan --}}
+            <div wire:loading wire:target="editAdmin"
+                class="absolute inset-0 z-50 flex items-center justify-center rounded-md bg-white/60 p-5 backdrop-blur-[0.5px] dark:bg-stone-900/60">
+                <div
+                    class="flex items-center gap-1.5 rounded-md border border-stone-100 bg-white px-2.5 py-1.5 shadow-sm dark:border-stone-700 dark:bg-stone-800">
+                    <svg class="text-sage-600 dark:text-sage-400 h-3.5 w-3.5 animate-spin" fill="none"
+                        viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                            stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V12H4z"></path>
+                    </svg>
+                    <span class="text-[10px] font-medium text-stone-600 dark:text-stone-300">
+                        {{ __('Menyimpan data...') }}
+                    </span>
+                </div>
+            </div>
+
+            {{-- Indikator Loading khusus saat method create berjalan --}}
+            <div wire:loading wire:target="updateAdmin"
+                class="absolute inset-0 z-50 flex items-center justify-center rounded-md bg-white/60 p-5 backdrop-blur-[0.5px] dark:bg-stone-900/60">
+                <div
+                    class="flex items-center gap-1.5 rounded-md border border-stone-100 bg-white px-2.5 py-1.5 shadow-sm dark:border-stone-700 dark:bg-stone-800">
+                    <svg class="text-sage-600 dark:text-sage-400 h-3.5 w-3.5 animate-spin" fill="none"
+                        viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                            stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V12H4z"></path>
+                    </svg>
+                    <span class="text-[10px] font-medium text-stone-600 dark:text-stone-300">
+                        {{ __('Menyimpan data...') }}
+                    </span>
+                </div>
+            </div>
+
             <form wire:submit.prevent="updateAdmin" class="relative space-y-3 p-4">
 
                 {{-- Header Modal --}}
@@ -85,40 +118,6 @@ new class extends Component {
                 </div>
 
                 <div class="relative">
-                    {{-- Indikator Loading khusus saat method create berjalan --}}
-                    <div wire:loading wire:target="editAdmin"
-                        class="absolute inset-0 z-50 flex items-center justify-center rounded-md bg-white/60 backdrop-blur-[0.5px] dark:bg-stone-900/60">
-                        <div
-                            class="flex items-center gap-1.5 rounded-md border border-stone-100 bg-white px-2.5 py-1.5 shadow-sm dark:border-stone-700 dark:bg-stone-800">
-                            <svg class="text-sage-600 dark:text-sage-400 h-3.5 w-3.5 animate-spin" fill="none"
-                                viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                    stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V12H4z"></path>
-                            </svg>
-                            <span class="text-[10px] font-medium text-stone-600 dark:text-stone-300">
-                                {{ __('Menyimpan data...') }}
-                            </span>
-                        </div>
-                    </div>
-
-                    {{-- Indikator Loading khusus saat method create berjalan --}}
-                    <div wire:loading wire:target="updateAdmin"
-                        class="absolute inset-0 z-50 flex items-center justify-center rounded-md bg-white/60 backdrop-blur-[0.5px] dark:bg-stone-900/60">
-                        <div
-                            class="flex items-center gap-1.5 rounded-md border border-stone-100 bg-white px-2.5 py-1.5 shadow-sm dark:border-stone-700 dark:bg-stone-800">
-                            <svg class="text-sage-600 dark:text-sage-400 h-3.5 w-3.5 animate-spin" fill="none"
-                                viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                    stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V12H4z"></path>
-                            </svg>
-                            <span class="text-[10px] font-medium text-stone-600 dark:text-stone-300">
-                                {{ __('Menyimpan data...') }}
-                            </span>
-                        </div>
-                    </div>
-
                     <div class="space-y-2.5">
                         {{-- Baris 1: Nama & NIK --}}
                         <div class="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
@@ -217,8 +216,7 @@ new class extends Component {
                             <label class="mb-0.5 block text-[11px] font-medium text-stone-600 dark:text-stone-400">
                                 {{ __('Alamat Lengkap Rumah') }}
                             </label>
-                            <textarea wire:model="form.alamat" rows="2"
-                                placeholder="Tuliskan alamat domisili saat ini..."
+                            <textarea wire:model="form.alamat" rows="2" placeholder="Tuliskan alamat domisili saat ini..."
                                 class="focus:border-sage-500 focus:ring-sage-500 w-full rounded-md border border-stone-200 bg-stone-50 px-2.5 py-1.5 text-xs text-stone-800 placeholder:text-stone-400 focus:outline-none focus:ring-1 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-100"></textarea>
                             @error('form.alamat')
                                 <p class="mt-0.5 text-[10px] text-red-500">{{ $message }}</p>
@@ -236,7 +234,7 @@ new class extends Component {
 
                     {{-- Tombol simpan otomatis disabled saat data sedang dimuat --}}
                     <button type="submit" wire:loading.attr="disabled" wire:target="editAdmin"
-                        class="cursor-pointer bg-sage-600 hover:bg-sage-700 focus:ring-sage-500 dark:bg-sage-500 dark:hover:bg-sage-600 rounded-md px-3 py-1.5 text-xs font-medium text-white transition focus:outline-none focus:ring-2 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-60">
+                        class="bg-sage-600 hover:bg-sage-700 focus:ring-sage-500 dark:bg-sage-500 dark:hover:bg-sage-600 cursor-pointer rounded-md px-3 py-1.5 text-xs font-medium text-white transition focus:outline-none focus:ring-2 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-60">
                         {{ __('Perbarui Data') }}
                     </button>
                 </div>

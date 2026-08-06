@@ -3,26 +3,23 @@
 use Livewire\Component;
 use App\Models\Departemens;
 use Livewire\Attributes\Title;
+use Livewire\WithPagination;
 
 new #[Title('Manage Departemen')] class extends Component {
+    use WithPagination;
     public $search = '';
     public $nama_departemen;
     public $singkatan;
-    public $showDeleteModal = false;
     public $departemen;
 
-    public function confirmDelete(Departemens $departemen): void
+    public function deleteDepartemen(Departemens $id): void
     {
-        $this->departemen = $departemen;
-        $this->showDeleteModal = true;
-    }
-
-    public function deleteDepartemen(): void
-    {
-        $this->departemen->delete();
-        $this->showDeleteModal = false;
-        $this->departemen = null;
-        session()->flash('success', 'Departemen berhasil dihapus.');
+        try {
+            $this->id->delete();
+            session()->flash('success', 'Departemen berhasil dihapus.');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Gagal mengahpus.');
+        }
     }
 
     public function render()
@@ -39,6 +36,25 @@ new #[Title('Manage Departemen')] class extends Component {
 <div class="min-h-screen bg-stone-100 dark:bg-stone-950">
 
     <x-page-header title="Daftar Departemen" leading="Kelola semua Departemen sistem SMILE" />
+
+    <div x-data="{ show: true }" x-show="show"
+        class="mt-2 flex select-none items-center gap-2.5 rounded-lg border border-amber-200 bg-amber-50 py-2 pl-3 pr-2.5 text-amber-700 shadow-xl shadow-stone-200/50 dark:border-amber-900/60 dark:bg-amber-950/30 dark:text-amber-300 dark:shadow-none">
+        <div class="shrink-0">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+        </div>
+        <div class="flex-1 text-[11px] font-medium leading-normal">
+            <span>{{ __('Perhatikan setiap data yang anda modifikasi dikarenakan setiap data Departemen akan digunakan pada keseluruhan sistem informasi ini. Hubungi Super Admin untuk informasi lebih lanjut!') }}</span>
+        </div>
+        <button @click="show = false"
+            class="shrink-0 rounded p-1 text-stone-400 transition-colors hover:text-stone-600 dark:hover:text-stone-200">
+            <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+    </div>
 
     <div class="mx-auto mt-2 max-w-7xl space-y-2">
 
@@ -69,13 +85,13 @@ new #[Title('Manage Departemen')] class extends Component {
                         class="focus:ring-sage-500 w-full rounded-lg border border-stone-200 bg-stone-50 py-1.5 pl-8 pr-3 text-xs text-stone-800 transition placeholder:text-stone-400 focus:border-transparent focus:outline-none focus:ring-1 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-100 dark:placeholder:text-stone-500" />
                 </div>
 
-                <a href="#"
-                    class="bg-sage-600 hover:bg-sage-700 dark:bg-sage-500 dark:hover:bg-sage-600 inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-xs font-semibold text-white shadow-sm transition-colors">
+                <button x-on:click="$dispatch('modal-add-departemen')"
+                    class="bg-sage-600 hover:bg-sage-700 dark:bg-sage-500 dark:hover:bg-sage-600 inline-flex cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-xs font-semibold text-white shadow-sm transition-colors">
                     <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
                     Tambah Dept.
-                </a>
+                </button>
 
             </div>
         </div>
@@ -171,11 +187,8 @@ new #[Title('Manage Departemen')] class extends Component {
                                                 <div class="space-y-0.5 p-1">
 
                                                     {{-- Edit --}}
-                                                    <button
-                                                        x-on:click="
-                                                            $flux.modal('edit-admin-modal').show();
-                                                            $wire.updateAdmin({{ $departemen->id_departemen }});
-                                                            open = false;"
+                                                    <button x-data
+                                                        x-on:click="$dispatch('modal-edit-departemen', { id: {{ $departemen->id_departemen }}})"
                                                         @click="open = false"
                                                         class="text-sage-600 dark:text-sage-400 hover:bg-sage-50 dark:hover:bg-sage-950/30 flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs transition-colors">
                                                         <svg class="text-sage-500 h-3.5 w-3.5" fill="none"
@@ -190,8 +203,8 @@ new #[Title('Manage Departemen')] class extends Component {
                                                     <flux:separator />
 
                                                     {{-- Hapus --}}
-                                                    <button
-                                                        wire:click="confirmDelete({{ $departemen->id_departemen }})"
+                                                    <button x-data
+                                                        x-on:click="$dispatch('detele-modal-departemen', { id: {{ $departemen->id_departemen }}})"
                                                         @click="open = false"
                                                         class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40">
                                                         <svg class="h-3.5 w-3.5 text-red-400" fill="none"
@@ -225,15 +238,18 @@ new #[Title('Manage Departemen')] class extends Component {
 
             {{-- Pagination --}}
             <div class="border-t border-stone-100 px-4 py-3 dark:border-stone-800">
-                {{ $departemens->links() }}
+                {{ $departemens->links('pagination::tailwind') }}
             </div>
         </div>
 
     </div>
 
+    <livewire:admin.departemens.add-departemen />
     <livewire:admin.departemens.edit-departemen />
+    <x-modal-hapus modal_name="detele-modal-departemen" action_hapus="deleteDepartemen" title="Hapus Departemen"
+        description="Data departemen akan dihapus permanen dari sistem." />
 
-    {{-- ── DELETE MODAL ── --}}
+    {{-- ── DELETE MODAL ──
     @if ($showDeleteModal)
         <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm dark:bg-black/60"
             wire:click.self="$set('showDeleteModal', false)">
@@ -267,6 +283,6 @@ new #[Title('Manage Departemen')] class extends Component {
                 </div>
             </div>
         </div>
-    @endif
+    @endif --}}
 
 </div>

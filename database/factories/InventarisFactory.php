@@ -20,11 +20,30 @@ class InventarisFactory extends Factory
     public function definition(): array
     {
         $barang = [
-            'Laptop', 'Proyektor', 'Printer', 'Meja', 'Kursi',
-            'Sound System', 'Kamera', 'Tripod', 'Whiteboard', 'Lemari',
-            'Sound System Portable', 'Tenda', 'Meja Lipat', 'Kursi Lipat',
-            'Kipas Angin', 'AC Portable', 'Speaker', 'Microphone', 'Gitar',
-            'Keyboard', 'Drum', 'Seragam', 'Handy Talky', 'Alat Tulis'
+            'Laptop',
+            'Proyektor',
+            'Printer',
+            'Meja',
+            'Kursi',
+            'Sound System',
+            'Kamera',
+            'Tripod',
+            'Whiteboard',
+            'Lemari',
+            'Sound System Portable',
+            'Tenda',
+            'Meja Lipat',
+            'Kursi Lipat',
+            'Kipas Angin',
+            'AC Portable',
+            'Speaker',
+            'Microphone',
+            'Gitar',
+            'Keyboard',
+            'Drum',
+            'Seragam',
+            'Handy Talky',
+            'Alat Tulis'
         ];
 
         $warna = ['Hitam', 'Putih', 'Merah', 'Biru', 'Hijau', 'Kuning', 'Abu-abu', 'Coklat'];
@@ -50,17 +69,17 @@ class InventarisFactory extends Factory
      */
     public function ownedBy(User $user): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'user_id' => $user->id_user,
         ]);
     }
 
-     /**
+    /**
      * Set inventaris in good condition.
      */
     public function baik(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'kondisi' => 'baik',
         ]);
     }
@@ -70,7 +89,7 @@ class InventarisFactory extends Factory
      */
     public function rusak(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'kondisi' => 'rusak',
         ]);
     }
@@ -80,7 +99,7 @@ class InventarisFactory extends Factory
      */
     public function dapatDipinjam(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'dpt_dipinjam' => true,
             'kondisi' => 'baik',
         ]);
@@ -91,7 +110,7 @@ class InventarisFactory extends Factory
      */
     public function tidakDapatDipinjam(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'dpt_dipinjam' => false,
         ]);
     }
@@ -101,14 +120,14 @@ class InventarisFactory extends Factory
      */
     public function elektronik(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'tipe' => 'Elektronik',
         ]);
     }
 
     public function furniture(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'tipe' => 'Furniture',
         ]);
     }

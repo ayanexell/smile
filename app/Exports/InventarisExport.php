@@ -11,7 +11,6 @@ use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
-use PhpOffice\PhpSpreadsheet\Style\Font;
 use Carbon\Carbon;
 
 class InventarisExport implements FromCollection, WithMapping, WithHeadings, ShouldAutoSize, WithEvents
@@ -82,7 +81,7 @@ class InventarisExport implements FromCollection, WithMapping, WithHeadings, Sho
                 $sheet->setCellValue('A1', 'DATA INVENTARIS');
                 $sheet->setCellValue('A2', $this->user->departemen->nama_departemen ?? 'Departemen Tidak Diketahui');
                 $sheet->setCellValue('A3', 'BULAN ' . Carbon::now()->translatedFormat('F Y')); // contoh: "Juli 2026"
-
+    
                 // 3. Merge cells untuk info header (A sampai G)
                 $lastColumn = 'G'; // sesuai jumlah kolom
                 $sheet->mergeCells("A1:{$lastColumn}1");
@@ -98,7 +97,7 @@ class InventarisExport implements FromCollection, WithMapping, WithHeadings, Sho
                     ],
                     'alignment' => [
                         'horizontal' => Alignment::HORIZONTAL_CENTER,
-                        'vertical'   => Alignment::VERTICAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
                     ],
                 ]);
 
@@ -107,18 +106,18 @@ class InventarisExport implements FromCollection, WithMapping, WithHeadings, Sho
                 $headingRange = "A{$headingRow}:{$lastColumn}{$headingRow}";
                 $sheet->getStyle($headingRange)->applyFromArray([
                     'font' => [
-                        'name'  => 'Book Antiqua',
-                        'size'  => 11,
-                        'bold'  => true,
+                        'name' => 'Book Antiqua',
+                        'size' => 11,
+                        'bold' => true,
                         'color' => ['rgb' => 'FFFFFF'], // putih
                     ],
                     'fill' => [
-                        'fillType'   => Fill::FILL_SOLID,
+                        'fillType' => Fill::FILL_SOLID,
                         'startColor' => ['rgb' => '538DD5'], // biru
                     ],
                     'alignment' => [
                         'horizontal' => Alignment::HORIZONTAL_CENTER,
-                        'vertical'   => Alignment::VERTICAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
                     ],
                 ]);
 

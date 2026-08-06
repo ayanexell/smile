@@ -272,7 +272,7 @@ new class extends Component {
                                 <td class="px-2.5 py-1.5">
                                     <div class="max-w-45 flex items-center gap-2 sm:max-w-xs">
                                         {{-- Thumbnail gambar atau placeholder --}}
-                                        @if ($item->img_path)
+                                        @if ($item->img_path && Storage::exists($item->img_path))
                                             <img src="{{ Storage::url($item->img_path) }}"
                                                 alt="{{ $item->nama_barang }}"
                                                 class="h-7 w-7 shrink-0 rounded-lg border border-stone-200 object-cover dark:border-stone-700" />

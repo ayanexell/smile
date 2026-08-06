@@ -6,19 +6,19 @@
 ])
 {{-- Modal Hapus --}}
 <div x-data="{
-        show: false,
-        idUser: null,
-        init() {
-            window.addEventListener('{{ $modal_name }}', (e) => {
-                this.idUser = e.detail.id;
-                this.show = true;
-            });
-        },
-        hapus() {
-            $wire.{{ $action_hapus }}(this.idUser)
-                .then(() => { this.show = false; });
-        }
-    }" x-show="show" x-transition.opacity
+    show: false,
+    id: null,
+    init() {
+        window.addEventListener('{{ $modal_name }}', (e) => {
+            this.id = e.detail.id;
+            this.show = true;
+        });
+    },
+    hapus() {
+        $wire.{{ $action_hapus }}(this.id)
+            .then(() => { this.show = false; });
+    }
+}" x-show="show" x-transition.opacity
     class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm dark:bg-black/60"
     x-cloak>
     <div class="w-full max-w-xs rounded-xl border border-stone-200 bg-white p-5 shadow-2xl dark:border-stone-800 dark:bg-stone-900"
@@ -43,7 +43,12 @@
             </button>
             <button @click="hapus()"
                 class="flex-1 cursor-pointer rounded-lg bg-red-500 px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-red-600">
-                Ya, Hapus
+                <span wire:loading.remove wire:target="{{ $action_hapus }}">
+                    Ya, Hapus
+                </span>
+                <span wire:loading wire:target="{{ $action_hapus }}">
+                    Loading...
+                </span>
             </button>
         </div>
     </div>

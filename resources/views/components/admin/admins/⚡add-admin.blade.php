@@ -43,6 +43,7 @@ new class extends Component {
             });
             // Event sukses dari Livewire
             window.addEventListener('admin-added', (e) => {
+                this.show = false;
                 this.successMessage = e.detail.message;
             });
         }

@@ -38,6 +38,7 @@
         .logo-cell {
             width: 80px;
             padding-right: 15px;
+            align-content: center;
         }
 
         .logo-cell img {
@@ -101,14 +102,13 @@
 
         .barang-table {
             margin-bottom: 20px;
-            font-size: 12px;
+            font-size: 11px;
         }
 
         .barang-table th {
             background-color: #f9fafb;
             text-align: left;
             font-weight: bold;
-            text-transform: uppercase;
             padding: 8px 5px;
             border-bottom: 2px solid #9ca3af;
         }
@@ -186,7 +186,7 @@
         <!-- Judul -->
         <div class="title">Bukti Peminjaman Inventaris</div>
         <div class="subtitle">Nomor: #{{ $peminjaman->id_peminjaman }} | Tanggal:
-            {{ \Carbon\Carbon::parse($peminjaman->tgl_peminjaman)->format('d/m/Y') }}</div>
+            {{ \Carbon\Carbon::parse($peminjaman->tgl_peminjaman)->translatedFormat('d F Y') }}</div>
 
         <!-- Data Peminjam -->
         <div class="section-title">Data Peminjam</div>
@@ -235,6 +235,7 @@
                     <th>Departemen</th>
                     <th>Tanggal Pinjam</th>
                     <th>Tanggal Kembali</th>
+                    <th>Jumlah</th>
                     <th>Status</th>
                 </tr>
             </thead>
@@ -243,8 +244,9 @@
                     <td>1</td>
                     <td>{{ $peminjaman->inventaris->nama_barang }}</td>
                     <td>{{ $peminjaman->inventaris->user->departemen->nama_departemen }}</td>
-                    <td>{{ \Carbon\Carbon::parse($peminjaman->tgl_peminjaman)->format('d/m/Y') }}</td>
-                    <td>{{ \Carbon\Carbon::parse($peminjaman->tgl_pengembalian)->format('d/m/Y') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($peminjaman->tgl_peminjaman)->translatedFormat('d F Y') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($peminjaman->tgl_pengembalian)->translatedFormat('d F Y') }}</td>
+                    <td>{{ $peminjaman->jumlah }}</td>
                     <td>
                         @if ($peminjaman->status == 'dipinjam')
                             <span class="badge badge-dipinjam">Dipinjam</span>
