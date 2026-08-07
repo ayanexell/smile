@@ -7,6 +7,7 @@ use App\Models\Peminjaman;
 use App\Models\User;
 use App\Actions\WhatsappAction;
 use Illuminate\Support\Facades\Log;
+use Livewire\Attributes\Validate;
 
 new #[Layout('layouts.guest')] class extends Component {
     public $inventaris;
@@ -14,19 +15,16 @@ new #[Layout('layouts.guest')] class extends Component {
     public $tgl_pengembalian;
     public $jumlah = 0;
 
-    public function rules()
+    public function rules(): array
     {
         return [
             'tgl_peminjaman' => 'required|date|after_or_equal:today',
             'tgl_pengembalian' => 'required|date|after:tgl_peminjaman',
-            'jumlah' => [
-                'required',
-                'min:1',
-                'max:' . $this->inventaris->jumlah, // fallback agar aman
-            ],
+            'jumlah' => 'required|numeric|min:1|max:' . $this->inventaris->jumlah,
         ];
     }
-    public function messages()
+
+    public function messages(): array
     {
         return [
             'tgl_peminjaman.required' => 'Tanggal peminjaman wajib diisi.',
@@ -62,7 +60,7 @@ new #[Layout('layouts.guest')] class extends Component {
 
         $user = auth()->user();
         $admin = User::onlyAdmins()->first();
-        $barang = $this->inventaris->nama_barang; // asumsi ada properti nama
+        $barang = $this->inventaris->nama_barang;
         $jumlah = $this->jumlah;
         $tglPinjam = \Carbon\Carbon::parse($this->tgl_peminjaman);
         $tglKembali = \Carbon\Carbon::parse($this->tgl_pengembalian);
@@ -76,7 +74,6 @@ new #[Layout('layouts.guest')] class extends Component {
             $actionUser->send();
             $actionAdmin = new WhatsappAction($admin->no_wa, $messageAdmin);
             $actionAdmin->send();
-            session()->flash('success', 'Notifikasi telah dikirim ke WhatsApp Anda dan admin.');
         } catch (\Exception $e) {
             // Tangani error jika ada
             session()->flash('notification', [
@@ -84,9 +81,10 @@ new #[Layout('layouts.guest')] class extends Component {
                 'message' => 'Terjadi kesalahan saat mengirim notifikasi WhatsApp. Silakan coba lagi.',
             ]);
             Log::error('Gagal mengirim notifikasi WhatsApp: ' . $e->getMessage());
-            return;
         }
-
+        $this->dispatch('add-success', ['message' => 'Pengajuan Peminjaman berhasil ditambahkan']);
+        $this->reset('inventaris', 'tgl_peminjaman', 'tgl_pengembalian', 'jumlah');
+        $this->redirect(route('user.peminjaman'));
         // Notifikasi sukses
         session()->flash('notification', [
             'type' => 'success',
@@ -105,21 +103,21 @@ new #[Layout('layouts.guest')] class extends Component {
         idInventaris: null,
         init() {
             window.addEventListener('modal-peminjaman-user', (e) => {
-                this.message = '';
                 $wire.addPeminjaman(e.detail.id);
                 this.idInventaris = e.detail.id;
+                this.successMessage = '';
                 this.errorMessage = '';
                 this.show = true;
             });
-
+    
             // Event sukses dari Livewire
-            window.addEventListener('update-success', (e) => {
+            window.addEventListener('add-success', (e) => {
                 this.show = false;
                 this.successMessage = e.detail.message;
             });
-
+    
             // Event error dari Livewire
-            window.addEventListener('update-error', (e) => {
+            window.addEventListener('add-error', (e) => {
                 this.errorMessage = e.detail.message;
             });
         },
@@ -175,7 +173,7 @@ new #[Layout('layouts.guest')] class extends Component {
             </div>
 
             {{-- Form Tanggal --}}
-            <div class="space-y-4 px-5">
+            <div class="space-y-2 px-5">
                 <div>
                     <label class="mb-1 block text-[11px] font-medium text-stone-600 dark:text-stone-400">Tanggal
                         Pinjam</label>
@@ -194,8 +192,9 @@ new #[Layout('layouts.guest')] class extends Component {
                         <p class="mt-1 text-[10px] text-red-500">{{ $message }}</p>
                     @enderror
                 </div>
+                {{-- Jumlah --}}
                 <div>
-                    <label class="mb-0.5 block text-[11px] font-medium text-stone-600 dark:text-stone-400">
+                    <label class="mb-1 block text-[11px] font-medium text-stone-600 dark:text-stone-400">
                         {{ __('Jumlah') }}
                     </label>
                     <input wire:model="jumlah" type="number" placeholder="Jumlah barang yang dipinjam"
@@ -208,7 +207,7 @@ new #[Layout('layouts.guest')] class extends Component {
 
             {{-- Footer --}}
             <div
-                class="flex justify-end gap-2 border-t border-stone-100 bg-stone-50 px-5 py-3 dark:border-stone-800 dark:bg-stone-800/30">
+                class="mt-4 flex justify-end gap-2 border-t border-stone-100 bg-stone-50 px-5 py-3 dark:border-stone-800 dark:bg-stone-800/30">
                 <button type="button" @click="show = false"
                     class="rounded-lg border border-stone-200 px-4 py-1.5 text-xs font-medium text-stone-600 transition hover:bg-stone-100 dark:border-stone-700 dark:text-stone-400 dark:hover:bg-stone-700">
                     Batal

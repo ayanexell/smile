@@ -55,7 +55,7 @@ class InventarisFactory extends Factory
         return [
             // Jangan set default user_id, biarkan null atau set manual
             'nama_barang' => $namaBarang,
-            'jumlah' => fake()->numberBetween(1, 50),
+            'jumlah' => fake()->numberBetween(1, 10),
             'kondisi' => fake()->randomElement(['baik', 'rusak']),
             'tipe' => fake()->randomElement($tipe),
             'img_path' => 'inventaris/' . fake()->uuid() . '.jpg',

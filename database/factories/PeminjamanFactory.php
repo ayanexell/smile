@@ -37,7 +37,7 @@ class PeminjamanFactory extends Factory
      */
     public function dipinjam(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'status' => 'dipinjam',
             'lambat' => false,
         ]);
@@ -48,7 +48,7 @@ class PeminjamanFactory extends Factory
      */
     public function dikembalikan(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'status' => 'dikembalikan',
         ]);
     }
@@ -58,7 +58,7 @@ class PeminjamanFactory extends Factory
      */
     public function terlambat(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'status' => 'terlambat',
             'lambat' => true,
         ]);
@@ -69,7 +69,7 @@ class PeminjamanFactory extends Factory
      */
     public function lambat(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'lambat' => true,
             'status' => 'terlambat',
         ]);
@@ -80,7 +80,7 @@ class PeminjamanFactory extends Factory
      */
     public function tepatWaktu(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'lambat' => false,
         ]);
     }
@@ -90,7 +90,7 @@ class PeminjamanFactory extends Factory
      */
     public function oleh(User $user): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'user_id' => $user->id_user,
         ]);
     }
@@ -100,7 +100,7 @@ class PeminjamanFactory extends Factory
      */
     public function untuk(Inventaris $inventaris): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'inventaris_id' => $inventaris->id_inventaris,
         ]);
     }
@@ -110,7 +110,7 @@ class PeminjamanFactory extends Factory
      */
     public function denganHibah(int $amount): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'hibah' => $amount,
         ]);
     }

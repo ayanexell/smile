@@ -196,10 +196,6 @@
                                 {{ __('Dashboard') }}
                             </a>
                         @endauth
-                        <a href="{{ route('list-inventaris') }}"
-                            class="hover:border-sage-300 dark:hover:border-sage-600 hover:text-sage-700 dark:hover:text-sage-300 inline-flex items-center justify-center gap-2.5 rounded-xl border border-stone-200 bg-white px-5 py-2 font-medium text-stone-700 transition-all duration-200 hover:-translate-y-0.5 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-300">
-                            {{ __('Jelajahi Inventaris') }}
-                        </a>
                     </div>
                 </div>
 
@@ -226,49 +222,7 @@
                             </div>
 
                             {{-- Stats Grid --}}
-                            <div class="mb-5 grid grid-cols-2 gap-3">
-                                @foreach ([['Total Aset', '1,248', '+12%', 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4', 'sage'], ['Dipinjam', '84', '-3%', 'M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4', 'amber'], ['Kondisi Baik', '96%', '+2%', 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z', 'emerald'], ['Perlu Servis', '23', '+5', 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z', 'rose']] as $stat)
-                                    <div class="stat-card relative rounded-xl bg-stone-50 p-3.5 dark:bg-stone-800/50">
-                                        <div class="mb-2 flex items-start justify-between">
-                                            <div
-                                                class="{{ $stat[4] === 'sage' ? 'bg-sage-100 dark:bg-sage-900/30 text-sage-600 dark:text-sage-400' : '' }} {{ $stat[4] === 'amber' ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400' : '' }} {{ $stat[4] === 'emerald' ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400' : '' }} {{ $stat[4] === 'rose' ? 'bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400' : '' }} rounded-lg p-1.5">
-                                                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2" d="{{ $stat[3] }}" />
-                                                </svg>
-                                            </div>
-                                            <span
-                                                class="{{ str_starts_with($stat[2], '+') ? 'text-emerald-500' : 'text-rose-500' }} font-mono text-[10px]">
-                                                {{ $stat[2] }}
-                                            </span>
-                                        </div>
-                                        <p class="font-display text-xl font-bold text-stone-800 dark:text-stone-100">
-                                            {{ __("$stat[1]") }}</p>
-                                        <p class="mt-0.5 text-[11px] text-stone-500 dark:text-stone-400">
-                                            {{ __("$stat[0]") }}</p>
-                                    </div>
-                                @endforeach
-                            </div>
-
-                            {{-- Mini Chart Bar --}}
-                            <div class="rounded-xl bg-stone-50 p-3.5 dark:bg-stone-800/50">
-                                <p
-                                    class="mb-3 font-mono text-[11px] uppercase tracking-widest text-stone-400 dark:text-stone-500">
-                                    {{ __('Aktivitas 7 Hari Terakhir') }}</p>
-                                <div class="flex h-12 items-end gap-1.5">
-                                    @foreach ([40, 65, 45, 80, 55, 70, 90] as $height)
-                                        <div class="bg-sage-200 dark:bg-sage-800/60 hover:bg-sage-400 dark:hover:bg-sage-500 flex-1 cursor-pointer rounded-t-sm transition-all"
-                                            style="height: {{ $height }}%"></div>
-                                    @endforeach
-                                </div>
-                                <div class="mt-1.5 flex justify-between">
-                                    @foreach (['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'] as $day)
-                                        <span
-                                            class="font-mono text-[9px] text-stone-400 dark:text-stone-600">{{ __($day) }}</span>
-                                    @endforeach
-                                </div>
-                            </div>
+                            <livewire:welcome-stats />
                         </div>
 
                         {{-- Floating Badge --}}
@@ -309,57 +263,120 @@
     </section>
 
 
-    {{-- ===================== FITUR SECTION ===================== --}}
+    {{-- ===================== INVENTARIS SERING DIPINJAM SECTION ===================== --}}
     <section id="fitur" class="bg-white py-24 transition-colors duration-500 dark:bg-stone-900">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
             {{-- Section Header --}}
             <div class="mx-auto mb-16 max-w-2xl text-center">
                 <p class="text-sage-600 dark:text-sage-400 mb-3 font-mono text-xs uppercase tracking-[0.3em]">
-                    {{ __('Kemampuan Sistem') }}</p>
+                    {{ __('Statistik Peminjaman') }}</p>
                 <h2 class="font-display mb-4 text-3xl font-bold text-stone-900 sm:text-4xl dark:text-stone-50">
-                    {{ __('Fitur Unggulan') }} <span class="text-sage-600 dark:text-sage-400 italic">SMILE</span>
+                    {{ __('Inventaris') }} <span
+                        class="text-sage-600 dark:text-sage-400 italic">{{ __('Paling Sering Dipinjam') }}</span>
                 </h2>
                 <p class="leading-relaxed text-stone-500 dark:text-stone-400">
-                    {{ __('Dirancang khusus untuk memenuhi kebutuhan manajemen inventaris pesantren yang efektif dan efisien.') }}
+                    {{ __('Delapan aset dengan tingkat peminjaman tertinggi berdasarkan aktivitas sistem saat ini.') }}
                 </p>
             </div>
 
-            {{-- Features Grid --}}
-            <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                @foreach ([
-        ['Manajemen Aset', 'Kelola seluruh inventaris dengan kategori terstruktur, QR code, dan pelacakan real-time.', 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4'],
-        ['Laporan & Analitik', 'Ekspor laporan otomatis dalam berbagai format. Visualisasi data yang informatif dan mudah dipahami.', 'M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'],
-        ['Peminjaman & Pengembalian', 'Alur peminjaman yang jelas dengan notifikasi otomatis, batas waktu, dan riwayat lengkap.', 'M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4'],
-        ['Manajemen Pengguna', 'Kontrol akses berbasis peran — admin, petugas, dan santri dengan hak akses yang dapat dikonfigurasi.', 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z'],
-        ['Notifikasi Otomatis', 'Peringatan stok menipis, jadwal perawatan, dan peminjaman jatuh tempo dikirim secara otomatis.', 'M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9'],
-        ['Object Detection (YOLO)', 'Gunakan teknologi YOLO untuk mendeteksi dan mengkategorikan aset secara otomatis melalui foto.', 'M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z'],
-    ] as $index => $feature)
-                    <div
-                        class="hover:border-sage-200 dark:hover:border-sage-700/50 group relative rounded-2xl border border-stone-200/80 bg-stone-50 p-6 transition-all duration-300 hover:-translate-y-1 hover:bg-white hover:shadow-xl hover:shadow-stone-900/5 dark:border-stone-700/50 dark:bg-stone-800/50 dark:hover:bg-stone-800 dark:hover:shadow-stone-950/50">
-                        <div
-                            class="icon-ring bg-sage-100 dark:bg-sage-900/30 text-sage-600 dark:text-sage-400 group-hover:bg-sage-200 dark:group-hover:bg-sage-800/50 mb-4 flex h-11 w-11 items-center justify-center rounded-xl transition-colors">
-                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="{{ __($feature[2]) }}" />
-                            </svg>
-                        </div>
-                        <h3 class="font-display mb-2 font-semibold text-stone-800 dark:text-stone-100">
-                            {{ __($feature[0]) }}</h3>
-                        <p class="text-sm leading-relaxed text-stone-500 dark:text-stone-400">{{ __($feature[1]) }}
-                        </p>
+            {{-- Inventory Grid --}}
+            <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                @php
+                    $topBorrowedItems = $topBorrowedItems ?? [
+                        ['Proyektor Epson EB-X05', 'Elektronik', 42, 'Baik', 'M4 6h16M4 12h16M4 18h7'],
+                        ['Kursi Lipat Chitose', 'Furnitur', 38, 'Baik', 'M4 6h16M4 12h16M4 18h7'],
+                        [
+                            'Sound System Portable',
+                            'Elektronik',
+                            35,
+                            'Baik',
+                            'M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z',
+                        ],
+                        [
+                            'Meja Lipat Serbaguna',
+                            'Furnitur',
+                            31,
+                            'Baik',
+                            'M3 10h18M3 14h18M5 6h14a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2z',
+                        ],
+                        ['Karpet Aula Utama', 'Perlengkapan', 27, 'Cukup', 'M4 4h16v16H4z'],
+                        ['Genset 5000 Watt', 'Elektronik', 24, 'Baik', 'M13 10V3L4 14h7v7l9-11h-7z'],
+                        ['Tenda Serbaguna', 'Perlengkapan', 21, 'Cukup', 'M3 21h18M5 21V10l7-7 7 7v11M9 21v-6h6v6'],
+                        [
+                            'Mic Wireless Set',
+                            'Elektronik',
+                            19,
+                            'Baik',
+                            'M12 18v3m0 0h-3m3 0h3M8 10a4 4 0 108 0V6a4 4 0 10-8 0v4zm-3 0a7 7 0 0014 0',
+                        ],
+                    ];
+                @endphp
 
-                        {{-- Hover Arrow --}}
+                @foreach (array_slice($topBorrowedItems, 0, 8) as $index => $item)
+                    <div
+                        class="group relative overflow-hidden rounded-2xl border border-stone-200/80 bg-stone-50 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-stone-900/5 dark:border-stone-700/50 dark:bg-stone-800/50 dark:hover:shadow-stone-950/50">
+
+                        {{-- Visual Header --}}
                         <div
-                            class="absolute bottom-5 right-5 translate-x-2 transform opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100">
-                            <svg class="text-sage-500 h-4 w-4" fill="none" stroke="currentColor"
+                            class="bg-sage-100 dark:bg-sage-900/30 relative flex h-32 w-full items-center justify-center">
+                            <svg class="text-sage-400 dark:text-sage-600 h-10 w-10" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="{{ $item[4] }}" />
                             </svg>
+
+                            {{-- Rank Badge --}}
+                            <span
+                                class="absolute left-3 top-3 inline-flex items-center rounded-full bg-white/90 px-2.5 py-1 font-mono text-[10px] font-semibold text-stone-600 shadow-sm dark:bg-stone-900/80 dark:text-stone-300">
+                                #{{ $index + 1 }}
+                            </span>
+
+                            {{-- Condition Badge --}}
+                            <span
+                                class="{{ $item[3] === 'Baik' ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400' }} absolute right-3 top-3 rounded-full px-2.5 py-1 text-[10px] font-medium">
+                                {{ __($item[3]) }}
+                            </span>
+                        </div>
+
+                        {{-- Content --}}
+                        <div class="p-4">
+                            <p
+                                class="text-sage-600 dark:text-sage-400 mb-1 font-mono text-[11px] uppercase tracking-wide">
+                                {{ __($item[1]) }}</p>
+                            <h3 class="font-display mb-3 line-clamp-1 font-semibold text-stone-800 dark:text-stone-100">
+                                {{ __($item[0]) }}</h3>
+
+                            <div
+                                class="flex items-center justify-between border-t border-stone-200/70 pt-3 dark:border-stone-700/50">
+                                <div class="flex items-center gap-1.5 text-xs text-stone-500 dark:text-stone-400">
+                                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                                    </svg>
+                                    {{ $item[2] }}x {{ __('Dipinjam') }}
+                                </div>
+                                <a href="{{ route('list-inventaris') }}"
+                                    class="text-sage-600 dark:text-sage-400 text-xs font-medium hover:underline">
+                                    {{ __('Detail') }}
+                                </a>
+                            </div>
                         </div>
                     </div>
                 @endforeach
+            </div>
+
+            {{-- View All Link --}}
+            <div class="mt-12 flex justify-center">
+                <a href="{{ route('list-inventaris') }}"
+                    class="hover:border-sage-300 dark:hover:border-sage-600 hover:text-sage-700 dark:hover:text-sage-300 inline-flex items-center justify-center gap-2.5 rounded-xl border border-stone-200 bg-white px-5 py-2 text-sm font-medium text-stone-700 transition-all duration-200 hover:-translate-y-0.5 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-300">
+                    {{ __('Lihat Semua Inventaris') }}
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                </a>
             </div>
         </div>
     </section>
@@ -433,6 +450,74 @@
                             @endforeach
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    {{-- ===================== PETA & KONTAK SECTION ===================== --}}
+    <section id="peta-kontak" class="bg-white py-24 transition-colors duration-500 dark:bg-stone-900">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+
+            {{-- Section Header --}}
+            <div class="mx-auto mb-16 max-w-2xl text-center">
+                <p class="text-sage-600 dark:text-sage-400 mb-3 font-mono text-xs uppercase tracking-[0.3em]">
+                    {{ __('Lokasi & Kontak') }}</p>
+                <h2 class="font-display mb-4 text-3xl font-bold text-stone-900 sm:text-4xl dark:text-stone-50">
+                    {{ __('Temukan') }} <span
+                        class="text-sage-600 dark:text-sage-400 italic">{{ __('Kami') }}</span>
+                </h2>
+                <p class="leading-relaxed text-stone-500 dark:text-stone-400">
+                    {{ __('Kunjungi atau hubungi kami untuk informasi lebih lanjut mengenai SMILE.') }}
+                </p>
+            </div>
+
+            <div class="grid gap-8 lg:grid-cols-2 lg:items-stretch">
+
+                {{-- Left: Map --}}
+                <div
+                    class="overflow-hidden rounded-2xl border border-stone-200/80 shadow-xl shadow-stone-900/5 dark:border-stone-700/50">
+                    <iframe
+                        src="https://www.google.com/maps?q=Pondok+Pesantren+Annuqayah+Latee,+Guluk-Guluk,+Sumenep&output=embed"
+                        class="h-full min-h-[420px] w-full grayscale-[10%] dark:grayscale-0" style="border:0;"
+                        allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+                        title="{{ __('Lokasi Pondok Pesantren Annuqayah Latee') }}">
+                    </iframe>
+                </div>
+
+                {{-- Right: Contact Info --}}
+                <div
+                    class="flex flex-col justify-between rounded-2xl border border-stone-200/80 bg-stone-50 p-8 dark:border-stone-700/50 dark:bg-stone-800/50">
+                    <div class="space-y-6">
+                        @foreach ([['Alamat', 'Jl. Pondok Pesantren Annuqayah, Guluk-Guluk, Sumenep, Madura, Jawa Timur', 'M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z'], ['Telepon', '(0328) 821-XXX', 'M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z'], ['Email', 'info@smile-latee.ac.id', 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z'], ['Jam Operasional', 'Senin – Sabtu, 08.00 – 16.00 WIB', 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z']] as $c)
+                            <div class="flex items-start gap-4">
+                                <div
+                                    class="bg-sage-100 dark:bg-sage-900/30 text-sage-600 dark:text-sage-400 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl">
+                                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="{{ $c[2] }}" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold text-stone-700 dark:text-stone-300">
+                                        {{ __($c[0]) }}</p>
+                                    <p class="mt-0.5 text-sm text-stone-500 dark:text-stone-400">
+                                        {{ __($c[1]) }}</p>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    {{-- WhatsApp CTA --}}
+                    <a href="https://wa.me/62XXXXXXXXXX" target="_blank" rel="noopener"
+                        class="bg-sage-600 dark:bg-sage-500 hover:bg-sage-700 dark:hover:bg-sage-400 hover:shadow-sage-600/25 mt-8 inline-flex items-center justify-center gap-2.5 rounded-xl px-5 py-2.5 text-sm font-medium text-white shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg">
+                        <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.28-1.38a9.9 9.9 0 004.76 1.21h.01c5.46 0 9.9-4.45 9.9-9.9C21.96 6.45 17.5 2 12.04 2zm5.85 14.03c-.25.7-1.24 1.28-2.02 1.44-.55.11-1.26.2-3.65-.79-2.6-1.08-4.28-3.72-4.41-3.9-.13-.18-1.06-1.41-1.06-2.7 0-1.28.68-1.91.92-2.17.25-.26.54-.32.72-.32.18 0 .36 0 .52.01.17.01.39-.06.61.47.25.6.85 2.08.92 2.23.07.15.12.32.02.51-.09.19-.14.31-.28.48-.14.16-.29.36-.42.48-.14.13-.28.28-.12.55.16.27.72 1.19 1.55 1.93 1.06.95 1.96 1.24 2.23 1.38.27.13.43.11.59-.07.16-.18.68-.79.87-1.06.18-.27.36-.22.61-.13.25.09 1.57.74 1.84.87.27.13.45.2.51.31.07.11.07.62-.18 1.32z" />
+                        </svg>
+                        {{ __('Hubungi via WhatsApp') }}
+                    </a>
                 </div>
             </div>
         </div>

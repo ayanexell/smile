@@ -33,6 +33,10 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
         $peminjaman->update([
             'status' => 'dipinjam',
         ]);
+        $peminjaman->inventaris()->update([
+            'frequensi_peminjaman' => $peminjaman->inventaris->frequensi_peminjaman + 1,
+            'jumlah' => $peminjaman->inventaris->jumlah - $peminjaman->jumlah,
+        ]);
         $this->sendStatus($peminjaman, 'Diterima');
         session()->flash('success', 'Peminjaman berhasil diterima.');
     }
@@ -41,6 +45,9 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
     {
         $peminjaman->update([
             'status' => 'ditolak',
+        ]);
+        $peminjaman->inventaris()->update([
+            'jumlah' => $peminjaman->inventaris->jumlah + $peminjaman->jumlah,
         ]);
         $this->sendStatus($peminjaman, 'Ditolak');
         session()->flash('success', 'Peminjaman berhasil ditolak.');
@@ -51,6 +58,11 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
         $peminjaman->update([
             'status' => 'dikembalikan',
         ]);
+
+        $peminjaman->inventaris()->update([
+            'jumlah' => $peminjaman->inventaris->jumlah + $peminjaman->jumlah,
+        ]);
+
         $this->sendStatus($peminjaman, 'Dikembalikan');
         session()->flash('success', 'Peminjaman berhasil dikembalikan.');
     }
@@ -58,7 +70,7 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
     public function pendingPeminjaman(Peminjaman $peminjaman)
     {
         $peminjaman->update([
-            'status' => 'pending',
+            'status' => 'menunggu',
         ]);
         $this->sendStatus($peminjaman, 'Pending');
         session()->flash('success', 'Peminjaman berhasil dikembalikan ke status pending.');
@@ -391,85 +403,254 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                                 style="display: none;">
                                                 <div class="space-y-0.5 p-1">
 
-                                                    {{-- Accept --}}
-                                                    <button
-                                                        x-on:click="
-                                                                                    $wire.acceptPeminjaman({{ $peminjaman->id_peminjaman }})"
-                                                        class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-green-500 transition-colors hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-950/30">
-                                                        <svg fill="currentColor" class="h-3.5 w-3.5"
-                                                            viewBox="0 0 24 24" id="check-mark-circle-2"
-                                                            xmlns="http://www.w3.org/2000/svg" class="icon line">
-                                                            <path id="primary"
-                                                                d="M20.94,11A8.26,8.26,0,0,1,21,12a9,9,0,1,1-9-9,8.83,8.83,0,0,1,4,1"
-                                                                style="fill: none; stroke: rgb(3, 251, 44); stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.5;">
-                                                            </path>
-                                                            <polyline id="primary-2" data-name="primary"
-                                                                points="21 5 12 14 8 10"
-                                                                style="fill: none; stroke: rgb(3, 251, 44); stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.5;">
-                                                            </polyline>
-                                                        </svg>
-                                                        Accept
-                                                    </button>
-                                                    {{-- Decline --}}
-                                                    <button
-                                                        x-on:click="
-                                                                                    $wire.declinePeminjaman({{ $peminjaman->id_peminjaman }})"
-                                                        class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-rose-600 transition-colors hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/40">
-                                                        <svg class="color-rose-600 h-3.5 w-3.5" viewBox="0 0 24 24"
-                                                            role="img" xmlns="http://www.w3.org/2000/svg"
-                                                            aria-labelledby="cancelIconTitle" stroke="currentColor"
-                                                            stroke-width="1" stroke-linecap="square"
-                                                            stroke-linejoin="miter" fill="none">
-                                                            <title id="cancelIconTitle">Cancel</title>
-                                                            <path
-                                                                d="M15.5355339 15.5355339L8.46446609 8.46446609M15.5355339 8.46446609L8.46446609 15.5355339" />
-                                                            <path
-                                                                d="M4.92893219,19.0710678 C1.02368927,15.1658249 1.02368927,8.83417511 4.92893219,4.92893219 C8.83417511,1.02368927 15.1658249,1.02368927 19.0710678,4.92893219 C22.9763107,8.83417511 22.9763107,15.1658249 19.0710678,19.0710678 C15.1658249,22.9763107 8.83417511,22.9763107 4.92893219,19.0710678 Z" />
-                                                        </svg>
-                                                        Decline
-                                                    </button>
-                                                    {{-- Pending --}}
-                                                    <button
-                                                        x-on:click="
-                                                                                        $wire.pendingPeminjaman({{ $peminjaman->id_peminjaman }})"
-                                                        class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-orange-500 transition-colors hover:bg-orange-50 dark:text-orange-400 dark:hover:bg-orange-950/40">
-                                                        <svg class="color-orange-400 h-3 w-3" fill="currentColor"
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            shape-rendering="geometricPrecision"
-                                                            text-rendering="geometricPrecision"
-                                                            image-rendering="optimizeQuality" fill-rule="evenodd"
-                                                            clip-rule="evenodd" viewBox="0 0 502 511.82">
-                                                            <path fill-rule="nonzero"
-                                                                d="M279.75 471.21c14.34-1.9 25.67 12.12 20.81 25.75-2.54 6.91-8.44 11.76-15.76 12.73a260.727 260.727 0 0 1-50.81 1.54c-62.52-4.21-118.77-31.3-160.44-72.97C28.11 392.82 0 330.04 0 260.71 0 191.37 28.11 128.6 73.55 83.16S181.76 9.61 251.1 9.61c24.04 0 47.47 3.46 69.8 9.91a249.124 249.124 0 0 1 52.61 21.97l-4.95-12.96c-4.13-10.86 1.32-23.01 12.17-27.15 10.86-4.13 23.01 1.32 27.15 12.18L428.8 68.3a21.39 21.39 0 0 1 1.36 6.5c1.64 10.2-4.47 20.31-14.63 23.39l-56.03 17.14c-11.09 3.36-22.8-2.9-26.16-13.98-3.36-11.08 2.9-22.8 13.98-26.16l4.61-1.41a210.71 210.71 0 0 0-41.8-17.12c-18.57-5.36-38.37-8.24-59.03-8.24-58.62 0-111.7 23.76-150.11 62.18-38.42 38.41-62.18 91.48-62.18 150.11 0 58.62 23.76 111.69 62.18 150.11 34.81 34.81 81.66 57.59 133.77 61.55 14.9 1.13 30.23.76 44.99-1.16zm-67.09-312.63c0-10.71 8.69-19.4 19.41-19.4 10.71 0 19.4 8.69 19.4 19.4V276.7l80.85 35.54c9.8 4.31 14.24 15.75 9.93 25.55-4.31 9.79-15.75 14.24-25.55 9.93l-91.46-40.2c-7.35-2.77-12.58-9.86-12.58-18.17V158.58zm134.7 291.89c-15.62 7.99-13.54 30.9 3.29 35.93 4.87 1.38 9.72.96 14.26-1.31 12.52-6.29 24.54-13.7 35.81-22.02 5.5-4.1 8.36-10.56 7.77-17.39-1.5-15.09-18.68-22.74-30.89-13.78a208.144 208.144 0 0 1-30.24 18.57zm79.16-69.55c-8.84 13.18 1.09 30.9 16.97 30.2 6.21-.33 11.77-3.37 15.25-8.57 7.86-11.66 14.65-23.87 20.47-36.67 5.61-12.64-3.13-26.8-16.96-27.39-7.93-.26-15.11 4.17-18.41 11.4-4.93 10.85-10.66 21.15-17.32 31.03zm35.66-99.52c-.7 7.62 3 14.76 9.59 18.63 12.36 7.02 27.6-.84 29.05-14.97 1.33-14.02 1.54-27.9.58-41.95-.48-6.75-4.38-12.7-10.38-15.85-13.46-6.98-29.41 3.46-28.34 18.57.82 11.92.63 23.67-.5 35.57zM446.1 177.02c4.35 10.03 16.02 14.54 25.95 9.96 9.57-4.4 13.86-15.61 9.71-25.29-5.5-12.89-12.12-25.28-19.69-37.08-9.51-14.62-31.89-10.36-35.35 6.75-.95 5.03-.05 9.94 2.72 14.27 6.42 10.02 12 20.44 16.66 31.39z" />
-                                                        </svg>
-                                                        Pending
-                                                    </button>
-                                                    {{-- Dikembalikan --}}
-                                                    <button
-                                                        x-on:click="
-                                                                                        $wire.returnPeminjaman({{ $peminjaman->id_peminjaman }})"
-                                                        class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-blue-600 transition-colors hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-950/40">
-                                                        <svg fill="currentColor" class="h-3 w-3" version="1.1"
-                                                            id="Capa_1" xmlns="http://www.w3.org/2000/svg"
-                                                            xmlns:xlink="http://www.w3.org/1999/xlink"
-                                                            viewBox="0 0 384.97 384.97" xml:space="preserve">
-                                                            <g>
-                                                                <g id="Arrow_Left_Circle">
-                                                                    <path
-                                                                        d="M192.485,0C86.185,0,0,86.185,0,192.485C0,298.797,86.185,384.97,192.485,384.97 c106.312,0,192.485-86.173,192.485-192.485C384.97,86.185,298.797,0,192.485,0z M192.485,360.909 c-93.018,0-168.424-75.406-168.424-168.424S99.467,24.061,192.485,24.061s168.424,75.406,168.424,168.424 S285.503,360.909,192.485,360.909z" />
-                                                                    <path
-                                                                        d="M300.758,180.226H113.169l62.558-63.46c4.692-4.74,4.692-12.439,0-17.179c-4.704-4.74-12.319-4.74-17.011,0l-82.997,84.2 c-2.25,2.25-3.537,5.414-3.537,8.59c0,3.164,1.299,6.328,3.525,8.59l82.997,84.2c4.704,4.752,12.319,4.74,17.011,0 c4.704-4.752,4.704-12.439,0-17.191l-62.558-63.46h187.601c6.641,0,12.03-5.438,12.03-12.151 C312.788,185.664,307.398,180.226,300.758,180.226z" />
+                                                    @if ($peminjaman->status === 'dipinjam')
+                                                        {{-- Decline --}}
+                                                        <button
+                                                            x-on:click="
+                                                                                        $wire.declinePeminjaman({{ $peminjaman->id_peminjaman }})"
+                                                            class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-rose-600 transition-colors hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/40">
+                                                            <svg class="color-rose-600 h-3.5 w-3.5"
+                                                                viewBox="0 0 24 24" role="img"
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                aria-labelledby="cancelIconTitle"
+                                                                stroke="currentColor" stroke-width="1"
+                                                                stroke-linecap="square" stroke-linejoin="miter"
+                                                                fill="none">
+                                                                <title id="cancelIconTitle">Cancel</title>
+                                                                <path
+                                                                    d="M15.5355339 15.5355339L8.46446609 8.46446609M15.5355339 8.46446609L8.46446609 15.5355339" />
+                                                                <path
+                                                                    d="M4.92893219,19.0710678 C1.02368927,15.1658249 1.02368927,8.83417511 4.92893219,4.92893219 C8.83417511,1.02368927 15.1658249,1.02368927 19.0710678,4.92893219 C22.9763107,8.83417511 22.9763107,15.1658249 19.0710678,19.0710678 C15.1658249,22.9763107 8.83417511,22.9763107 4.92893219,19.0710678 Z" />
+                                                            </svg>
+                                                            Decline
+                                                        </button>
+                                                        {{-- Pending --}}
+                                                        <button
+                                                            x-on:click="
+                                                                                            $wire.pendingPeminjaman({{ $peminjaman->id_peminjaman }})"
+                                                            class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-orange-500 transition-colors hover:bg-orange-50 dark:text-orange-400 dark:hover:bg-orange-950/40">
+                                                            <svg class="color-orange-400 h-3 w-3" fill="currentColor"
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                shape-rendering="geometricPrecision"
+                                                                text-rendering="geometricPrecision"
+                                                                image-rendering="optimizeQuality" fill-rule="evenodd"
+                                                                clip-rule="evenodd" viewBox="0 0 502 511.82">
+                                                                <path fill-rule="nonzero"
+                                                                    d="M279.75 471.21c14.34-1.9 25.67 12.12 20.81 25.75-2.54 6.91-8.44 11.76-15.76 12.73a260.727 260.727 0 0 1-50.81 1.54c-62.52-4.21-118.77-31.3-160.44-72.97C28.11 392.82 0 330.04 0 260.71 0 191.37 28.11 128.6 73.55 83.16S181.76 9.61 251.1 9.61c24.04 0 47.47 3.46 69.8 9.91a249.124 249.124 0 0 1 52.61 21.97l-4.95-12.96c-4.13-10.86 1.32-23.01 12.17-27.15 10.86-4.13 23.01 1.32 27.15 12.18L428.8 68.3a21.39 21.39 0 0 1 1.36 6.5c1.64 10.2-4.47 20.31-14.63 23.39l-56.03 17.14c-11.09 3.36-22.8-2.9-26.16-13.98-3.36-11.08 2.9-22.8 13.98-26.16l4.61-1.41a210.71 210.71 0 0 0-41.8-17.12c-18.57-5.36-38.37-8.24-59.03-8.24-58.62 0-111.7 23.76-150.11 62.18-38.42 38.41-62.18 91.48-62.18 150.11 0 58.62 23.76 111.69 62.18 150.11 34.81 34.81 81.66 57.59 133.77 61.55 14.9 1.13 30.23.76 44.99-1.16zm-67.09-312.63c0-10.71 8.69-19.4 19.41-19.4 10.71 0 19.4 8.69 19.4 19.4V276.7l80.85 35.54c9.8 4.31 14.24 15.75 9.93 25.55-4.31 9.79-15.75 14.24-25.55 9.93l-91.46-40.2c-7.35-2.77-12.58-9.86-12.58-18.17V158.58zm134.7 291.89c-15.62 7.99-13.54 30.9 3.29 35.93 4.87 1.38 9.72.96 14.26-1.31 12.52-6.29 24.54-13.7 35.81-22.02 5.5-4.1 8.36-10.56 7.77-17.39-1.5-15.09-18.68-22.74-30.89-13.78a208.144 208.144 0 0 1-30.24 18.57zm79.16-69.55c-8.84 13.18 1.09 30.9 16.97 30.2 6.21-.33 11.77-3.37 15.25-8.57 7.86-11.66 14.65-23.87 20.47-36.67 5.61-12.64-3.13-26.8-16.96-27.39-7.93-.26-15.11 4.17-18.41 11.4-4.93 10.85-10.66 21.15-17.32 31.03zm35.66-99.52c-.7 7.62 3 14.76 9.59 18.63 12.36 7.02 27.6-.84 29.05-14.97 1.33-14.02 1.54-27.9.58-41.95-.48-6.75-4.38-12.7-10.38-15.85-13.46-6.98-29.41 3.46-28.34 18.57.82 11.92.63 23.67-.5 35.57zM446.1 177.02c4.35 10.03 16.02 14.54 25.95 9.96 9.57-4.4 13.86-15.61 9.71-25.29-5.5-12.89-12.12-25.28-19.69-37.08-9.51-14.62-31.89-10.36-35.35 6.75-.95 5.03-.05 9.94 2.72 14.27 6.42 10.02 12 20.44 16.66 31.39z" />
+                                                            </svg>
+                                                            Pending
+                                                        </button>
+                                                        {{-- Dikembalikan --}}
+                                                        <button
+                                                            x-on:click="
+                                                                                            $wire.returnPeminjaman({{ $peminjaman->id_peminjaman }})"
+                                                            class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-blue-600 transition-colors hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-950/40">
+                                                            <svg fill="currentColor" class="h-3 w-3" version="1.1"
+                                                                id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+                                                                xmlns:xlink="http://www.w3.org/1999/xlink"
+                                                                viewBox="0 0 384.97 384.97" xml:space="preserve">
+                                                                <g>
+                                                                    <g id="Arrow_Left_Circle">
+                                                                        <path
+                                                                            d="M192.485,0C86.185,0,0,86.185,0,192.485C0,298.797,86.185,384.97,192.485,384.97 c106.312,0,192.485-86.173,192.485-192.485C384.97,86.185,298.797,0,192.485,0z M192.485,360.909 c-93.018,0-168.424-75.406-168.424-168.424S99.467,24.061,192.485,24.061s168.424,75.406,168.424,168.424 S285.503,360.909,192.485,360.909z" />
+                                                                        <path
+                                                                            d="M300.758,180.226H113.169l62.558-63.46c4.692-4.74,4.692-12.439,0-17.179c-4.704-4.74-12.319-4.74-17.011,0l-82.997,84.2 c-2.25,2.25-3.537,5.414-3.537,8.59c0,3.164,1.299,6.328,3.525,8.59l82.997,84.2c4.704,4.752,12.319,4.74,17.011,0 c4.704-4.752,4.704-12.439,0-17.191l-62.558-63.46h187.601c6.641,0,12.03-5.438,12.03-12.151 C312.788,185.664,307.398,180.226,300.758,180.226z" />
+                                                                    </g>
+                                                                    <g></g>
+                                                                    <g></g>
+                                                                    <g></g>
+                                                                    <g></g>
+                                                                    <g></g>
+                                                                    <g></g>
                                                                 </g>
-                                                                <g></g>
-                                                                <g></g>
-                                                                <g></g>
-                                                                <g></g>
-                                                                <g></g>
-                                                                <g></g>
-                                                            </g>
-                                                        </svg>
-                                                        Dikembalikan
-                                                    </button>
+                                                            </svg>
+                                                            Dikembalikan
+                                                        </button>
+                                                    @elseif($peminjaman->status === 'ditolak')
+                                                        {{-- Accept --}}
+                                                        <button
+                                                            x-on:click="
+                                                                                            $wire.acceptPeminjaman({{ $peminjaman->id_peminjaman }})"
+                                                            class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-green-500 transition-colors hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-950/30">
+                                                            <svg fill="currentColor" class="h-3.5 w-3.5"
+                                                                viewBox="0 0 24 24" id="check-mark-circle-2"
+                                                                xmlns="http://www.w3.org/2000/svg" class="icon line">
+                                                                <path id="primary"
+                                                                    d="M20.94,11A8.26,8.26,0,0,1,21,12a9,9,0,1,1-9-9,8.83,8.83,0,0,1,4,1"
+                                                                    style="fill: none; stroke: rgb(3, 251, 44); stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.5;">
+                                                                </path>
+                                                                <polyline id="primary-2" data-name="primary"
+                                                                    points="21 5 12 14 8 10"
+                                                                    style="fill: none; stroke: rgb(3, 251, 44); stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.5;">
+                                                                </polyline>
+                                                            </svg>
+                                                            Accept
+                                                        </button>
+                                                        {{-- Pending --}}
+                                                        <button
+                                                            x-on:click="
+                                                                                            $wire.pendingPeminjaman({{ $peminjaman->id_peminjaman }})"
+                                                            class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-orange-500 transition-colors hover:bg-orange-50 dark:text-orange-400 dark:hover:bg-orange-950/40">
+                                                            <svg class="color-orange-400 h-3 w-3" fill="currentColor"
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                shape-rendering="geometricPrecision"
+                                                                text-rendering="geometricPrecision"
+                                                                image-rendering="optimizeQuality" fill-rule="evenodd"
+                                                                clip-rule="evenodd" viewBox="0 0 502 511.82">
+                                                                <path fill-rule="nonzero"
+                                                                    d="M279.75 471.21c14.34-1.9 25.67 12.12 20.81 25.75-2.54 6.91-8.44 11.76-15.76 12.73a260.727 260.727 0 0 1-50.81 1.54c-62.52-4.21-118.77-31.3-160.44-72.97C28.11 392.82 0 330.04 0 260.71 0 191.37 28.11 128.6 73.55 83.16S181.76 9.61 251.1 9.61c24.04 0 47.47 3.46 69.8 9.91a249.124 249.124 0 0 1 52.61 21.97l-4.95-12.96c-4.13-10.86 1.32-23.01 12.17-27.15 10.86-4.13 23.01 1.32 27.15 12.18L428.8 68.3a21.39 21.39 0 0 1 1.36 6.5c1.64 10.2-4.47 20.31-14.63 23.39l-56.03 17.14c-11.09 3.36-22.8-2.9-26.16-13.98-3.36-11.08 2.9-22.8 13.98-26.16l4.61-1.41a210.71 210.71 0 0 0-41.8-17.12c-18.57-5.36-38.37-8.24-59.03-8.24-58.62 0-111.7 23.76-150.11 62.18-38.42 38.41-62.18 91.48-62.18 150.11 0 58.62 23.76 111.69 62.18 150.11 34.81 34.81 81.66 57.59 133.77 61.55 14.9 1.13 30.23.76 44.99-1.16zm-67.09-312.63c0-10.71 8.69-19.4 19.41-19.4 10.71 0 19.4 8.69 19.4 19.4V276.7l80.85 35.54c9.8 4.31 14.24 15.75 9.93 25.55-4.31 9.79-15.75 14.24-25.55 9.93l-91.46-40.2c-7.35-2.77-12.58-9.86-12.58-18.17V158.58zm134.7 291.89c-15.62 7.99-13.54 30.9 3.29 35.93 4.87 1.38 9.72.96 14.26-1.31 12.52-6.29 24.54-13.7 35.81-22.02 5.5-4.1 8.36-10.56 7.77-17.39-1.5-15.09-18.68-22.74-30.89-13.78a208.144 208.144 0 0 1-30.24 18.57zm79.16-69.55c-8.84 13.18 1.09 30.9 16.97 30.2 6.21-.33 11.77-3.37 15.25-8.57 7.86-11.66 14.65-23.87 20.47-36.67 5.61-12.64-3.13-26.8-16.96-27.39-7.93-.26-15.11 4.17-18.41 11.4-4.93 10.85-10.66 21.15-17.32 31.03zm35.66-99.52c-.7 7.62 3 14.76 9.59 18.63 12.36 7.02 27.6-.84 29.05-14.97 1.33-14.02 1.54-27.9.58-41.95-.48-6.75-4.38-12.7-10.38-15.85-13.46-6.98-29.41 3.46-28.34 18.57.82 11.92.63 23.67-.5 35.57zM446.1 177.02c4.35 10.03 16.02 14.54 25.95 9.96 9.57-4.4 13.86-15.61 9.71-25.29-5.5-12.89-12.12-25.28-19.69-37.08-9.51-14.62-31.89-10.36-35.35 6.75-.95 5.03-.05 9.94 2.72 14.27 6.42 10.02 12 20.44 16.66 31.39z" />
+                                                            </svg>
+                                                            Pending
+                                                        </button>
+                                                        {{-- Dikembalikan --}}
+                                                        <button
+                                                            x-on:click="
+                                                                                            $wire.returnPeminjaman({{ $peminjaman->id_peminjaman }})"
+                                                            class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-blue-600 transition-colors hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-950/40">
+                                                            <svg fill="currentColor" class="h-3 w-3" version="1.1"
+                                                                id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+                                                                xmlns:xlink="http://www.w3.org/1999/xlink"
+                                                                viewBox="0 0 384.97 384.97" xml:space="preserve">
+                                                                <g>
+                                                                    <g id="Arrow_Left_Circle">
+                                                                        <path
+                                                                            d="M192.485,0C86.185,0,0,86.185,0,192.485C0,298.797,86.185,384.97,192.485,384.97 c106.312,0,192.485-86.173,192.485-192.485C384.97,86.185,298.797,0,192.485,0z M192.485,360.909 c-93.018,0-168.424-75.406-168.424-168.424S99.467,24.061,192.485,24.061s168.424,75.406,168.424,168.424 S285.503,360.909,192.485,360.909z" />
+                                                                        <path
+                                                                            d="M300.758,180.226H113.169l62.558-63.46c4.692-4.74,4.692-12.439,0-17.179c-4.704-4.74-12.319-4.74-17.011,0l-82.997,84.2 c-2.25,2.25-3.537,5.414-3.537,8.59c0,3.164,1.299,6.328,3.525,8.59l82.997,84.2c4.704,4.752,12.319,4.74,17.011,0 c4.704-4.752,4.704-12.439,0-17.191l-62.558-63.46h187.601c6.641,0,12.03-5.438,12.03-12.151 C312.788,185.664,307.398,180.226,300.758,180.226z" />
+                                                                    </g>
+                                                                    <g></g>
+                                                                    <g></g>
+                                                                    <g></g>
+                                                                    <g></g>
+                                                                    <g></g>
+                                                                    <g></g>
+                                                                </g>
+                                                            </svg>
+                                                            Dikembalikan
+                                                        </button>
+                                                    @elseif ($peminjaman->status === 'menunggu')
+                                                        {{-- Accept --}}
+                                                        <button
+                                                            x-on:click="
+                                                                                            $wire.acceptPeminjaman({{ $peminjaman->id_peminjaman }})"
+                                                            class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-green-500 transition-colors hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-950/30">
+                                                            <svg fill="currentColor" class="h-3.5 w-3.5"
+                                                                viewBox="0 0 24 24" id="check-mark-circle-2"
+                                                                xmlns="http://www.w3.org/2000/svg" class="icon line">
+                                                                <path id="primary"
+                                                                    d="M20.94,11A8.26,8.26,0,0,1,21,12a9,9,0,1,1-9-9,8.83,8.83,0,0,1,4,1"
+                                                                    style="fill: none; stroke: rgb(3, 251, 44); stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.5;">
+                                                                </path>
+                                                                <polyline id="primary-2" data-name="primary"
+                                                                    points="21 5 12 14 8 10"
+                                                                    style="fill: none; stroke: rgb(3, 251, 44); stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.5;">
+                                                                </polyline>
+                                                            </svg>
+                                                            Accept
+                                                        </button>
+                                                        {{-- Decline --}}
+                                                        <button
+                                                            x-on:click="
+                                                                                        $wire.declinePeminjaman({{ $peminjaman->id_peminjaman }})"
+                                                            class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-rose-600 transition-colors hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/40">
+                                                            <svg class="color-rose-600 h-3.5 w-3.5"
+                                                                viewBox="0 0 24 24" role="img"
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                aria-labelledby="cancelIconTitle"
+                                                                stroke="currentColor" stroke-width="1"
+                                                                stroke-linecap="square" stroke-linejoin="miter"
+                                                                fill="none">
+                                                                <title id="cancelIconTitle">Cancel</title>
+                                                                <path
+                                                                    d="M15.5355339 15.5355339L8.46446609 8.46446609M15.5355339 8.46446609L8.46446609 15.5355339" />
+                                                                <path
+                                                                    d="M4.92893219,19.0710678 C1.02368927,15.1658249 1.02368927,8.83417511 4.92893219,4.92893219 C8.83417511,1.02368927 15.1658249,1.02368927 19.0710678,4.92893219 C22.9763107,8.83417511 22.9763107,15.1658249 19.0710678,19.0710678 C15.1658249,22.9763107 8.83417511,22.9763107 4.92893219,19.0710678 Z" />
+                                                            </svg>
+                                                            Decline
+                                                        </button>
+                                                        {{-- Dikembalikan --}}
+                                                        <button
+                                                            x-on:click="
+                                                                                            $wire.returnPeminjaman({{ $peminjaman->id_peminjaman }})"
+                                                            class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-blue-600 transition-colors hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-950/40">
+                                                            <svg fill="currentColor" class="h-3 w-3" version="1.1"
+                                                                id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+                                                                xmlns:xlink="http://www.w3.org/1999/xlink"
+                                                                viewBox="0 0 384.97 384.97" xml:space="preserve">
+                                                                <g>
+                                                                    <g id="Arrow_Left_Circle">
+                                                                        <path
+                                                                            d="M192.485,0C86.185,0,0,86.185,0,192.485C0,298.797,86.185,384.97,192.485,384.97 c106.312,0,192.485-86.173,192.485-192.485C384.97,86.185,298.797,0,192.485,0z M192.485,360.909 c-93.018,0-168.424-75.406-168.424-168.424S99.467,24.061,192.485,24.061s168.424,75.406,168.424,168.424 S285.503,360.909,192.485,360.909z" />
+                                                                        <path
+                                                                            d="M300.758,180.226H113.169l62.558-63.46c4.692-4.74,4.692-12.439,0-17.179c-4.704-4.74-12.319-4.74-17.011,0l-82.997,84.2 c-2.25,2.25-3.537,5.414-3.537,8.59c0,3.164,1.299,6.328,3.525,8.59l82.997,84.2c4.704,4.752,12.319,4.74,17.011,0 c4.704-4.752,4.704-12.439,0-17.191l-62.558-63.46h187.601c6.641,0,12.03-5.438,12.03-12.151 C312.788,185.664,307.398,180.226,300.758,180.226z" />
+                                                                    </g>
+                                                                    <g></g>
+                                                                    <g></g>
+                                                                    <g></g>
+                                                                    <g></g>
+                                                                    <g></g>
+                                                                    <g></g>
+                                                                </g>
+                                                            </svg>
+                                                            Dikembalikan
+                                                        </button>
+                                                    @elseif ($peminjaman->status === 'dikembalikan')
+                                                        {{-- Accept --}}
+                                                        <button
+                                                            x-on:click="
+                                                                                            $wire.acceptPeminjaman({{ $peminjaman->id_peminjaman }})"
+                                                            class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-green-500 transition-colors hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-950/30">
+                                                            <svg fill="currentColor" class="h-3.5 w-3.5"
+                                                                viewBox="0 0 24 24" id="check-mark-circle-2"
+                                                                xmlns="http://www.w3.org/2000/svg" class="icon line">
+                                                                <path id="primary"
+                                                                    d="M20.94,11A8.26,8.26,0,0,1,21,12a9,9,0,1,1-9-9,8.83,8.83,0,0,1,4,1"
+                                                                    style="fill: none; stroke: rgb(3, 251, 44); stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.5;">
+                                                                </path>
+                                                                <polyline id="primary-2" data-name="primary"
+                                                                    points="21 5 12 14 8 10"
+                                                                    style="fill: none; stroke: rgb(3, 251, 44); stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.5;">
+                                                                </polyline>
+                                                            </svg>
+                                                            Accept
+                                                        </button>
+                                                        {{-- Decline --}}
+                                                        <button
+                                                            x-on:click="
+                                                                                        $wire.declinePeminjaman({{ $peminjaman->id_peminjaman }})"
+                                                            class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-rose-600 transition-colors hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/40">
+                                                            <svg class="color-rose-600 h-3.5 w-3.5"
+                                                                viewBox="0 0 24 24" role="img"
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                aria-labelledby="cancelIconTitle"
+                                                                stroke="currentColor" stroke-width="1"
+                                                                stroke-linecap="square" stroke-linejoin="miter"
+                                                                fill="none">
+                                                                <title id="cancelIconTitle">Cancel</title>
+                                                                <path
+                                                                    d="M15.5355339 15.5355339L8.46446609 8.46446609M15.5355339 8.46446609L8.46446609 15.5355339" />
+                                                                <path
+                                                                    d="M4.92893219,19.0710678 C1.02368927,15.1658249 1.02368927,8.83417511 4.92893219,4.92893219 C8.83417511,1.02368927 15.1658249,1.02368927 19.0710678,4.92893219 C22.9763107,8.83417511 22.9763107,15.1658249 19.0710678,19.0710678 C15.1658249,22.9763107 8.83417511,22.9763107 4.92893219,19.0710678 Z" />
+                                                            </svg>
+                                                            Decline
+                                                        </button>
+                                                        {{-- Pending --}}
+                                                        <button
+                                                            x-on:click="
+                                                                                            $wire.pendingPeminjaman({{ $peminjaman->id_peminjaman }})"
+                                                            class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-orange-500 transition-colors hover:bg-orange-50 dark:text-orange-400 dark:hover:bg-orange-950/40">
+                                                            <svg class="color-orange-400 h-3 w-3" fill="currentColor"
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                shape-rendering="geometricPrecision"
+                                                                text-rendering="geometricPrecision"
+                                                                image-rendering="optimizeQuality" fill-rule="evenodd"
+                                                                clip-rule="evenodd" viewBox="0 0 502 511.82">
+                                                                <path fill-rule="nonzero"
+                                                                    d="M279.75 471.21c14.34-1.9 25.67 12.12 20.81 25.75-2.54 6.91-8.44 11.76-15.76 12.73a260.727 260.727 0 0 1-50.81 1.54c-62.52-4.21-118.77-31.3-160.44-72.97C28.11 392.82 0 330.04 0 260.71 0 191.37 28.11 128.6 73.55 83.16S181.76 9.61 251.1 9.61c24.04 0 47.47 3.46 69.8 9.91a249.124 249.124 0 0 1 52.61 21.97l-4.95-12.96c-4.13-10.86 1.32-23.01 12.17-27.15 10.86-4.13 23.01 1.32 27.15 12.18L428.8 68.3a21.39 21.39 0 0 1 1.36 6.5c1.64 10.2-4.47 20.31-14.63 23.39l-56.03 17.14c-11.09 3.36-22.8-2.9-26.16-13.98-3.36-11.08 2.9-22.8 13.98-26.16l4.61-1.41a210.71 210.71 0 0 0-41.8-17.12c-18.57-5.36-38.37-8.24-59.03-8.24-58.62 0-111.7 23.76-150.11 62.18-38.42 38.41-62.18 91.48-62.18 150.11 0 58.62 23.76 111.69 62.18 150.11 34.81 34.81 81.66 57.59 133.77 61.55 14.9 1.13 30.23.76 44.99-1.16zm-67.09-312.63c0-10.71 8.69-19.4 19.41-19.4 10.71 0 19.4 8.69 19.4 19.4V276.7l80.85 35.54c9.8 4.31 14.24 15.75 9.93 25.55-4.31 9.79-15.75 14.24-25.55 9.93l-91.46-40.2c-7.35-2.77-12.58-9.86-12.58-18.17V158.58zm134.7 291.89c-15.62 7.99-13.54 30.9 3.29 35.93 4.87 1.38 9.72.96 14.26-1.31 12.52-6.29 24.54-13.7 35.81-22.02 5.5-4.1 8.36-10.56 7.77-17.39-1.5-15.09-18.68-22.74-30.89-13.78a208.144 208.144 0 0 1-30.24 18.57zm79.16-69.55c-8.84 13.18 1.09 30.9 16.97 30.2 6.21-.33 11.77-3.37 15.25-8.57 7.86-11.66 14.65-23.87 20.47-36.67 5.61-12.64-3.13-26.8-16.96-27.39-7.93-.26-15.11 4.17-18.41 11.4-4.93 10.85-10.66 21.15-17.32 31.03zm35.66-99.52c-.7 7.62 3 14.76 9.59 18.63 12.36 7.02 27.6-.84 29.05-14.97 1.33-14.02 1.54-27.9.58-41.95-.48-6.75-4.38-12.7-10.38-15.85-13.46-6.98-29.41 3.46-28.34 18.57.82 11.92.63 23.67-.5 35.57zM446.1 177.02c4.35 10.03 16.02 14.54 25.95 9.96 9.57-4.4 13.86-15.61 9.71-25.29-5.5-12.89-12.12-25.28-19.69-37.08-9.51-14.62-31.89-10.36-35.35 6.75-.95 5.03-.05 9.94 2.72 14.27 6.42 10.02 12 20.44 16.66 31.39z" />
+                                                            </svg>
+                                                            Pending
+                                                        </button>
+                                                    @endif
 
                                                     <flux:separator />
 

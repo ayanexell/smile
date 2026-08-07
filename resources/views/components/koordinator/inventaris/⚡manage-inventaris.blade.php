@@ -6,8 +6,9 @@ use App\Exports\InventarisExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
 use App\Models\LaporanInventaris;
+use Livewire\Attributes\Title;
 
-new class extends Component {
+new #[Title('Kelola Inventaris')] class extends Component {
     use Livewire\WithPagination;
 
     public $search = '';
@@ -20,19 +21,14 @@ new class extends Component {
         Carbon::setLocale('id');
     }
 
-    public function editInventaris($id)
-    {
-        $this->dispatch('edit-inventaris', $id);
-    }
-
     public function deleteInventaris(Inventaris $inventaris)
     {
         try {
             $inventaris->delete();
-            session('success', 'Inventaris berhasil dihapus!');
+            session()->flash('success', 'Inventaris berhasil dihapus!!');
         } catch (Exception $e) {
             Log::log('error', $e->getMessage());
-            session('error', 'Gagal menghapus Inventaris' . $e->getMessage());
+            session()->flash('error', 'Gagal menghapus Inventaris' . $e->getMessage());
         }
     }
 
@@ -165,7 +161,7 @@ new class extends Component {
                 </select>
 
                 {{-- Tombol Tambah --}}
-                <button x-data x-on:click="$dispatch('open-inventaris-modal')" x-cloak
+                <button x-data x-on:click="$dispatch('add-inventaris-modal')" x-cloak
                     class="bg-sage-600 dark:bg-sage-500 hover:bg-sage-700 dark:hover:bg-sage-400 hover:shadow-sage-600/20 inline-flex shrink-0 cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-medium text-white shadow-sm transition-all hover:shadow">
                     <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -175,57 +171,51 @@ new class extends Component {
 
                 {{-- Tombol Laporan --}}
                 <button wire:click="buatLaporan"
-                    class="bg-sage-100 dark:bg-white-500 hover:bg-white-700 dark:hover:bg-white-400 hover:shadow-white-600/20 text-sage-600 inline-flex shrink-0 cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-medium shadow-sm transition-all hover:shadow">
-                    <svg class="h-4a w-4" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                    class="bg-sage-100 dark:bg-white-500 hover:bg-white-700 dark:hover:bg-white-400 hover:shadow-white-600/20 text-sage-600 relative inline-flex shrink-0 cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-medium shadow-sm transition-all hover:shadow">
+                    <div class="flex gap-1">
+                        <svg class="h-4a w-4" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <style>
+                                    .cls-1 {
+                                        fill: #0f773d;
+                                    }
+                                </style>
+                            </defs>
+                            <title />
+                            <g id="xxx-word">
+                                <path class="cls-1"
+                                    d="M325,105H250a5,5,0,0,1-5-5V25a5,5,0,1,1,10,0V95h70a5,5,0,0,1,0,10Z" />
+                                <path class="cls-1"
+                                    d="M325,154.83a5,5,0,0,1-5-5V102.07L247.93,30H100A20,20,0,0,0,80,50v98.17a5,5,0,0,1-10,0V50a30,30,0,0,1,30-30H250a5,5,0,0,1,3.54,1.46l75,75A5,5,0,0,1,330,100v49.83A5,5,0,0,1,325,154.83Z" />
+                                <path class="cls-1"
+                                    d="M300,380H100a30,30,0,0,1-30-30V275a5,5,0,0,1,10,0v75a20,20,0,0,0,20,20H300a20,20,0,0,0,20-20V275a5,5,0,0,1,10,0v75A30,30,0,0,1,300,380Z" />
 
-                        <defs>
+                                <path class="cls-1" d="M275,280H125a5,5,0,1,1,0-10H275a5,5,0,0,1,0,10Z" />
 
-                            <style>
-                                .cls-1 {
-                                    fill: #0f773d;
-                                }
-                            </style>
+                                <path class="cls-1" d="M200,330H125a5,5,0,1,1,0-10h75a5,5,0,0,1,0,10Z" />
 
-                        </defs>
+                                <path class="cls-1"
+                                    d="M325,280H75a30,30,0,0,1-30-30V173.17a30,30,0,0,1,30-30h.2l250,1.66a30.09,30.09,0,0,1,29.81,30V250A30,30,0,0,1,325,280ZM75,153.17a20,20,0,0,0-20,20V250a20,20,0,0,0,20,20H325a20,20,0,0,0,20-20V174.83a20.06,20.06,0,0,0-19.88-20l-250-1.66Z" />
 
-                        <title />
+                                <path class="cls-1"
+                                    d="M152.44,236H117.79V182.68h34.3v7.93H127.4v14.45h19.84v7.73H127.4v14.92h25Z" />
 
-                        <g id="xxx-word">
+                                <path class="cls-1"
+                                    d="M190.18,236H180l-8.36-14.37L162.52,236h-7.66L168,215.69l-11.37-19.14h10.2l6.48,11.6,7.38-11.6h7.46L177,213.66Z" />
 
-                            <path class="cls-1"
-                                d="M325,105H250a5,5,0,0,1-5-5V25a5,5,0,1,1,10,0V95h70a5,5,0,0,1,0,10Z" />
+                                <path class="cls-1"
+                                    d="M217.4,221.51l7.66.78q-1.49,7.42-5.74,11A15.5,15.5,0,0,1,209,236.82q-8.17,0-12.56-6a23.89,23.89,0,0,1-4.39-14.59q0-8.91,4.8-14.73a15.77,15.77,0,0,1,12.81-5.82q12.89,0,15.35,13.59l-7.66,1.05q-1-7.34-7.23-7.34a6.9,6.9,0,0,0-6.58,4,20.66,20.66,0,0,0-2.05,9.59q0,6,2.13,9.22a6.74,6.74,0,0,0,6,3.24Q215.49,229,217.4,221.51Z" />
 
-                            <path class="cls-1"
-                                d="M325,154.83a5,5,0,0,1-5-5V102.07L247.93,30H100A20,20,0,0,0,80,50v98.17a5,5,0,0,1-10,0V50a30,30,0,0,1,30-30H250a5,5,0,0,1,3.54,1.46l75,75A5,5,0,0,1,330,100v49.83A5,5,0,0,1,325,154.83Z" />
+                                <path class="cls-1"
+                                    d="M257,223.42l8,1.09a16.84,16.84,0,0,1-6.09,8.83,18.13,18.13,0,0,1-11.37,3.48q-8.2,0-13.2-5.51t-5-14.92q0-8.94,5-14.8t13.67-5.86q8.44,0,13,5.78t4.61,14.84l0,1H238.61a22.12,22.12,0,0,0,.76,6.45,8.68,8.68,0,0,0,3,4.22,8.83,8.83,0,0,0,5.66,1.8Q254.67,229.83,257,223.42Zm-.55-11.8a9.92,9.92,0,0,0-2.56-7,8.63,8.63,0,0,0-12.36-.18,11.36,11.36,0,0,0-2.89,7.13Z" />
 
-                            <path class="cls-1"
-                                d="M300,380H100a30,30,0,0,1-30-30V275a5,5,0,0,1,10,0v75a20,20,0,0,0,20,20H300a20,20,0,0,0,20-20V275a5,5,0,0,1,10,0v75A30,30,0,0,1,300,380Z" />
+                                <path class="cls-1" d="M282.71,236h-8.91V182.68h8.91Z" />
 
-                            <path class="cls-1" d="M275,280H125a5,5,0,1,1,0-10H275a5,5,0,0,1,0,10Z" />
+                            </g>
 
-                            <path class="cls-1" d="M200,330H125a5,5,0,1,1,0-10h75a5,5,0,0,1,0,10Z" />
-
-                            <path class="cls-1"
-                                d="M325,280H75a30,30,0,0,1-30-30V173.17a30,30,0,0,1,30-30h.2l250,1.66a30.09,30.09,0,0,1,29.81,30V250A30,30,0,0,1,325,280ZM75,153.17a20,20,0,0,0-20,20V250a20,20,0,0,0,20,20H325a20,20,0,0,0,20-20V174.83a20.06,20.06,0,0,0-19.88-20l-250-1.66Z" />
-
-                            <path class="cls-1"
-                                d="M152.44,236H117.79V182.68h34.3v7.93H127.4v14.45h19.84v7.73H127.4v14.92h25Z" />
-
-                            <path class="cls-1"
-                                d="M190.18,236H180l-8.36-14.37L162.52,236h-7.66L168,215.69l-11.37-19.14h10.2l6.48,11.6,7.38-11.6h7.46L177,213.66Z" />
-
-                            <path class="cls-1"
-                                d="M217.4,221.51l7.66.78q-1.49,7.42-5.74,11A15.5,15.5,0,0,1,209,236.82q-8.17,0-12.56-6a23.89,23.89,0,0,1-4.39-14.59q0-8.91,4.8-14.73a15.77,15.77,0,0,1,12.81-5.82q12.89,0,15.35,13.59l-7.66,1.05q-1-7.34-7.23-7.34a6.9,6.9,0,0,0-6.58,4,20.66,20.66,0,0,0-2.05,9.59q0,6,2.13,9.22a6.74,6.74,0,0,0,6,3.24Q215.49,229,217.4,221.51Z" />
-
-                            <path class="cls-1"
-                                d="M257,223.42l8,1.09a16.84,16.84,0,0,1-6.09,8.83,18.13,18.13,0,0,1-11.37,3.48q-8.2,0-13.2-5.51t-5-14.92q0-8.94,5-14.8t13.67-5.86q8.44,0,13,5.78t4.61,14.84l0,1H238.61a22.12,22.12,0,0,0,.76,6.45,8.68,8.68,0,0,0,3,4.22,8.83,8.83,0,0,0,5.66,1.8Q254.67,229.83,257,223.42Zm-.55-11.8a9.92,9.92,0,0,0-2.56-7,8.63,8.63,0,0,0-12.36-.18,11.36,11.36,0,0,0-2.89,7.13Z" />
-
-                            <path class="cls-1" d="M282.71,236h-8.91V182.68h8.91Z" />
-
-                        </g>
-
-                    </svg>
-                    Laporan
+                        </svg>
+                        Laporan
+                    </div>
                 </button>
             </div>
         </div>
@@ -255,6 +245,7 @@ new class extends Component {
                             <th class="hidden px-2.5 py-1.5 sm:table-cell">Kondisi</th>
                             <th class="hidden px-2.5 py-1.5 lg:table-cell">Warna</th>
                             <th class="hidden px-2.5 py-1.5 text-center md:table-cell">Dipinjam</th>
+                            <th class="hidden px-2.5 py-1.5 text-center md:table-cell">Frequensi</th>
                             <th class="w-20 px-2.5 py-1.5 text-right">Aksi</th>
                         </tr>
                     </thead>
@@ -376,6 +367,12 @@ new class extends Component {
                                     @endif
                                 </td>
 
+                                {{-- Frequenst --}}
+                                <td
+                                    class="hidden px-2.5 py-1.5 text-center font-mono text-stone-600 md:table-cell dark:text-stone-400">
+                                    {{ $item->frequensi_peminjaman ?? 0 }}
+                                </td>
+
                                 {{-- Aksi --}}
                                 <td class="px-2.5 py-1.5 text-right">
                                     <div class="flex items-center justify-end" x-data="{ open: false }">
@@ -402,31 +399,11 @@ new class extends Component {
                                                 class="absolute right-0 z-30 mt-1 w-36 origin-top-right rounded-md border border-stone-200 bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:border-stone-800 dark:bg-stone-900"
                                                 style="display: none;">
                                                 <div class="space-y-0.5 p-1">
-
-                                                    {{-- Detail --}}
-                                                    <button
-                                                        x-on:click="
-                                                            $flux.modal('detail-inventaris-modal').show();
-                                                            $wire.lihatDetail({{ $item->id }});
-                                                            open = false;"
-                                                        class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-stone-600 transition-colors hover:bg-stone-50 dark:text-stone-400 dark:hover:bg-stone-800/60">
-                                                        <svg class="h-3.5 w-3.5 text-stone-400" fill="none"
-                                                            stroke="currentColor" stroke-width="2"
-                                                            viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178z" />
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                        </svg>
-                                                        Detail
-                                                    </button>
-
                                                     {{-- Edit --}}
                                                     <button
                                                         x-on:click="
-                                                            $flux.modal('edit-inventaris-modal').show();
-                                                            $wire.editInventaris({{ $item->id_inventaris }});
-                                                            open = false;"
+                                                            $dispatch('edit-inventaris-modal', {id: {{ $item->id_inventaris }}})"
+                                                        @click="open = false";
                                                         class="text-sage-600 dark:text-sage-400 hover:bg-sage-50 dark:hover:bg-sage-950/30 flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs transition-colors">
                                                         <svg class="text-sage-500 h-3.5 w-3.5" fill="none"
                                                             stroke="currentColor" stroke-width="2"
@@ -440,9 +417,9 @@ new class extends Component {
                                                     <flux:separator />
 
                                                     {{-- Hapus --}}
-                                                    <button wire:click="deleteInventaris({{ $item->id_inventaris }})"
+                                                    <button x-data
+                                                        x-on:click="$dispatch('delete-inventaris-modal', { id: {{ $item->id_inventaris }} })"
                                                         @click="open = false"
-                                                        wire:confirm="Apakah anda yakin ingin menghapus inventaris ini?"
                                                         class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-rose-600 transition-colors hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/40">
                                                         <svg class="h-3.5 w-3.5 text-rose-400" fill="none"
                                                             stroke="currentColor" stroke-width="2"
@@ -488,6 +465,9 @@ new class extends Component {
             </div>
 
         </div>
-        <livewire:koordinator.inventaris.add-inventaris />
     </div>
+    <livewire:koordinator.inventaris.add-inventaris />
+    <livewire:koordinator.inventaris.edit-inventaris />
+    <x-modal-hapus modal_name="delete-inventaris-modal" action_hapus="deleteInventaris" title="Hapus Inventaris"
+        description="Data inventaris akan dihapus permanen dari sistem." />
 </div>

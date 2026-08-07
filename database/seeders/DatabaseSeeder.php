@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
             DepartemenSeeder::class,
             UserSeeder::class,
             InventarisSeeder::class,
-            PeminjamanSeeder::class,
+            // PeminjamanSeeder::class,
         ]);
     }
 }

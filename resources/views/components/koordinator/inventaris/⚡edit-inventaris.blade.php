@@ -14,40 +14,26 @@ new class extends Component {
 
     #[Validate('required|string|max:255')]
     public $nama_barang;
-
     #[Validate('required|integer|min:0')]
     public $jumlah;
-
     #[Validate('required|string|max:100')]
     public $kondisi;
-
     #[Validate('required|string|max:100')]
     public $tipe;
-
     // Hapus validasi untuk img_path karena diisi otomatis
     public $img_path;
-
     #[Validate('required|string|max:100')]
     public $warna;
-
     #[Validate('required|boolean')]
-    public $dpt_dipinjam = false; // 2MB max
-
+    public $dpt_dipinjam = false;
     #[Validate('nullable|image|max:2048')]
     public $img_upload;
 
-    public $departemens;
     public $inventaris;
-
-    public function mount()
-    {
-        $this->departemens = Departemens::all();
-    }
 
     public function validationAttributes()
     {
         return [
-            'departemen_id' => 'Departemen',
             'nama_barang' => 'Nama Barang',
             'img_upload' => 'Foto Barang', // ubah dari img_path
             'dpt_dipinjam' => 'Status Ketersediaan Pinjam',
@@ -133,9 +119,6 @@ new class extends Component {
                 'type' => 'success',
                 'message' => 'Inventaris berhasil diupdate!',
             ]);
-
-            // Dispatch event untuk refresh tabel (jika diperlukan)
-            $this->dispatch('inventaris-updated');
         } catch (\Exception $e) {
             $this->dispatch('edit-error', ['message' => 'Gagal mengupdate: ' . $e->getMessage()]);
         }

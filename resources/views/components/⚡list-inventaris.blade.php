@@ -30,7 +30,7 @@ new #[Layout('layouts.guest')] #[Title('List Inventaris')] class extends Compone
 };
 ?>
 
-<div class="grid-pattern relative min-h-screen overflow-hidden">
+<div class="grid-pattern relative min-h-screen overflow-hidden pt-16">
     <div class="mx-auto max-w-7xl space-y-6 px-4 py-6">
         {{-- Header / Judul --}}
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -66,7 +66,7 @@ new #[Layout('layouts.guest')] #[Title('List Inventaris')] class extends Compone
                     {{-- Gambar --}}
                     <div
                         class="aspect-4/3 flex items-center justify-center overflow-hidden bg-stone-100 dark:bg-stone-800">
-                        @if ($item->img_path)
+                        @if ($item->img_path && Storage::exists($item->img_path))
                             <img src="{{ asset('storage/' . $item->img_path) }}" alt="{{ $item->nama_barang }}"
                                 class="h-full w-full object-cover">
                         @else

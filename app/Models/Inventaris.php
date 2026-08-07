@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Attributes\Scope;
 use App\Models\User;
 use App\Models\Peminjaman;
 
-#[Fillable(['user_id', 'nama_barang', 'jumlah', 'kondisi', 'tipe', 'img_path', 'warna', 'dpt_dipinjam'])]
+#[Fillable(['user_id', 'nama_barang', 'jumlah', 'kondisi', 'tipe', 'img_path', 'warna', 'dpt_dipinjam', 'frequensi_peminjaman'])]
 class Inventaris extends Model
 {
     use HasFactory;
@@ -28,6 +28,6 @@ class Inventaris extends Model
     #[Scope()]
     protected function onlyDipinjamkan()
     {
-        return $this->where('dpt_dipinjam', true);
+        return $this->where('dpt_dipinjam', true)->where('kondisi', 'baik')->where('jumlah', '>=', 1);
     }
 }

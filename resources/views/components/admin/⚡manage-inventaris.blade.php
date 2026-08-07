@@ -111,7 +111,7 @@ new #[Title('Manage Inventaris')] class extends Component {
                     <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
-                    Tambah Barang
+                    Barang
                 </button>
             </div>
         </div>
@@ -141,6 +141,7 @@ new #[Title('Manage Inventaris')] class extends Component {
                             <th class="hidden px-2.5 py-1.5 sm:table-cell">Kondisi</th>
                             <th class="hidden px-2.5 py-1.5 lg:table-cell">Warna</th>
                             <th class="hidden px-2.5 py-1.5 text-center md:table-cell">Dipinjam</th>
+                            <th class="hidden px-2.5 py-1.5 text-center md:table-cell">Frequensi</th>
                             <th class="w-20 px-2.5 py-1.5 text-right">Aksi</th>
                         </tr>
                     </thead>
@@ -263,6 +264,12 @@ new #[Title('Manage Inventaris')] class extends Component {
                                             Tidak
                                         </span>
                                     @endif
+                                </td>
+
+                                {{-- Frequenst --}}
+                                <td
+                                    class="hidden px-2.5 py-1.5 text-center font-mono text-stone-600 md:table-cell dark:text-stone-400">
+                                    {{ $item->frequensi_peminjaman ?? 0 }}
                                 </td>
 
                                 {{-- Aksi --}}
