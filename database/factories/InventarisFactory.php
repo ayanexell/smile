@@ -131,4 +131,21 @@ class InventarisFactory extends Factory
             'tipe' => 'Furniture',
         ]);
     }
+    /**
+     * Barang dibuat sebelum tanggal tertentu (berguna untuk data “7 hari lalu”).
+     */
+    public function dibuatSebelum($date): static
+    {
+        return $this->state(fn() => [
+            'created_at' => $date,
+        ]);
+    }
+
+    /**
+     * Barang dengan jumlah spesifik.
+     */
+    public function denganJumlah(int $jumlah): static
+    {
+        return $this->state(fn() => ['jumlah' => $jumlah]);
+    }
 }

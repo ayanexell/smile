@@ -381,9 +381,11 @@ new #[Title('Kelola Laporan Inventaris')] class extends Component {
                                                     @endcan
                                                     <flux:separator />
                                                     {{-- Hapus --}}
-                                                    <button x-data @click="open = false"
-                                                        class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40">
-                                                        <svg class="h-3.5 w-3.5 text-red-400" fill="none"
+                                                    <button x-data
+                                                        x-on:click="$dispatch('delete-laporan', { id: {{ $laporan->id_laporan_peminjaman }} })"
+                                                        @click="open = false"
+                                                        class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-rose-600 transition-colors hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/40">
+                                                        <svg class="h-3.5 w-3.5 text-rose-400" fill="none"
                                                             stroke="currentColor" stroke-width="2"
                                                             viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round"

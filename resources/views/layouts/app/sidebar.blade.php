@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
-    x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' }" :class="{ 'dark': darkMode }">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' }" :class="{ 'dark': darkMode }">
 
 <head>
     @include('partials.head')
@@ -15,7 +14,7 @@
 
             {{-- Logo --}}
             <a href="{{ route('dashboard') }}" wire:navigate
-                class="flex shrink-0 items-center gap-2.5 border-b border-stone-200 px-5 h-[53px] no-underline dark:border-stone-800">
+                class="h-13.25 flex shrink-0 items-center gap-2.5 border-b border-stone-200 px-5 no-underline dark:border-stone-800">
                 <div class="sidebar-logo-icon">
                     <img src="{{ asset('assets/logo.webp') }}" alt="Logo" class="w-8" />
                 </div>
@@ -41,8 +40,7 @@
                     </a>
                 </div>
 
-                <div class="sidebar-group"
-                    x-data="{ open: {{ request()->routeIs(['admin.*', 'koordinator.*', 'user.*']) ? 'true' : 'false' }} }">
+                <div class="sidebar-group" x-data="{ open: {{ request()->routeIs(['admin.*', 'koordinator.*', 'user.*']) ? 'true' : 'false' }} }">
 
                     @can('isSuperAdminAndAdmin')
                         {{-- Label Grup Menu --}}
@@ -52,8 +50,8 @@
                             class="sidebar-item {{ request()->routeIs('admin.departemens') ? 'active' : '' }} flex w-full cursor-pointer items-center justify-between py-1.5 text-left text-xs transition-colors">
                             <div class="flex items-center gap-2.5">
                                 {{-- Ikon Departemens --}}
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                    stroke="currentColor"
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor"
                                     class="h-3.5 w-3.5 shrink-0 text-stone-400 group-[.active]:text-current dark:text-stone-500">
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 21h7.5V10.75M2.25 21h1.5m18 0h-18M2.25 9l4.5-1.636M18.75 3l-1.5.545m0 6.205 3 1m1.5.5-1.5-.5M6.75 7.364V3h-3v18m3-13.636 10.5-3.819" />
@@ -81,7 +79,7 @@
 
                                 {{-- Ikon Chevron (Berputar otomatis menggunakan Alpine) --}}
                                 <svg :class="open ? 'rotate-180' : ''"
-                                    class="h-3.5 w-3.5 text-stone-400 transition-transform duration-200 dark:text-stone-500"
+                                    class="h-3 w-3 text-stone-400 transition-transform duration-200 dark:text-stone-500"
                                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M19 9l-7 7-7-7" />
@@ -138,7 +136,7 @@
                             class="sidebar-item {{ request()->routeIs('admin.inventaris') ? 'active' : '' }} flex w-full cursor-pointer items-center justify-between py-1.5 text-left text-xs transition-colors">
                             <div class="flex items-center gap-2.5">
                                 {{-- Ikon Inventaris --}}
-                                <svg class="w-3.5 h-3.5" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                     <path fill-rule="evenodd"
                                         d="M20 9c0 .55-.45 1-1 1h-2v2c0 .55-.45 1-1 1s-1-.45-1-1v-2h-2c-.55 0-1-.45-1-1s.45-1 1-1h2V6c0-.55.45-1 1-1s1 .45 1 1v2h2c.55 0 1 .45 1 1zM4 8h3V3H4v5zm-2 9h5v-7H2v7zm14-2c-.55 0-1 .45-1 1v1H9V6h3c.55 0 1-.45 1-1s-.45-1-1-1H9V2c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v6H1c-.55 0-1 .45-1 1v9c0 .55.45 1 1 1h15c.55 0 1-.45 1-1v-2c0-.55-.45-1-1-1z"
                                         fill="currentColor" />
@@ -153,7 +151,8 @@
                             class="sidebar-item {{ request()->routeIs('admin.peminjaman') ? 'active' : '' }} flex w-full cursor-pointer items-center justify-between py-1.5 text-left text-xs transition-colors">
                             <div class="flex items-center gap-2.5">
                                 {{-- Ikon Peminjamans --}}
-                                <svg fill="currentColor" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
+                                <svg fill="currentColor" version="1.1" id="Layer_1"
+                                    xmlns="http://www.w3.org/2000/svg"
                                     class="{{ request()->routeIs('admin.peminjaman') ? 'w-3.5 h-3.5' : '' }} h-3 w-3"
                                     xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 502.56 502.56"
                                     xml:space="preserve">
@@ -174,27 +173,87 @@
                             </div>
                         </a>
 
-                        {{-- Laporan --}}
-                        <a href="{{ route('admin.laporan-inventaris') }}" wire:navigate
-                            class="sidebar-item {{ request()->routeIs('admin.laporan-inventaris') ? 'active' : '' }} flex w-full cursor-pointer items-center justify-between py-1.5 text-left text-xs transition-colors">
-                            <div class="flex items-center gap-2.5">
-                                {{-- Ikon laporans --}}
-                                <svg class="{{ request()->routeIs('admin.laporan-inventaris') ? 'w-3.5 h-3.5' : '' }} h-3.5 w-3.5"
-                                    viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M18.18 8.03933L18.6435 7.57589C19.4113 6.80804 20.6563 6.80804 21.4241 7.57589C22.192 8.34374 22.192 9.58868 21.4241 10.3565L20.9607 10.82M18.18 8.03933C18.18 8.03933 18.238 9.02414 19.1069 9.89309C19.9759 10.762 20.9607 10.82 20.9607 10.82M18.18 8.03933L13.9194 12.2999C13.6308 12.5885 13.4865 12.7328 13.3624 12.8919C13.2161 13.0796 13.0906 13.2827 12.9882 13.4975C12.9014 13.6797 12.8368 13.8732 12.7078 14.2604L12.2946 15.5L12.1609 15.901M20.9607 10.82L16.7001 15.0806C16.4115 15.3692 16.2672 15.5135 16.1081 15.6376C15.9204 15.7839 15.7173 15.9094 15.5025 16.0118C15.3203 16.0986 15.1268 16.1632 14.7396 16.2922L13.5 16.7054L13.099 16.8391M13.099 16.8391L12.6979 16.9728C12.5074 17.0363 12.2973 16.9867 12.1553 16.8447C12.0133 16.7027 11.9637 16.4926 12.0272 16.3021L12.1609 15.901M13.099 16.8391L12.1609 15.901"
-                                        stroke="#1C274C" stroke-width="1.5" />
-                                    <path d="M8 13H10.5" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round" />
-                                    <path d="M8 9H14.5" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round" />
-                                    <path d="M8 17H9.5" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round" />
-                                    <path
-                                        d="M3 14V10C3 6.22876 3 4.34315 4.17157 3.17157C5.34315 2 7.22876 2 11 2H13C16.7712 2 18.6569 2 19.8284 3.17157M21 14C21 17.7712 21 19.6569 19.8284 20.8284M4.17157 20.8284C5.34315 22 7.22876 22 11 22H13C16.7712 22 18.6569 22 19.8284 20.8284M19.8284 20.8284C20.7715 19.8853 20.9554 18.4796 20.9913 16"
-                                        stroke="#1C274C" stroke-width="1.5" stroke-linecap="round" />
-                                </svg>
+                        {{-- Navigasi Laporan --}}
+                        <div x-data="{ openL: {{ request()->routeIs(['admin.laporan-inventaris', 'admin.laporan-peminjaman']) ? 'true' : 'false' }} }">
+                            {{-- Dropdown Trigger (User) --}}
+                            <button @click="openL = !openL"
+                                class="sidebar-item flex w-full cursor-pointer items-center justify-between py-1.5 text-left text-xs transition-colors">
+                                <div class="flex items-center gap-2.5">
+                                    {{-- Ikon Laporan --}}
+                                    <svg class="h-3.5 w-3.5" viewBox="0 0 40 40" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <rect width="40" height="40" rx="8" fill="currentColor"
+                                            fill-opacity="0.4" />
+                                        <path fill-rule="evenodd" clip-rule="evenodd"
+                                            d="M16.7333 7.86667H23.2667C24.482 7.86667 25.5206 8.64758 25.9064 9.73335H28.4C28.8789 9.73335 29.3395 9.91742 29.6865 10.2475C30.0335 10.5776 30.2404 11.0284 30.2643 11.5067L30.2667 11.6V30.2667C30.2667 30.7456 30.0826 31.2062 29.7525 31.5532C29.4225 31.9002 28.9717 32.1071 28.4933 32.131L28.4 32.1333H11.6C11.1211 32.1333 10.6605 31.9493 10.3135 31.6192C9.96649 31.2891 9.75962 30.8383 9.73567 30.36L9.73334 30.2667V11.6C9.73334 11.1211 9.91741 10.6605 10.2475 10.3135C10.5775 9.9665 11.0284 9.75963 11.5067 9.73568L11.6 9.73335H14.0937C14.4794 8.64758 15.518 7.86667 16.7333 7.86667ZM15.8021 10.7289C15.8043 10.6966 15.8047 10.6642 15.8035 10.6317C15.8032 10.6226 15.8027 10.6135 15.8021 10.6045C15.8347 10.1219 16.2432 9.73334 16.7333 9.73334H23.2667C23.7777 9.73334 24.2 10.1557 24.2 10.6667C24.2 11.1777 23.7777 11.6 23.2667 11.6H16.7333C16.2432 11.6 15.8347 11.2115 15.8021 10.7289Z"
+                                            fill="white" />
+                                        <path
+                                            d="M23.8136 18.1332C24.178 17.7688 24.7689 17.7689 25.1333 18.1333V18.1333C25.4978 18.4977 25.4978 19.0886 25.1333 19.4531L19.7265 24.8598C19.5515 25.0348 19.3142 25.1331 19.0667 25.1331C18.8192 25.1331 18.5818 25.0348 18.4068 24.8598L15.3334 21.7864C14.9689 21.422 14.9689 20.8311 15.3334 20.4666V20.4666C15.6978 20.1022 16.2886 20.1021 16.6531 20.4665L19.0667 22.8793L23.8136 18.1332Z"
+                                            fill="#B5B5B5" />
+                                    </svg>
+                                    <span class="font-medium">{{ __('Laporan') }}</span>
+                                </div>
 
-                                <span class="font-medium">{{ __('Laporan') }}</span>
+                                {{-- Ikon Chevron --}}
+                                <svg :class="openL ? 'rotate-180' : ''"
+                                    class="h-3.5 w-3.5 text-stone-400 transition-transform duration-200 dark:text-stone-500"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+
+                            {{-- Sub Navigasi Vertikal --}}
+                            <div x-show="openL" x-collapse class="mt-0.5 flex flex-col space-y-0.5 pl-4 pr-1"
+                                style="display: none;">
+                                {{-- Laporan Inventaris --}}
+                                <a href="{{ route('admin.laporan-inventaris') }}" wire:navigate
+                                    class="sidebar-item {{ request()->routeIs('admin.laporan-inventaris') ? 'active' : '' }} flex w-full cursor-pointer items-center justify-between py-1.5 text-left text-xs transition-colors">
+                                    <div class="flex items-center gap-2.5">
+                                        <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M18.18 8.03933L18.6435 7.57589C19.4113 6.80804 20.6563 6.80804 21.4241 7.57589C22.192 8.34374 22.192 9.58868 21.4241 10.3565L20.9607 10.82M18.18 8.03933C18.18 8.03933 18.238 9.02414 19.1069 9.89309C19.9759 10.762 20.9607 10.82 20.9607 10.82M18.18 8.03933L13.9194 12.2999C13.6308 12.5885 13.4865 12.7328 13.3624 12.8919C13.2161 13.0796 13.0906 13.2827 12.9882 13.4975C12.9014 13.6797 12.8368 13.8732 12.7078 14.2604L12.2946 15.5L12.1609 15.901M20.9607 10.82L16.7001 15.0806C16.4115 15.3692 16.2672 15.5135 16.1081 15.6376C15.9204 15.7839 15.7173 15.9094 15.5025 16.0118C15.3203 16.0986 15.1268 16.1632 14.7396 16.2922L13.5 16.7054L13.099 16.8391M13.099 16.8391L12.6979 16.9728C12.5074 17.0363 12.2973 16.9867 12.1553 16.8447C12.0133 16.7027 11.9637 16.4926 12.0272 16.3021L12.1609 15.901M13.099 16.8391L12.1609 15.901"
+                                                stroke="#1C274C" stroke-width="1.5" />
+                                            <path d="M8 13H10.5" stroke="#1C274C" stroke-width="1.5"
+                                                stroke-linecap="round" />
+                                            <path d="M8 9H14.5" stroke="#1C274C" stroke-width="1.5"
+                                                stroke-linecap="round" />
+                                            <path d="M8 17H9.5" stroke="#1C274C" stroke-width="1.5"
+                                                stroke-linecap="round" />
+                                            <path
+                                                d="M3 14V10C3 6.22876 3 4.34315 4.17157 3.17157C5.34315 2 7.22876 2 11 2H13C16.7712 2 18.6569 2 19.8284 3.17157M21 14C21 17.7712 21 19.6569 19.8284 20.8284M4.17157 20.8284C5.34315 22 7.22876 22 11 22H13C16.7712 22 18.6569 22 19.8284 20.8284M19.8284 20.8284C20.7715 19.8853 20.9554 18.4796 20.9913 16"
+                                                stroke="#1C274C" stroke-width="1.5" stroke-linecap="round" />
+                                        </svg>
+
+                                        <span class="font-medium">{{ __('Inventaris') }}</span>
+                                    </div>
+                                </a>
+
+                                {{-- Laporan Peminjaman --}}
+                                <a href="{{ route('admin.laporan-peminjaman') }}" wire:navigate
+                                    class="sidebar-item {{ request()->routeIs('admin.laporan-peminjaman') ? 'active' : '' }} flex w-full cursor-pointer items-center justify-between py-1.5 text-left text-xs transition-colors">
+                                    <div class="flex items-center gap-2.5">
+                                        <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M18.18 8.03933L18.6435 7.57589C19.4113 6.80804 20.6563 6.80804 21.4241 7.57589C22.192 8.34374 22.192 9.58868 21.4241 10.3565L20.9607 10.82M18.18 8.03933C18.18 8.03933 18.238 9.02414 19.1069 9.89309C19.9759 10.762 20.9607 10.82 20.9607 10.82M18.18 8.03933L13.9194 12.2999C13.6308 12.5885 13.4865 12.7328 13.3624 12.8919C13.2161 13.0796 13.0906 13.2827 12.9882 13.4975C12.9014 13.6797 12.8368 13.8732 12.7078 14.2604L12.2946 15.5L12.1609 15.901M20.9607 10.82L16.7001 15.0806C16.4115 15.3692 16.2672 15.5135 16.1081 15.6376C15.9204 15.7839 15.7173 15.9094 15.5025 16.0118C15.3203 16.0986 15.1268 16.1632 14.7396 16.2922L13.5 16.7054L13.099 16.8391M13.099 16.8391L12.6979 16.9728C12.5074 17.0363 12.2973 16.9867 12.1553 16.8447C12.0133 16.7027 11.9637 16.4926 12.0272 16.3021L12.1609 15.901M13.099 16.8391L12.1609 15.901"
+                                                stroke="#1C274C" stroke-width="1.5" />
+                                            <path d="M8 13H10.5" stroke="#1C274C" stroke-width="1.5"
+                                                stroke-linecap="round" />
+                                            <path d="M8 9H14.5" stroke="#1C274C" stroke-width="1.5"
+                                                stroke-linecap="round" />
+                                            <path d="M8 17H9.5" stroke="#1C274C" stroke-width="1.5"
+                                                stroke-linecap="round" />
+                                            <path
+                                                d="M3 14V10C3 6.22876 3 4.34315 4.17157 3.17157C5.34315 2 7.22876 2 11 2H13C16.7712 2 18.6569 2 19.8284 3.17157M21 14C21 17.7712 21 19.6569 19.8284 20.8284M4.17157 20.8284C5.34315 22 7.22876 22 11 22H13C16.7712 22 18.6569 22 19.8284 20.8284M19.8284 20.8284C20.7715 19.8853 20.9554 18.4796 20.9913 16"
+                                                stroke="#1C274C" stroke-width="1.5" stroke-linecap="round" />
+                                        </svg>
+                                        <span class="font-medium">{{ __('Peminjaman') }}</span>
+                                    </div>
+                                </a>
                             </div>
-                        </a>
+                        </div>
                     @endcan
                     @can('isKoordinator')
                         {{-- Inventaris Koordinator --}}
@@ -216,7 +275,8 @@
                             class="sidebar-item {{ request()->routeIs('koordinator.peminjaman') ? 'active' : '' }} flex w-full cursor-pointer items-center justify-between py-1.5 text-left text-xs transition-colors">
                             <div class="flex items-center gap-2.5">
                                 {{-- Ikon Peminjamans --}}
-                                <svg fill="currentColor" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
+                                <svg fill="currentColor" version="1.1" id="Layer_1"
+                                    xmlns="http://www.w3.org/2000/svg"
                                     class="{{ request()->routeIs('koordinator.peminjaman') ? 'w-3.5 h-3.5' : '' }} h-3 w-3"
                                     xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 502.56 502.56"
                                     xml:space="preserve">
@@ -266,7 +326,8 @@
                             class="sidebar-item {{ request()->routeIs('user.peminjaman') ? 'active' : '' }} flex w-full cursor-pointer items-center justify-between py-1.5 text-left text-xs transition-colors">
                             <div class="flex items-center gap-2.5">
                                 {{-- Ikon Peminjamans --}}
-                                <svg fill="currentColor" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
+                                <svg fill="currentColor" version="1.1" id="Layer_1"
+                                    xmlns="http://www.w3.org/2000/svg"
                                     class="{{ request()->routeIs('user.peminjaman') ? 'w-3.5 h-3.5' : '' }} h-3 w-3"
                                     xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 502.56 502.56"
                                     xml:space="preserve">
@@ -304,8 +365,8 @@
             {{-- Mobile header --}}
             <header class="mobile-header">
                 <button class="header-icon-btn" onclick="toggleSidebar()" aria-label="Menu">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" class="h-5 w-5">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
                         <line x1="3" y1="6" x2="21" y2="6" />
                         <line x1="3" y1="12" x2="21" y2="12" />
                         <line x1="3" y1="18" x2="21" y2="18" />
@@ -347,25 +408,27 @@
                     <button x-data variant="segmented" x-model="$flux.appearance"
                         class="cursor-pointer rounded-lg p-2 text-stone-500 transition-colors hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800"
                         :aria-label="darkMode ? 'Dark Mode' : 'Light Mode'" @click="darkMode = !darkMode">
-                        <svg x-show="!darkMode" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg x-show="!darkMode" class="h-5 w-5" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
                         </svg>
-                        <svg x-show="darkMode" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg x-show="darkMode" class="h-5 w-5" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                         </svg>
                     </button>
 
                     {{-- Notifications --}}
-                    <button class="header-icon-btn" title="{{ __('Notifikasi') }}">
+                    {{-- <button class="header-icon-btn" title="{{ __('Notifikasi') }}">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"
                             stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
                             <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
                             <path d="M13.73 21a2 2 0 01-3.46 0" />
                         </svg>
                         <span class="notif-badge"></span>
-                    </button>
+                    </button> --}}
 
                     <div class="header-divider"></div>
 
@@ -386,9 +449,9 @@
     </div>
 
     @persist('toast')
-    <flux:toast.group>
-        <flux:toast />
-    </flux:toast.group>
+        <flux:toast.group>
+            <flux:toast />
+        </flux:toast.group>
     @endpersist
 
     @fluxScripts

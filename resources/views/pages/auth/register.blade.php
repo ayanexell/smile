@@ -8,13 +8,13 @@
 
                 <div class="grid-pattern pointer-events-none absolute inset-0 opacity-50"></div>
 
-                <div class="relative z-10 flex items-center gap-3">
-                    <div class="dark:bg-sage-600 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl shadow-lg p-1">
-                        <img src="{{ asset('assets/logo.webp') }}" alt="Logo" class="w-11" />
+                <div class="relative z-10 flex flex-col items-center gap-3">
+                    <div class="dark:bg-sage-600 animate-float flex shrink-0 items-center justify-center rounded-xl p-1">
+                        <img src="{{ asset('assets/logo.webp') }}" alt="Logo" class="w-20" />
                     </div>
-                    <div>
-                        <div class="font-display text-lg text-stone-800 dark:text-stone-100">SMILE</div>
-                        <div class="font-mono text-[9px] uppercase tracking-widest text-stone-500 dark:text-stone-500">
+                    <div class="flex flex-col items-center justify-center text-center">
+                        <div class="font-display text-xl text-stone-800 dark:text-stone-100">SMILE</div>
+                        <div class="font-mono text-[12px] uppercase tracking-widest text-stone-500 dark:text-stone-500">
                             Sistem Manajemen Inventaris Latee</div>
                     </div>
                 </div>
@@ -400,16 +400,11 @@
                                     </button>
                                 </div>
                             </div>
-
                         </div>
 
                         {{-- ── Submit ── --}}
                         <button type="submit"
-                            class="bg-sage-600 dark:bg-sage-500 hover:bg-sage-700 dark:hover:bg-sage-400 hover:shadow-sage-600/20 focus:ring-sage-500 mt-1 flex w-full items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-xs font-medium text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 active:translate-y-0 dark:focus:ring-offset-stone-950">
-                            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                            </svg>
+                            class="bg-sage-600 dark:bg-sage-500 hover:bg-sage-700 dark:hover:bg-sage-400 hover:shadow-sage-600/20 focus:ring-sage-500 mt-1 flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-xs font-medium text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 active:translate-y-0 dark:focus:ring-offset-stone-950">
                             Buat Akun
                         </button>
 

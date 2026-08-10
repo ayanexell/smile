@@ -6,11 +6,14 @@ use App\Models\User;
 use App\Models\Inventaris;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Carbon\Carbon;
+use App\Models\Peminjaman;
 /**
- * @extends Factory<\App\Models\Peminjaman>
+ * @extends Factory Peminjaman>
  */
 class PeminjamanFactory extends Factory
 {
+    protected $model = Peminjaman::class;
+
     /**
      * Define the model's default state.
      *
@@ -30,6 +33,62 @@ class PeminjamanFactory extends Factory
             'hibah' => fake()->numberBetween(0, 2),
             'lambat' => false,
         ];
+    }
+
+    /**
+     * Peminjaman yang terjadi dalam 7 hari terakhir.
+     */
+    public function dalam7HariTerakhir(): static
+    {
+        return $this->state(function () {
+            $now = Carbon::now();
+            return [
+                'tgl_peminjaman' => Carbon::instance(
+                    fake()->dateTimeBetween($now->copy()->subDays(7), $now)
+                ),
+            ];
+        });
+    }
+
+    /**
+     * Peminjaman yang masih berlangsung (belum dikembalikan sampai sekarang).
+     */
+    public function masihDipinjam(): static
+    {
+        return $this->state(function () {
+            $now = Carbon::now();
+            return [
+                'status' => 'dipinjam',
+                'tgl_pengembalian' => Carbon::instance(
+                    fake()->dateTimeBetween($now->copy()->addDay(), '+2 weeks')
+                ),
+                'lambat' => false,
+            ];
+        });
+    }
+
+    /**
+     * Peminjaman dengan tanggal pinjam spesifik.
+     */
+    public function denganTanggalPinjam(Carbon $date): static
+    {
+        return $this->state(fn() => ['tgl_peminjaman' => $date]);
+    }
+
+    /**
+     * Peminjaman dengan tanggal kembali spesifik.
+     */
+    public function denganTanggalKembali(Carbon $date): static
+    {
+        return $this->state(fn() => ['tgl_pengembalian' => $date]);
+    }
+
+    /**
+     * Peminjaman dengan jumlah tertentu.
+     */
+    public function denganJumlah(int $jumlah): static
+    {
+        return $this->state(fn() => ['jumlah' => $jumlah]);
     }
 
     /**

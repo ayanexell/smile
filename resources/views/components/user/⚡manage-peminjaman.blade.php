@@ -174,7 +174,7 @@ new #[Title('Manajemen Peminjaman User')] class extends Component {
                                 <td class="px-2.5 py-1.5">
                                     <div class="max-w-45 flex items-center gap-2 sm:max-w-xs">
                                         {{-- Thumbnail gambar atau placeholder --}}
-                                        @if ($peminjaman->inventaris->img_path)
+                                        @if ($peminjaman->inventaris->img_path && Storage::exists($peminjaman->inventaris->img_path))
                                             <img src="{{ Storage::url($peminjaman->inventaris->img_path) }}"
                                                 alt="{{ $peminjaman->inventaris->nama_barang }}"
                                                 class="h-7 w-7 shrink-0 rounded-lg border border-stone-200 object-cover dark:border-stone-700" />

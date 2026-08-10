@@ -21,16 +21,15 @@
 
                 {{-- Logo --}}
                 <div class="relative z-10 flex items-center gap-3">
-                    <div
-                        class="dark:bg-sage-600 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl p-1 shadow-lg">
-                        <img src="{{ asset('assets/logo.webp') }}" alt="Logo" class="w-9" />
+                    <div class="dark:bg-sage-600 flex shrink-0 items-center justify-center rounded-xl p-1">
+                        <img src="{{ asset('assets/logo.webp') }}" alt="Logo" class="w-16" />
                     </div>
                     <div>
                         <p
-                            class="font-display text-sm font-semibold leading-tight tracking-wide text-stone-800 dark:text-stone-100">
+                            class="font-display text-xl font-semibold leading-tight tracking-wide text-stone-800 dark:text-stone-100">
                             SMILE
                         </p>
-                        <p class="font-mono text-[10px] uppercase tracking-widest text-stone-400 dark:text-stone-500">
+                        <p class="font-mono text-[12px] uppercase tracking-widest text-stone-400 dark:text-stone-500">
                             Sistem Manajemen Inventaris Latee
                         </p>
                     </div>

@@ -15,6 +15,24 @@ new #[Title('Kelola Inventaris')] class extends Component {
     public $filterKondisi = '';
     public $filterTipe = '';
     public $filterDptDipinjam = '';
+    public $three_months;
+
+    protected function getQuarterDates(): ?array
+    {
+        if (!$this->three_months) {
+            return null;
+        }
+
+        $year = now()->year;
+
+        return match ($this->three_months) {
+            'januari-maret' => [Carbon::create($year, 1, 1)->startOfDay(), Carbon::create($year, 3, 31)->endOfDay()],
+            'april-juni' => [Carbon::create($year, 4, 1)->startOfDay(), Carbon::create($year, 6, 30)->endOfDay()],
+            'juli-september' => [Carbon::create($year, 7, 1)->startOfDay(), Carbon::create($year, 9, 30)->endOfDay()],
+            'oktober-desember' => [Carbon::create($year, 10, 1)->startOfDay(), Carbon::create($year, 12, 31)->endOfDay()],
+            default => null,
+        };
+    }
 
     public function mount()
     {
@@ -47,6 +65,13 @@ new #[Title('Kelola Inventaris')] class extends Component {
             ->when($this->filterKondisi, fn($q) => $q->where('kondisi', $this->filterKondisi))
             ->when($this->filterTipe, fn($q) => $q->where('tipe', $this->filterTipe))
             ->when($this->filterDptDipinjam, fn($q) => $q->where('dpt_dipinjam', $this->filterDptDipinjam))
+            ->when($this->three_months, function ($q) {
+                $dates = $this->getQuarterDates();
+                if ($dates) {
+                    [$start, $end] = $dates;
+                    $q->whereBetween('created_at', [$start, $end]);
+                }
+            })
             ->latest()
             ->paginate(10);
         return $this->view([
@@ -57,26 +82,56 @@ new #[Title('Kelola Inventaris')] class extends Component {
     public function buatLaporan()
     {
         $user = Auth::user();
-        $month = Carbon::now()->translatedFormat('F');
-        $filename = $user->departemen->singkatan . '-inventaris.xlsx';
-        $folderPath = 'export-inventaris/' . $month;
-        $fullPath = $folderPath . '/' . $filename;
+
         try {
-            LaporanInventaris::create([
-                'user_id' => $user->id_user,
-                'laporan_path' => $fullPath,
-                'bulan' => $month,
-                'status' => 'pending',
-            ]);
-            session()->flash('success', 'Berhasil menyimpan data laporan bulanan!');
-            return Excel::store(new InventarisExport($user), $fullPath);
-            // return Excel::download(new InventarisExport($user), $fullPath);
+            // Jika dropdown "Per 3 Bulan" dipilih
+            if ($this->three_months) {
+                $dates = $this->getQuarterDates();
+
+                if (!$dates) {
+                    session()->flash('error', 'Periode 3 bulan tidak valid.');
+                    return;
+                }
+
+                [$start, $end] = $dates;
+                $quarterLabel = str_replace('-', ' - ', $this->three_months); // "januari - maret"
+                $folderPath = 'export-inventaris/' . $quarterLabel;
+                $filename = $user->departemen->singkatan . '-inventaris-triwulan.xlsx';
+                $fullPath = $folderPath . '/' . $filename;
+
+                LaporanInventaris::create([
+                    'user_id' => $user->id_user,
+                    'laporan_path' => $fullPath,
+                    'bulan' => ucwords($quarterLabel), // "Januari - Maret"
+                    'status' => 'pending',
+                ]);
+
+                session()->flash('success', 'Berhasil menyimpan laporan triwulan!');
+                return Excel::store(new InventarisExport($user, $start, $end), $fullPath);
+            } else {
+                // Logika laporan bulanan yang sudah ada (default)
+                $month = Carbon::now()->translatedFormat('F');
+                $folderPath = 'export-inventaris/' . $month;
+                $filename = $user->departemen->singkatan . '-inventaris.xlsx';
+                $fullPath = $folderPath . '/' . $filename;
+
+                LaporanInventaris::create([
+                    'user_id' => $user->id_user,
+                    'laporan_path' => $fullPath,
+                    'bulan' => $month,
+                    'status' => 'pending',
+                ]);
+
+                session()->flash('success', 'Berhasil menyimpan data laporan bulanan!');
+                // Untuk laporan bulanan, Export hanya butuh user (data bulan berjalan)
+                return Excel::store(new InventarisExport($user), $fullPath);
+            }
         } catch (Exception $e) {
             Log::error('Gagal membuat laporan: ' . $e->getMessage());
-            if (Storage::exists($fullPath)) {
+            if (Storage::exists($fullPath ?? '')) {
                 Storage::delete($fullPath);
             }
-            session()->flash('error', 'Gagal menyimpan database: ' . $e->getMessage());
+            session()->flash('error', 'Gagal menyimpan laporan: ' . $e->getMessage());
         }
     }
 };
@@ -217,6 +272,16 @@ new #[Title('Kelola Inventaris')] class extends Component {
                         Laporan
                     </div>
                 </button>
+
+                {{-- Tombol Per 3 Bulan --}}
+                <select wire:model.live="three_months"
+                    class="focus:ring-sage-500 rounded-lg border border-stone-200 bg-stone-50 px-2.5 py-1.5 text-xs text-stone-700 transition focus:outline-none focus:ring-1 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-300">
+                    <option value="">Semua Bulan</option>
+                    <option value="januari-maret">Januari - Maret</option>
+                    <option value="april-juni">April - Juni</option>
+                    <option value="juli-september">Juli - September</option>
+                    <option value="oktober-desember">Oktober - Desember</option>
+                </select>
             </div>
         </div>
 

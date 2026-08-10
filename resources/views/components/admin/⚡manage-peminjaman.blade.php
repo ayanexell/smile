@@ -7,13 +7,23 @@ use Illuminate\Support\Carbon;
 use Livewire\Attributes\Title;
 use App\Actions\WhatsappAction;
 use Illuminate\Support\Facades\Validator;
-use Barryvdh\DomPDF\Facade\Pdf;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Models\LaporanPeminjaman;
+use App\Exports\PeminjamanExport;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 new #[Title('Manajemen Peminjaman')] class extends Component {
     use WithPagination;
     public $search = '';
     public $peminjaman;
     public $showDeleteModal = false;
+    public $tahun;
+
+    public function mount()
+    {
+        $this->tahun = Carbon::now()->year;
+    }
 
     public function sendStatus($peminjaman, $status)
     {
@@ -30,50 +40,97 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
 
     public function acceptPeminjaman(Peminjaman $peminjaman)
     {
-        $peminjaman->update([
-            'status' => 'dipinjam',
-        ]);
-        $peminjaman->inventaris()->update([
-            'frequensi_peminjaman' => $peminjaman->inventaris->frequensi_peminjaman + 1,
-            'jumlah' => $peminjaman->inventaris->jumlah - $peminjaman->jumlah,
-        ]);
-        $this->sendStatus($peminjaman, 'Diterima');
-        session()->flash('success', 'Peminjaman berhasil diterima.');
+        DB::transaction(function () use ($peminjaman) {
+            $oldStatus = $peminjaman->status;
+
+            // Validasi stok mencukupi
+            if ($peminjaman->inventaris->jumlah < $peminjaman->jumlah) {
+                throw ValidationException::withMessages([
+                    'jumlah' => 'Stok tidak mencukupi.',
+                ]);
+            }
+
+            $peminjaman->update(['status' => 'dipinjam']);
+
+            // Hanya kurangi stok jika sebelumnya masih menunggu
+            if ($oldStatus === 'menunggu') {
+                $peminjaman->inventaris()->update([
+                    'frequensi_peminjaman' => $peminjaman->inventaris->frequensi_peminjaman + 1,
+                    'jumlah' => $peminjaman->inventaris->jumlah - $peminjaman->jumlah,
+                ]);
+            }
+
+            $this->sendStatus($peminjaman, 'Diterima');
+            session()->flash('success', 'Peminjaman berhasil diterima.');
+        });
     }
 
     public function declinePeminjaman(Peminjaman $peminjaman)
     {
-        $peminjaman->update([
-            'status' => 'ditolak',
-        ]);
-        $peminjaman->inventaris()->update([
-            'jumlah' => $peminjaman->inventaris->jumlah + $peminjaman->jumlah,
-        ]);
-        $this->sendStatus($peminjaman, 'Ditolak');
-        session()->flash('success', 'Peminjaman berhasil ditolak.');
+        DB::transaction(function () use ($peminjaman) {
+            $oldStatus = $peminjaman->status;
+
+            $peminjaman->update(['status' => 'ditolak']);
+
+            // Kembalikan stok hanya jika sebelumnya sudah dipinjam
+            if ($oldStatus === 'dipinjam') {
+                $peminjaman->inventaris()->update([
+                    'jumlah' => $peminjaman->inventaris->jumlah + $peminjaman->jumlah,
+                ]);
+            }
+
+            $this->sendStatus($peminjaman, 'Ditolak');
+            session()->flash('success', 'Peminjaman berhasil ditolak.');
+        });
     }
 
-    public function returnPeminjaman(Peminjaman $peminjaman)
+    public function returnPeminjaman(Peminjaman $peminjaman, $hibah)
     {
-        $peminjaman->update([
-            'status' => 'dikembalikan',
-        ]);
+        $validator = Validator::make(['hibah' => $hibah], ['hibah' => 'required|numeric|min:0']);
 
-        $peminjaman->inventaris()->update([
-            'jumlah' => $peminjaman->inventaris->jumlah + $peminjaman->jumlah,
-        ]);
+        if ($validator->fails()) {
+            $this->dispatch('hibah-error', message: $validator->errors()->first());
+            return;
+        }
 
-        $this->sendStatus($peminjaman, 'Dikembalikan');
-        session()->flash('success', 'Peminjaman berhasil dikembalikan.');
+        DB::transaction(function () use ($peminjaman, $hibah) {
+            $oldStatus = $peminjaman->status;
+
+            $peminjaman->update([
+                'status' => 'dikembalikan',
+                'hibah' => $hibah,
+            ]);
+
+            // Kembalikan stok hanya jika sebelumnya sedang dipinjam
+            if ($oldStatus === 'dipinjam') {
+                $peminjaman->inventaris()->update([
+                    'jumlah' => $peminjaman->inventaris->jumlah + $peminjaman->jumlah,
+                ]);
+            }
+
+            $this->sendStatus($peminjaman, 'Dikembalikan');
+            $this->dispatch('hibah-success');
+            session()->flash('success', 'Peminjaman berhasil dikembalikan.');
+        });
     }
 
     public function pendingPeminjaman(Peminjaman $peminjaman)
     {
-        $peminjaman->update([
-            'status' => 'menunggu',
-        ]);
-        $this->sendStatus($peminjaman, 'Pending');
-        session()->flash('success', 'Peminjaman berhasil dikembalikan ke status pending.');
+        DB::transaction(function () use ($peminjaman) {
+            $oldStatus = $peminjaman->status;
+
+            $peminjaman->update(['status' => 'menunggu']);
+
+            // Kembalikan stok jika sebelumnya diterima (acc dibatalkan)
+            if ($oldStatus === 'dipinjam') {
+                $peminjaman->inventaris()->update([
+                    'jumlah' => $peminjaman->inventaris->jumlah + $peminjaman->jumlah,
+                ]);
+            }
+
+            $this->sendStatus($peminjaman, 'Pending');
+            session()->flash('success', 'Peminjaman dikembalikan ke status pending.');
+        });
     }
 
     public function deletePeminjaman(Peminjaman $id)
@@ -122,22 +179,60 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
 
     public function export()
     {
-        //
+        $tahun = Carbon::now()->translatedFormat('F');
+        $filename = 'laporan-peminjaman.xlsx';
+        $folderPath = 'export-peminjaman/' . $tahun;
+        $fullPath = $folderPath . '/' . $filename;
+
+        try {
+            // 1. Hitung total hibah dari peminjaman di departemen user saat ini
+            $total_hibah = Peminjaman::all()->sum('hibah');
+
+            // 2. Catat laporan ke database
+            LaporanPeminjaman::create([
+                'laporan_path' => $fullPath,
+                'tahun' => $this->tahun,
+                'total_hibah' => $total_hibah,
+                // Jika perlu menyimpan user_id atau departemen_id, tambahkan di sini
+            ]);
+
+            // 3. Flash pesan sukses
+            session()->flash('success', 'Berhasil menyimpan data laporan peminjaman!');
+
+            // 4. Simpan file Excel ke storage (folder export-peminjaman)
+            return Excel::store(new PeminjamanExport($this->tahun), $fullPath);
+
+            // Untuk langsung download, gunakan:
+            // return Excel::download(new PeminjamanExport($user), $filename);
+        } catch (Exception $e) {
+            Log::error('Gagal membuat laporan peminjaman: ' . $e->getMessage());
+
+            // Hapus file yang mungkin sudah sempat terbuat
+            if (Storage::exists($fullPath)) {
+                Storage::delete($fullPath);
+            }
+
+            session()->flash('error', 'Gagal menyimpan database: ' . $e->getMessage());
+        }
     }
 
     public function render()
     {
-        $peminjamans = Peminjaman::with(['user', 'inventaris'])
-            ->when($this->search, function ($query) {
-                $query
-                    ->whereHas('user', function ($q) {
-                        $q->where('nama_lengkap', 'like', '%' . $this->search . '%');
-                    })
-                    ->orWhereHas('inventaris', function ($q) {
-                        $q->where('nama_barang', 'like', '%' . $this->search . '%');
-                    });
+        $peminjamans = Peminjaman::when($this->search, function ($query) {
+            $query->where(function ($q) {
+                $q->whereHas('user', function ($userQuery) {
+                    $userQuery->where('nama_lengkap', 'like', '%' . $this->search . '%');
+                })->orWhereHas('inventaris', function ($invQuery) {
+                    $invQuery->where('nama_barang', 'like', '%' . $this->search . '%');
+                });
+            });
+        })
+            // Filter Tahun
+            ->when($this->tahun, function ($q) {
+                $q->whereYear('created_at', $this->tahun);
             })
             ->paginate(10);
+
         return $this->view([
             'peminjamans' => $peminjamans,
         ]);
@@ -146,7 +241,7 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
 ?>
 
 <div>
-    <x-page-header title="Daftar Peminjaman" subtitle="Kelola semua peminjaman sistem SMILE" />
+    <x-page-header title="Daftar Peminjaman" leading="Kelola semua peminjaman sistem SMILE" />
 
     <div class="mx-auto mt-2 max-w-7xl space-y-2">
 
@@ -195,6 +290,17 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                         placeholder="Cari nama peminjam, nama barang..."
                         class="focus:ring-sage-500 w-full rounded-lg border border-stone-200 bg-stone-50 py-1.5 pl-8 pr-3 text-xs text-stone-800 transition placeholder:text-stone-400 focus:border-transparent focus:outline-none focus:ring-1 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-100 dark:placeholder:text-stone-500" />
                 </div>
+
+                {{-- Tahun --}}
+                <select wire:model.live="tahun"
+                    class="focus:ring-sage-500 rounded-lg border border-stone-200 bg-stone-50 px-2.5 py-1.5 text-xs text-stone-700 transition focus:outline-none focus:ring-1 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-300">
+                    <option value="">{{ __('Tahun') }}</option>
+                    <option value="2026">{{ __('2026') }}</option>
+                    <option value="2027">{{ __('2027') }}</option>
+                    <option value="2028">{{ __('2028') }}</option>
+                    <option value="2029">{{ __('2029') }}</option>
+                    <option value="2030">{{ __('2030') }}</option>
+                </select>
 
                 {{-- Tombol Export --}}
                 <button wire:click="export"
@@ -279,6 +385,7 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                             <th class="px-2.5 py-1.5">Tgl. Pengembalian</th>
                             <th class="px-2.5 py-1.5 text-center">Jumlah</th>
                             <th class="px-2.5 py-1.5 text-center">Status</th>
+                            <th class="px-2.5 py-1.5 text-center">Hibah</th>
                             <th class="w-20 px-2.5 py-1.5 text-right">Aksi</th>
                         </tr>
                     </thead>
@@ -376,6 +483,11 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                     </span>
                                 </td>
 
+                                {{-- Hibah --}}
+                                <td class="px-2.5 py-1.5 text-center font-mono text-stone-600 dark:text-stone-400">
+                                    {{ $peminjaman->hibahRupiah ?? '-' }}
+                                </td>
+
                                 {{-- Aksi --}}
                                 <td class="px-2.5 py-1.5 text-right">
                                     <div class="flex items-center justify-end" x-data="{ open: false }">
@@ -399,7 +511,7 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                                 x-transition:leave="transition ease-in duration-75"
                                                 x-transition:leave-start="transform opacity-100 scale-100"
                                                 x-transition:leave-end="transform opacity-0 scale-95"
-                                                class="absolute right-0 z-30 mt-1 w-36 origin-top-right rounded-md border border-stone-200 bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:border-stone-800 dark:bg-stone-900"
+                                                class="absolute right-0 z-50 mt-1 w-36 origin-top-right rounded-md border border-stone-200 bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:border-stone-800 dark:bg-stone-900"
                                                 style="display: none;">
                                                 <div class="space-y-0.5 p-1">
 
@@ -441,9 +553,8 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                                             Pending
                                                         </button>
                                                         {{-- Dikembalikan --}}
-                                                        <button
-                                                            x-on:click="
-                                                                                            $wire.returnPeminjaman({{ $peminjaman->id_peminjaman }})"
+                                                        <button x-data
+                                                            x-on:click="$dispatch('open-hibah-modal', {id: {{ $peminjaman->id_peminjaman }}, defaultHibah: `0` })"
                                                             class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-blue-600 transition-colors hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-950/40">
                                                             <svg fill="currentColor" class="h-3 w-3" version="1.1"
                                                                 id="Capa_1" xmlns="http://www.w3.org/2000/svg"
@@ -503,9 +614,8 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                                             Pending
                                                         </button>
                                                         {{-- Dikembalikan --}}
-                                                        <button
-                                                            x-on:click="
-                                                                                            $wire.returnPeminjaman({{ $peminjaman->id_peminjaman }})"
+                                                        <button x-data
+                                                            x-on:click="$dispatch('open-hibah-modal', {id: {{ $peminjaman->id_peminjaman }}, defaultHibah: 0 })"
                                                             class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-blue-600 transition-colors hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-950/40">
                                                             <svg fill="currentColor" class="h-3 w-3" version="1.1"
                                                                 id="Capa_1" xmlns="http://www.w3.org/2000/svg"
@@ -570,8 +680,7 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                                         </button>
                                                         {{-- Dikembalikan --}}
                                                         <button
-                                                            x-on:click="
-                                                                                            $wire.returnPeminjaman({{ $peminjaman->id_peminjaman }})"
+                                                            x-on:click="$dispatch('open-hibah-modal', {id: {{ $peminjaman->id_peminjaman }}, defaultHibah: 0 })"
                                                             class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-blue-600 transition-colors hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-950/40">
                                                             <svg fill="currentColor" class="h-3 w-3" version="1.1"
                                                                 id="Capa_1" xmlns="http://www.w3.org/2000/svg"
@@ -718,52 +827,10 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
             </div>
 
         </div>
+
         {{-- Modal Hapus --}}
-        <div x-data="{
-            show: false,
-            idPeminjaman: null,
-            init() {
-                window.addEventListener('open-delete-modal', (e) => {
-                    this.idPeminjaman = e.detail.id;
-                    this.show = true;
-                });
-            },
-            hapus() {
-                $wire.deletePeminjaman(this.idPeminjaman)
-                    .then(() => { this.show = false; });
-            }
-        }" x-show="show" x-transition.opacity
-            class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm dark:bg-black/60"
-            x-cloak>
-            <div class="w-full max-w-xs rounded-xl border border-stone-200 bg-white p-5 shadow-2xl dark:border-stone-800 dark:bg-stone-900"
-                @click.outside="show = false">
-                <div class="flex items-start gap-3">
-                    <div
-                        class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-red-50 dark:bg-red-950">
-                        <svg class="h-4 w-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-                        </svg>
-                    </div>
-                    <div class="flex-1">
-                        <h3 class="mb-0.5 text-sm font-semibold text-stone-800 dark:text-stone-100">Hapus Peminjaman
-                        </h3>
-                        <p class="text-xs text-stone-500 dark:text-stone-400">Data peminjaman akan dihapus permanen
-                            dari sistem.</p>
-                    </div>
-                </div>
-                <div class="mt-5 flex gap-2">
-                    <button @click="show = false"
-                        class="flex-1 cursor-pointer rounded-lg border border-stone-200 px-3 py-2 text-xs font-medium text-stone-700 transition-colors hover:bg-stone-50 dark:border-stone-700 dark:text-stone-300 dark:hover:bg-stone-800">
-                        Batal
-                    </button>
-                    <button @click="hapus()"
-                        class="flex-1 cursor-pointer rounded-lg bg-red-500 px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-red-600">
-                        Ya, Hapus
-                    </button>
-                </div>
-            </div>
-        </div>
+        <x-modal-hapus modal_name="open-delete-modal" action_hapus="deletePeminjaman" title="Hapus Peminjaman"
+            description="Data peminjaman akan dihapus permanen dari sistem." />
 
         <div x-data="{
             show: false,
@@ -854,6 +921,132 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                             Kirim
                         </button>
                     </div>
+                </div>
+            </div>
+        </div>
+        {{-- Modal Hibah --}}
+        <div x-data="{
+            show: false,
+            hibah: '',
+            errorMessage: '',
+            idPeminjaman: null,
+            init() {
+                window.addEventListener('open-hibah-modal', (e) => {
+                    this.idPeminjaman = e.detail.id;
+                    this.hibah = e.detail.defaultHibah || '';
+                    this.message = '';
+                    this.errorMessage = '';
+                    this.show = true;
+                });
+        
+                // Event sukses dari Livewire
+                window.addEventListener('hibah-success', (e) => {
+                    this.show = false;
+                });
+        
+                // Event error dari Livewire
+                window.addEventListener('hibah-error', (e) => {
+                    this.errorMessage = e.detail.message;
+                });
+            },
+            submit() {
+                this.errorMessage = ''; // reset error sebelum kirim
+                $wire.returnPeminjaman(this.idPeminjaman, this.hibah);
+            }
+        }" x-show="show" x-transition.opacity
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm dark:bg-black/60"
+            x-cloak>
+            <div
+                class="w-full max-w-xs rounded-md border bg-white p-4 shadow-xl dark:border-emerald-900 dark:bg-stone-900">
+                {{-- Header --}}
+                <div class="flex items-center justify-between border-b border-stone-200 dark:border-stone-800">
+                    <h3 class="text-sm font-semibold text-stone-800 dark:text-stone-200">Tambah Inventaris</h3>
+                    <button @click="show = false"
+                        class="rounded-md p-1 text-stone-400 transition hover:bg-stone-100 hover:text-stone-600 dark:hover:bg-stone-800 dark:hover:text-stone-200">
+                        <svg class="h-4 w-4 cursor-pointer" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="mb-4 border-t border-stone-100 dark:border-stone-800"></div>
+
+                {{-- Pesan Error --}}
+                <template x-if="errorMessage">
+                    <div class="mb-3 rounded border border-red-300 bg-red-50 px-2 py-1.5 text-xs text-red-700 dark:border-red-800 dark:bg-red-900/30 dark:text-red-400"
+                        x-text="errorMessage">
+                    </div>
+                </template>
+
+                <div x-data="{ show: true }" x-show="show"
+                    class="flex select-none items-center gap-2.5 rounded-lg border border-amber-200 bg-amber-50 py-2 pl-3 pr-2.5 text-amber-700 dark:border-amber-900/60 dark:bg-amber-950/30 dark:text-amber-300 dark:shadow-none">
+                    <div class="shrink-0">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                        </svg>
+                    </div>
+                    <div class="flex-1 text-[11px] font-medium leading-normal">
+                        <span>{{ __('Masukkan nominal Hibah yang diberikan peminjam. Jika tidak, maka berikan nominal 0;') }}</span>
+                    </div>
+                    <button @click="show = false"
+                        class="shrink-0 rounded p-1 text-stone-400 transition-colors hover:text-stone-600 dark:hover:text-stone-200">
+                        <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="relative mt-2">
+                    <div wire:loading wire:target="returnPeminjaman"
+                        class="absolute inset-0 z-50 flex items-center justify-center rounded-md bg-white/60 pt-10 backdrop-blur-[0.5px] dark:bg-stone-900/60">
+                        <div
+                            class="flex items-center gap-1.5 rounded-md border border-stone-100 bg-white px-2.5 py-1.5 shadow-sm dark:border-stone-700 dark:bg-stone-800">
+                            <svg class="text-sage-600 dark:text-sage-400 h-3.5 w-3.5 animate-spin" fill="none"
+                                viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10"
+                                    stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V12H4z"></path>
+                            </svg>
+                            <span class="text-[10px] font-medium text-stone-600 dark:text-stone-300">
+                                {{ __('Mengirim pesan...') }}
+                            </span>
+                        </div>
+                    </div>
+
+                    {{-- Hibah --}}
+                    <div>
+                        <label class="block text-[11px] font-medium text-stone-600 dark:text-stone-400">Hibah</label>
+                        <input type="text" required placeholder="0" x-model="hibah"
+                            class="focus:ring-sage-500 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 py-1.5 text-xs text-stone-800 placeholder:text-stone-400 focus:outline-none focus:ring-1 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-100" />
+                        @error('hibah')
+                            <p class="mt-1 text-[10px] text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="flex justify-end gap-2 border-t border-stone-100 pt-4 dark:border-stone-800">
+                        <button type="button" x-on:click="show = false"
+                            class="cursor-pointerrounded-lg border border-stone-200 px-4 py-1.5 text-xs font-medium text-stone-600 transition hover:bg-stone-50 dark:border-stone-700 dark:text-stone-400 dark:hover:bg-stone-800">
+                            Batal
+                        </button>
+                        <button type="submit" wire:loading.attr="disabled" wire:target="returnPeminjaman"
+                            x-on:click="submit()"
+                            class="bg-sage-600 hover:bg-sage-700 focus:ring-sage-500 cursor-pointer rounded-lg px-4 py-1.5 text-xs font-medium text-white transition focus:outline-none focus:ring-2 focus:ring-offset-1">
+                            Simpan
+                        </button>
+                    </div>
+                    {{-- Tombol --}}
+                    {{-- <div class="flex justify-end gap-1.5">
+                        <button @click="show = false"
+                            class="rounded bg-gray-200 px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-300 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500">
+                            Batal
+                        </button>
+                        <button @click="submit()"
+                            class="rounded bg-emerald-600 px-3 py-1.5 text-xs text-white hover:bg-emerald-700 focus:ring-2 focus:ring-emerald-400 focus:ring-offset-1">
+                            Kirim
+                        </button>
+                    </div> --}}
                 </div>
             </div>
         </div>

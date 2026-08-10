@@ -14,6 +14,12 @@ new class extends Component {
     public $totalInventaris;
     public $totalLaporan;
     public $user;
+    public $accPeminjaman;
+    public $pendingPeminjaman;
+    public $ditolakPeminjaman;
+    public $terlambatPeminjaman;
+    public $dikembalikanPeminjaman;
+    public $peminjamanUser;
 
     public function mount()
     {
@@ -53,6 +59,13 @@ new class extends Component {
                     $q->where('departemen_id', $departemenId);
                 })
                 ->count();
+        } else {
+            $this->accPeminjaman = Auth::user()->peminjamans()->where('status', 'dipinjam')->count();
+            $this->pendingPeminjaman = Auth::user()->peminjamans()->where('status', 'menunggu')->count();
+            $this->ditolakPeminjaman = Auth::user()->peminjamans()->where('status', 'ditolak')->count();
+            $this->dikembalikanPeminjaman = Auth::user()->peminjamans()->where('status', 'dikembalikan')->count();
+            $this->terlambatPeminjaman = Auth::user()->peminjamans()->where('lambat', 1)->count();
+            $this->peminjamanUser = Auth::user()->peminjamans()->take(5)->latest()->get();
         }
         return $this->view([
             'totalUsers' => $this->totalUsers,
@@ -60,6 +73,12 @@ new class extends Component {
             'totalInventaris' => $this->totalInventaris,
             'barangTerbaru' => $this->barangTerbaru,
             'peminjamanTerbaru' => $this->peminjamanTerbaru,
+            'accPeminjaman' => $this->accPeminjaman,
+            'pendingPeminjaman' => $this->pendingPeminjaman,
+            'ditolakPeminjaman' => $this->ditolakPeminjaman,
+            'dikembalikanPeminjaman' => $this->dikembalikanPeminjaman,
+            'terlambatPeminjaman' => $this->terlambatPeminjaman,
+            'peminjamanUser' => $this->peminjamanUser,
         ]);
     }
 };
@@ -172,7 +191,8 @@ new class extends Component {
                                 <th>{{ __('Nama Barang') }}</th>
                                 <th>{{ __('Tipe') }}</th>
                                 <th>{{ __('Jumlah') }}</th>
-                                <th>{{ __('Status') }}</th>
+                                <th>{{ __('Dibuat') }}</th>
+                                {{-- <th>{{ __('Status') }}</th> --}}
                             </tr>
                         </thead>
                         <tbody>
@@ -181,7 +201,8 @@ new class extends Component {
                                     <td>{{ $barang->nama_barang }}</td>
                                     <td>{{ $barang->tipe ?? '-' }}</td>
                                     <td>{{ $barang->jumlah }}</td>
-                                    <td>
+                                    <td>{{ $barang->created_at->diffForHumans() }}</td>
+                                    {{-- <td>
                                         @php
                                             $badgeMap = [
                                                 'baik' => 'badge-green',
@@ -192,11 +213,11 @@ new class extends Component {
                                         @endphp
                                         <span
                                             class="badge {{ $badgeClass }} text-[9px]">{{ ucfirst($barang->kondisi ?? 'Tersedia') }}</span>
-                                    </td>
+                                    </td> --}}
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4"
+                                    <td colspan="6"
                                         style="text-align:center; padding: 2rem; color: var(--text-hint); font-size: 12.5px;">
                                         {{ __('Belum ada data barang.') }}
                                     </td>
@@ -210,7 +231,8 @@ new class extends Component {
                 <div class="data-card dash-animate d6">
                     <div class="data-card-header">
                         <span class="data-card-title">{{ __('Peminjaman Terbaru') }}</span>
-                        <a href="#" wire:navigate class="data-card-link">{{ __('Lihat Semua') }} →</a>
+                        <a href="{{ route('admin.peminjaman') }}" wire:navigate
+                            class="data-card-link">{{ __('Lihat Semua') }} →</a>
                     </div>
                     <table class="data-table">
                         <thead>
@@ -218,16 +240,18 @@ new class extends Component {
                                 <th>{{ __('Nama Peminjam') }}</th>
                                 <th>{{ __('Nama Barang') }}</th>
                                 <th>{{ __('Tgl. Pinjam') }}</th>
-                                <th>{{ __('Status') }}</th>
+                                <th>{{ __('Dibuat') }}</th>
+                                {{-- <th>{{ __('Status') }}</th> --}}
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($peminjamanTerbaru ?? [] as $pinjam)
+                            @forelse($peminjamanTerbaru as $pinjam)
                                 <tr>
                                     <td>{{ $pinjam->user->nama_lengkap ?? '-' }}</td>
                                     <td>{{ $pinjam->inventaris->nama_barang ?? '-' }}</td>
                                     <td>{{ \Carbon\Carbon::parse($pinjam->tgl_pinjam)->format('d M Y') }}</td>
-                                    <td>
+                                    <td>{{ $pinjam->created_at->diffForHumans() ?? '-' }}</td>
+                                    {{-- <td>
                                         @php
                                             $badgeMap = [
                                                 'dipinjam' => 'badge-yellow',
@@ -239,7 +263,7 @@ new class extends Component {
                                         @endphp
                                         <span
                                             class="badge {{ $badgeClass }} text-[9px]">{{ ucfirst($pinjam->status ?? 'Diproses') }}</span>
-                                    </td>
+                                    </td> --}}
                                 </tr>
                             @empty
                                 <tr>
@@ -404,7 +428,8 @@ new class extends Component {
                                 <th>{{ __('Nama Barang') }}</th>
                                 <th>{{ __('Tipe') }}</th>
                                 <th>{{ __('Jumlah') }}</th>
-                                <th>{{ __('Status') }}</th>
+                                <th>{{ __('Dibuat') }}</th>
+                                {{-- <th>{{ __('Status') }}</th> --}}
                             </tr>
                         </thead>
                         <tbody>
@@ -413,7 +438,8 @@ new class extends Component {
                                     <td>{{ $barang->nama_barang }}</td>
                                     <td>{{ $barang->tipe ?? '-' }}</td>
                                     <td>{{ $barang->jumlah }}</td>
-                                    <td>
+                                    <td>{{ $barang->created_at->diffForHumans() }}</td>
+                                    {{-- <td>
                                         @php
                                             $badgeMap = [
                                                 'baik' => 'badge-green',
@@ -424,7 +450,7 @@ new class extends Component {
                                         @endphp
                                         <span
                                             class="badge {{ $badgeClass }} text-[9px]">{{ ucfirst($barang->kondisi ?? 'Tersedia') }}</span>
-                                    </td>
+                                    </td> --}}
                                 </tr>
                             @empty
                                 <tr>
@@ -442,7 +468,8 @@ new class extends Component {
                 <div class="data-card dash-animate d6">
                     <div class="data-card-header">
                         <span class="data-card-title">{{ __('Peminjaman Terbaru') }}</span>
-                        <a href="#" wire:navigate class="data-card-link">{{ __('Lihat Semua') }} →</a>
+                        <a href="{{ route('koordinator.peminjaman') }}" wire:navigate
+                            class="data-card-link">{{ __('Lihat Semua') }} →</a>
                     </div>
                     <table class="data-table">
                         <thead>
@@ -450,16 +477,18 @@ new class extends Component {
                                 <th>{{ __('Nama Peminjam') }}</th>
                                 <th>{{ __('Nama Barang') }}</th>
                                 <th>{{ __('Tgl. Pinjam') }}</th>
-                                <th>{{ __('Status') }}</th>
+                                <th>{{ __('Dibuat') }}</th>
+                                {{-- <th>{{ __('Status') }}</th> --}}
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($peminjamanTerbaru ?? [] as $pinjam)
+                            @forelse($peminjamanTerbaru as $pinjam)
                                 <tr>
                                     <td>{{ $pinjam->user->nama_lengkap ?? '-' }}</td>
                                     <td>{{ $pinjam->inventaris->nama_barang ?? '-' }}</td>
                                     <td>{{ \Carbon\Carbon::parse($pinjam->tgl_pinjam)->format('d M Y') }}</td>
-                                    <td>
+                                    <td>{{ $pinjam->created_at->diffForHumans() }}</td>
+                                    {{-- <td>
                                         @php
                                             $badgeMap = [
                                                 'dipinjam' => 'badge-yellow',
@@ -471,7 +500,7 @@ new class extends Component {
                                         @endphp
                                         <span
                                             class="badge {{ $badgeClass }} text-[9px]">{{ ucfirst($pinjam->status ?? 'Diproses') }}</span>
-                                    </td>
+                                    </td> --}}
                                 </tr>
                             @empty
                                 <tr>
@@ -486,6 +515,219 @@ new class extends Component {
                 </div>
 
             </div>
+        </div>
+    @endcan
+    @can('isUser')
+        {{-- Welcome --}}
+        <div class="welcome-banner dash-animate d1">
+
+            {{-- Grid pattern dekoratif --}}
+            <svg class="banner-grid" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <pattern id="dash-grid" width="28" height="28" patternUnits="userSpaceOnUse">
+                        <path d="M 28 0 L 0 0 0 28" fill="none" stroke="currentColor" stroke-width="0.5"
+                            opacity="0.3" />
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#dash-grid)" />
+            </svg>
+
+            <div class="banner-glow"></div>
+
+            <div class="banner-text">
+                <div class="banner-eyebrow">{{ __('Selamat datang ' . Auth::user()->nama_lengkap) }}</div>
+                <h1 class="banner-title">{{ __('Selamat Datang di Dashboard SMILE') }}</h1>
+                <p class="banner-sub">
+                    <span class="banner-sub-small">
+                        {{ __('Sistem Informasi Manajemen Inventaris · Pondok Pesantren Annuqayah Latee') }}
+                    </span>
+                </p>
+            </div>
+
+            <div class="banner-illustration">
+                <img src="{{ asset('assets/svg/dashboard-svg.svg') }}" alt="{{ __('Dashboard Illustration') }}" />
+            </div>
+
+        </div>
+
+        {{-- Stats Card --}}
+        <div class="stat-grid">
+
+            {{-- Accepted --}}
+            <div class="stat-card dash-animate d2">
+                <div class="stat-icon-wrap">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-label">{{ __('Diterima') }}</div>
+                    <div class="stat-value">{{ $accPeminjaman ?? 0 }}</div>
+                    <div class="stat-unit">{{ __('item inventaris') }}</div>
+                </div>
+            </div>
+
+            {{-- Pending --}}
+            <div class="stat-card dash-animate d3">
+                <div class="stat-icon-wrap">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 00-3-3.87" />
+                        <path d="M16 3.13a4 4 0 010 7.75" />
+                    </svg>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-label">{{ __('Menunggu') }}</div>
+                    <div class="stat-value">{{ $pendingPeminjaman ?? 0 }}</div>
+                    <div class="stat-unit">{{ __('peminjam aktif') }}</div>
+                </div>
+            </div>
+
+            {{-- Ditolak --}}
+            <div class="stat-card dash-animate d4">
+                <div class="stat-icon-wrap">
+                    <svg width="800px" height="800px" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                            d="M20 9c0 .55-.45 1-1 1h-2v2c0 .55-.45 1-1 1s-1-.45-1-1v-2h-2c-.55 0-1-.45-1-1s.45-1 1-1h2V6c0-.55.45-1 1-1s1 .45 1 1v2h2c.55 0 1 .45 1 1zM4 8h3V3H4v5zm-2 9h5v-7H2v7zm14-2c-.55 0-1 .45-1 1v1H9V6h3c.55 0 1-.45 1-1s-.45-1-1-1H9V2c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v6H1c-.55 0-1 .45-1 1v9c0 .55.45 1 1 1h15c.55 0 1-.45 1-1v-2c0-.55-.45-1-1-1z"
+                            fill="currentColor" />
+                    </svg>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-label">{{ __('Ditolak') }}</div>
+                    <div class="stat-value">{{ $this->ditolakPeminjaman ?? 0 }}</div>
+                    <div class="stat-unit">{{ __('item inventaris') }}</div>
+                </div>
+            </div>
+
+            {{-- Dikembalikan --}}
+            <div class="stat-card dash-animate d4">
+                <div class="stat-icon-wrap">
+                    <svg width="800px" height="800px" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                            d="M20 9c0 .55-.45 1-1 1h-2v2c0 .55-.45 1-1 1s-1-.45-1-1v-2h-2c-.55 0-1-.45-1-1s.45-1 1-1h2V6c0-.55.45-1 1-1s1 .45 1 1v2h2c.55 0 1 .45 1 1zM4 8h3V3H4v5zm-2 9h5v-7H2v7zm14-2c-.55 0-1 .45-1 1v1H9V6h3c.55 0 1-.45 1-1s-.45-1-1-1H9V2c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v6H1c-.55 0-1 .45-1 1v9c0 .55.45 1 1 1h15c.55 0 1-.45 1-1v-2c0-.55-.45-1-1-1z"
+                            fill="currentColor" />
+                    </svg>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-label">{{ __('Dikembalikan') }}</div>
+                    <div class="stat-value">{{ $this->dikembalikanPeminjaman ?? 0 }}</div>
+                    <div class="stat-unit">{{ __('item inventaris') }}</div>
+                </div>
+            </div>
+
+            {{-- Terlambat --}}
+            <div class="stat-card dash-animate d4">
+                <div class="stat-icon-wrap">
+                    <svg width="800px" height="800px" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                            d="M20 9c0 .55-.45 1-1 1h-2v2c0 .55-.45 1-1 1s-1-.45-1-1v-2h-2c-.55 0-1-.45-1-1s.45-1 1-1h2V6c0-.55.45-1 1-1s1 .45 1 1v2h2c.55 0 1 .45 1 1zM4 8h3V3H4v5zm-2 9h5v-7H2v7zm14-2c-.55 0-1 .45-1 1v1H9V6h3c.55 0 1-.45 1-1s-.45-1-1-1H9V2c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v6H1c-.55 0-1 .45-1 1v9c0 .55.45 1 1 1h15c.55 0 1-.45 1-1v-2c0-.55-.45-1-1-1z"
+                            fill="currentColor" />
+                    </svg>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-label">{{ __('Terlambat') }}</div>
+                    <div class="stat-value">{{ $this->terlambatPeminjaman ?? 0 }}</div>
+                    <div class="stat-unit">{{ __('item inventaris') }}</div>
+                </div>
+            </div>
+        </div>
+        {{-- Peminjaman Terbaru --}}
+        <div class="data-card dash-animate d6">
+            <div class="data-card-header">
+                <span class="data-card-title">{{ __('Peminjaman Terbaru') }}</span>
+                <a href="{{ route('user.peminjaman') }}" wire:navigate class="data-card-link">{{ __('Lihat Semua') }}
+                    →</a>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>{{ __('Nama Barang') }}</th>
+                        <th>{{ __('Tgl. Pinjam') }}</th>
+                        <th>{{ __('Tgl. Kembali') }}</th>
+                        <th>{{ __('Jumlah') }}</th>
+                        <th>{{ __('Dibuat') }}</th>
+                        <th>{{ __('Status') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($peminjamanUser as $pinjam)
+                        <tr>
+                            {{-- Gambar + Nama Barang + Departemen --}}
+                            <td class="px-2.5 py-1.5">
+                                <div class="max-w-45 flex items-center gap-2 sm:max-w-xs">
+                                    {{-- Thumbnail gambar atau placeholder --}}
+                                    @if ($pinjam->inventaris->img_path && Storage::exists($pinjam->inventaris->img_path))
+                                        <img src="{{ Storage::url($pinjam->inventaris->img_path) }}"
+                                            alt="{{ $pinjam->inventaris->nama_barang }}"
+                                            class="h-7 w-7 shrink-0 rounded-lg border border-stone-200 object-cover dark:border-stone-700" />
+                                    @else
+                                        <div
+                                            class="bg-sage-100 dark:bg-sage-900/40 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-stone-200 dark:border-stone-700">
+                                            <svg class="text-sage-500 dark:text-sage-400 h-3.5 w-3.5" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                                            </svg>
+                                        </div>
+                                    @endif
+
+                                    <div class="truncate">
+                                        <div class="truncate font-medium text-stone-800 dark:text-stone-200">
+                                            {{ $pinjam->inventaris->nama_barang }}
+                                        </div>
+                                        <div class="truncate text-[10px] text-stone-400 dark:text-stone-500">
+                                            {{ $pinjam->inventaris->user->departemen->nama_departemen ?? '-' }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ \Carbon\Carbon::parse($pinjam->tgl_pinjam)->format('d M Y') ?? '-' }}</td>
+                            <td>{{ \Carbon\Carbon::parse($pinjam->tgl_kembali)->format('d M Y') ?? '-' }}</td>
+                            <td>{{ $pinjam->jumlah ?? '-' }}</td>
+                            <td>{{ $pinjam->created_at->diffForHumans() ?? '-' }}</td>
+                            <td>
+                                @php
+                                    $badgeMap = [
+                                        'dipinjam' => 'badge-yellow',
+                                        'dikembalikan' => 'badge-green',
+                                        'terlambat' => 'badge-red',
+                                        'diproses' => 'badge-blue',
+                                    ];
+                                    $badgeClass = $badgeMap[strtolower($pinjam->status ?? '')] ?? 'badge-blue';
+                                @endphp
+                                <span
+                                    class="badge {{ $badgeClass }} text-[9px]">{{ ucfirst($pinjam->status ?? 'Diproses') }}</span>
+                            </td>
+                        </tr>
+                    @empty
+                        {{-- <tr>
+                            <td colspan="6"
+                                style="text-align:center; padding: 2rem; color: var(--text-hint); font-size: 12.5px;">
+                                {{ __('Belum ada data peminjaman.') }}
+                            </td>
+                        </tr> --}}
+                        <tr>
+                            <td colspan="6" class="px-2.5 py-10 text-center">
+                                <div class="flex flex-col items-center gap-2 text-stone-400">
+                                    <svg class="h-8 w-8 text-stone-300 dark:text-stone-700" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                            d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                                    </svg>
+                                    <p class="text-xs font-medium">Tidak ada barang ditemukan</p>
+                                    <p class="text-[10px] text-stone-300 dark:text-stone-600">
+                                        Kunjungi Halaman Inventaris untuk menambah peminjaman
+                                    </p>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     @endcan
 </div>

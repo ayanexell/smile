@@ -153,6 +153,8 @@
                 {{-- Left: Text Content --}}
                 <div class="text-center lg:text-left">
 
+                    {{-- <div >
+                    </div> --}}
                     {{-- Badge --}}
                     <div
                         class="opacity-0-init animate-fade-up bg-sage-100 dark:bg-sage-900/40 border-sage-200 dark:border-sage-700/50 text-sage-700 dark:text-sage-300 mb-6 inline-flex items-center gap-2 rounded-full border px-3 py-1.5 font-mono text-xs font-medium uppercase tracking-wider">
@@ -264,122 +266,7 @@
 
 
     {{-- ===================== INVENTARIS SERING DIPINJAM SECTION ===================== --}}
-    <section id="fitur" class="bg-white py-24 transition-colors duration-500 dark:bg-stone-900">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-
-            {{-- Section Header --}}
-            <div class="mx-auto mb-16 max-w-2xl text-center">
-                <p class="text-sage-600 dark:text-sage-400 mb-3 font-mono text-xs uppercase tracking-[0.3em]">
-                    {{ __('Statistik Peminjaman') }}</p>
-                <h2 class="font-display mb-4 text-3xl font-bold text-stone-900 sm:text-4xl dark:text-stone-50">
-                    {{ __('Inventaris') }} <span
-                        class="text-sage-600 dark:text-sage-400 italic">{{ __('Paling Sering Dipinjam') }}</span>
-                </h2>
-                <p class="leading-relaxed text-stone-500 dark:text-stone-400">
-                    {{ __('Delapan aset dengan tingkat peminjaman tertinggi berdasarkan aktivitas sistem saat ini.') }}
-                </p>
-            </div>
-
-            {{-- Inventory Grid --}}
-            <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-                @php
-                    $topBorrowedItems = $topBorrowedItems ?? [
-                        ['Proyektor Epson EB-X05', 'Elektronik', 42, 'Baik', 'M4 6h16M4 12h16M4 18h7'],
-                        ['Kursi Lipat Chitose', 'Furnitur', 38, 'Baik', 'M4 6h16M4 12h16M4 18h7'],
-                        [
-                            'Sound System Portable',
-                            'Elektronik',
-                            35,
-                            'Baik',
-                            'M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z',
-                        ],
-                        [
-                            'Meja Lipat Serbaguna',
-                            'Furnitur',
-                            31,
-                            'Baik',
-                            'M3 10h18M3 14h18M5 6h14a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2z',
-                        ],
-                        ['Karpet Aula Utama', 'Perlengkapan', 27, 'Cukup', 'M4 4h16v16H4z'],
-                        ['Genset 5000 Watt', 'Elektronik', 24, 'Baik', 'M13 10V3L4 14h7v7l9-11h-7z'],
-                        ['Tenda Serbaguna', 'Perlengkapan', 21, 'Cukup', 'M3 21h18M5 21V10l7-7 7 7v11M9 21v-6h6v6'],
-                        [
-                            'Mic Wireless Set',
-                            'Elektronik',
-                            19,
-                            'Baik',
-                            'M12 18v3m0 0h-3m3 0h3M8 10a4 4 0 108 0V6a4 4 0 10-8 0v4zm-3 0a7 7 0 0014 0',
-                        ],
-                    ];
-                @endphp
-
-                @foreach (array_slice($topBorrowedItems, 0, 8) as $index => $item)
-                    <div
-                        class="group relative overflow-hidden rounded-2xl border border-stone-200/80 bg-stone-50 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-stone-900/5 dark:border-stone-700/50 dark:bg-stone-800/50 dark:hover:shadow-stone-950/50">
-
-                        {{-- Visual Header --}}
-                        <div
-                            class="bg-sage-100 dark:bg-sage-900/30 relative flex h-32 w-full items-center justify-center">
-                            <svg class="text-sage-400 dark:text-sage-600 h-10 w-10" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="{{ $item[4] }}" />
-                            </svg>
-
-                            {{-- Rank Badge --}}
-                            <span
-                                class="absolute left-3 top-3 inline-flex items-center rounded-full bg-white/90 px-2.5 py-1 font-mono text-[10px] font-semibold text-stone-600 shadow-sm dark:bg-stone-900/80 dark:text-stone-300">
-                                #{{ $index + 1 }}
-                            </span>
-
-                            {{-- Condition Badge --}}
-                            <span
-                                class="{{ $item[3] === 'Baik' ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400' }} absolute right-3 top-3 rounded-full px-2.5 py-1 text-[10px] font-medium">
-                                {{ __($item[3]) }}
-                            </span>
-                        </div>
-
-                        {{-- Content --}}
-                        <div class="p-4">
-                            <p
-                                class="text-sage-600 dark:text-sage-400 mb-1 font-mono text-[11px] uppercase tracking-wide">
-                                {{ __($item[1]) }}</p>
-                            <h3 class="font-display mb-3 line-clamp-1 font-semibold text-stone-800 dark:text-stone-100">
-                                {{ __($item[0]) }}</h3>
-
-                            <div
-                                class="flex items-center justify-between border-t border-stone-200/70 pt-3 dark:border-stone-700/50">
-                                <div class="flex items-center gap-1.5 text-xs text-stone-500 dark:text-stone-400">
-                                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                                    </svg>
-                                    {{ $item[2] }}x {{ __('Dipinjam') }}
-                                </div>
-                                <a href="{{ route('list-inventaris') }}"
-                                    class="text-sage-600 dark:text-sage-400 text-xs font-medium hover:underline">
-                                    {{ __('Detail') }}
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-
-            {{-- View All Link --}}
-            <div class="mt-12 flex justify-center">
-                <a href="{{ route('list-inventaris') }}"
-                    class="hover:border-sage-300 dark:hover:border-sage-600 hover:text-sage-700 dark:hover:text-sage-300 inline-flex items-center justify-center gap-2.5 rounded-xl border border-stone-200 bg-white px-5 py-2 text-sm font-medium text-stone-700 transition-all duration-200 hover:-translate-y-0.5 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-300">
-                    {{ __('Lihat Semua Inventaris') }}
-                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
-                </a>
-            </div>
-        </div>
-    </section>
+    <livewire:top-inventaris />
 
 
     {{-- ===================== TENTANG SECTION ===================== --}}
@@ -405,7 +292,7 @@
                     </p>
 
                     {{-- Stats Row --}}
-                    <div class="grid grid-cols-3 gap-4">
+                    {{-- <div class="grid grid-cols-3 gap-4">
                         @foreach ([['1,200+', 'Total Aset'], ['50+', 'Kategori'], ['100%', 'Terdigitalisasi']] as $s)
                             <div
                                 class="rounded-xl border border-stone-200 bg-white p-4 text-center dark:border-stone-700/50 dark:bg-stone-800/50">
@@ -414,7 +301,7 @@
                                 <p class="mt-1 text-xs text-stone-500 dark:text-stone-400">{{ $s[1] }}</p>
                             </div>
                         @endforeach
-                    </div>
+                    </div> --}}
                 </div>
 
                 {{-- Right: Visual --}}
@@ -423,9 +310,9 @@
                         class="rounded-2xl border border-stone-200 bg-white p-8 shadow-xl shadow-stone-900/5 dark:border-stone-700/50 dark:bg-stone-800/50">
                         {{-- Timeline --}}
                         <p class="mb-6 font-mono text-xs uppercase tracking-widest text-stone-400 dark:text-stone-500">
-                            Alur Sistem</p>
+                            Alur & Regulasi Peminjaman</p>
                         <div class="space-y-0">
-                            @foreach ([['Pencatatan Aset', 'Input data barang, lokasi, kondisi & foto', 'sage'], ['Kategorisasi', 'Klasifikasi berdasarkan jenis dan unit', 'sage'], ['Peminjaman', 'Permintaan dan persetujuan digital', 'sage'], ['Monitoring', 'Pemantauan status real-time', 'sage'], ['Pelaporan', 'Laporan otomatis berkala', 'sage']] as $i => $step)
+                            @foreach ([['Mendaftarkan Diri', 'Registrasi akun peminjam', 'sage'], ['Memilih Inventaris', 'Pilih barang yang akan dipinjam', 'sage'], ['Verifikasi Admin', 'Admin menyetujui permohonan', 'sage'], ['Cetak Bukti Peminjaman', 'Dokumen bukti transaksi', 'sage'], ['Pengembalian', 'Inventaris dikembalikan tepat waktu', 'sage']] as $i => $step)
                                 <div class="{{ $i < 4 ? 'pb-6' : '' }} relative flex gap-4">
                                     {{-- Line --}}
                                     @if ($i < 4)
@@ -554,11 +441,8 @@
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col items-center justify-between gap-4 sm:flex-row">
                 <div class="flex items-center gap-3">
-                    <div class="bg-sage-600 flex h-7 w-7 items-center justify-center rounded-lg">
-                        <svg class="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                        </svg>
+                    <div class="flex h-8 w-8 items-center justify-center rounded-lg">
+                        <img src="{{ asset('assets/logo.webp') }}" alt="Logo" class="w-7" />
                     </div>
                     <span class="font-mono text-sm text-stone-300">SMILE —
                         {{ __('Sistem Manajemen Inventaris Latee') }}</span>

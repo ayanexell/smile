@@ -20,7 +20,7 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
         ]);
         $peminjaman->inventaris()->update([
             'frequensi_peminjaman' => $peminjaman->inventaris->frequensi_peminjaman + 1,
-            'jumlah' => $peminjaman->inventaris->jumlah - $peminjaman->jumlah,
+            // 'jumlah' => $peminjaman->inventaris->jumlah - $peminjaman->jumlah,
         ]);
         session()->flash('success', 'Peminjaman berhasil diterima.');
     }
@@ -30,9 +30,9 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
         $peminjaman->update([
             'status' => 'ditolak',
         ]);
-        $peminjaman->inventaris()->update([
-            'jumlah' => $peminjaman->inventaris->jumlah + $peminjaman->jumlah,
-        ]);
+        // $peminjaman->inventaris()->update([
+        //     'jumlah' => $peminjaman->inventaris->jumlah + $peminjaman->jumlah,
+        // ]);
         session()->flash('success', 'Peminjaman berhasil ditolak.');
     }
 
@@ -41,9 +41,9 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
         $peminjaman->update([
             'status' => 'dikembalikan',
         ]);
-        $peminjaman->inventaris()->update([
-            'jumlah' => $peminjaman->inventaris->jumlah + $peminjaman->jumlah,
-        ]);
+        // $peminjaman->inventaris()->update([
+        //     'jumlah' => $peminjaman->inventaris->jumlah + $peminjaman->jumlah,
+        // ]);
         session()->flash('success', 'Peminjaman berhasil dikembalikan.');
     }
 

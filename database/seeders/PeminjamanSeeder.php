@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 use App\Models\Inventaris;
 use App\Models\Peminjaman;
 use App\Models\User;
+use Carbon\Carbon;
 class PeminjamanSeeder extends Seeder
 {
     /**
@@ -36,21 +37,33 @@ class PeminjamanSeeder extends Seeder
                 }
             }
         }
+        $now = Carbon::now();
+        for ($i = 0; $i < 5; $i++) {
+            $user = $users->random();
+            $inventaris = $inventarisBorrowable->random();
 
-        // Create active peminjamans
-        // Peminjaman::factory()
-        //     ->count(10)
-        //     ->dipinjam()
-        //     ->create();
+            Peminjaman::factory()
+                ->oleh($user)
+                ->untuk($inventaris)
+                ->masihDipinjam()         // status 'dipinjam', tgl_pengembalian > now
+                ->denganJumlah(rand(1, 3))
+                ->create();
+        }
+        for ($i = 6; $i >= 0; $i--) {
+            $date = $now->copy()->subDays($i);
+            $dailyCount = rand(2, 4);
 
-        // Create late peminjamans
-        // Peminjaman::fact
+            for ($j = 0; $j < $dailyCount; $j++) {
+                $user = $users->random();
+                $inventaris = $inventarisBorrowable->random();
 
-
-        // Create returned peminjamans
-        // Peminjaman::factory()
-        //     ->count(15)
-        //     ->dikembalikan()
-        //     ->create();
+                Peminjaman::factory()
+                    ->oleh($user)
+                    ->untuk($inventaris)
+                    ->denganTanggalPinjam($date)          // paksa tgl_peminjaman ke hari itu
+                    ->denganJumlah(1)
+                    ->create();
+            }
+        }
     }
 }
