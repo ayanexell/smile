@@ -58,10 +58,7 @@
                     {{-- Mobile logo (hanya tampil di layar kecil) --}}
                     <div class="mb-10 flex items-center gap-3 lg:hidden">
                         <div class="bg-sage-600 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl">
-                            <svg class="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                            </svg>
+                            <img src="{{ asset('assets/logo.webp') }}" alt="Logo" class="w-7" />
                         </div>
                         <div>
                             <p class="font-display text-sm font-semibold text-stone-900 dark:text-stone-50">SMILE</p>
