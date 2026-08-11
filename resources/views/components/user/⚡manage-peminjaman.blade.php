@@ -13,10 +13,10 @@ new #[Title('Manajemen Peminjaman User')] class extends Component {
     public $status;
     public $peminjaman;
 
-    public function deletePeminjaman()
+    public function deletePeminjaman(Peminjaman $id)
     {
-        $this->peminjaman->delete();
-        $this->reset('peminjaman', 'showDeleteModal');
+        $id->delete();
+        $this->reset('peminjaman');
         session()->flash('success', 'Peminjaman berhasil dihapus.');
     }
 
@@ -310,9 +310,8 @@ new #[Title('Manajemen Peminjaman User')] class extends Component {
                                                     @endif
                                                     <flux-spacer />
                                                     {{-- Hapus --}}
-                                                    <button
-                                                        wire:click="deletePeminjaman({{ $peminjaman->id_peminjaman }})"
-                                                        wire:confirm="Apakah anda yakin ingin menghapus data ini?"
+                                                    <button x-data
+                                                        x-on:click="$dispatch('open-delete-modal', { id: {{ $peminjaman->id_peminjaman }} })"
                                                         class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-rose-600 transition-colors hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/40">
                                                         <svg class="h-3.5 w-3.5 text-rose-400" fill="none"
                                                             stroke="currentColor" stroke-width="2"
@@ -356,7 +355,8 @@ new #[Title('Manajemen Peminjaman User')] class extends Component {
             <div class="border-t border-stone-100 px-4 py-3 dark:border-stone-800">
                 {{ $peminjamans->links('pagination::tailwind') }}
             </div>
-
         </div>
     </div>
+    <x-modal-hapus modal_name="open-delete-modal" action_hapus="deletePeminjaman" title="Hapus Peminjaman"
+        description="Data peminjaman akan dihapus permanen dari sistem." />
 </div>

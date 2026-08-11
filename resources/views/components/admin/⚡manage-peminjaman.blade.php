@@ -25,25 +25,11 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
         $this->tahun = Carbon::now()->year;
     }
 
-    public function sendStatus($peminjaman, $status)
-    {
-        $no_wa = $peminjaman->user->no_wa;
-        $message = "Halo, {{ $peminjaman->user->nama_lengkap }}, " . "peminjaman {{ $peminjaman->inventaris->nama_barang }} yang anda ajukan **{{ $status }}** oleh Admin.\n" . "Silahkan periksa aplikasi dengan masuk dengan akun yang telah anda buat!!\n" . "Harap diperhatikan tanggal pengembalian peminjaman.\n" . "Perlu diperhatikan bahwa segala peminjam memiliki tanggung jawab atas barang yang telah dipinjam.\n\n" . "kunjungi {{ env('APP_URL') }}";
-        try {
-            $action = new WhatsappAction($no_wa, $message);
-            $action->send();
-        } catch (\Exception $e) {
-            Log::error('Terjadi kesalahan saat mengirim pesan status diterima : ' . $e->getMessage());
-            session()->flash('error', 'Terjadi kesalahan saat mengirim pesan: \n\n' . $e->getMessage());
-        }
-    }
-
     public function acceptPeminjaman(Peminjaman $peminjaman)
     {
         DB::transaction(function () use ($peminjaman) {
             $oldStatus = $peminjaman->status;
 
-            // Validasi stok mencukupi
             if ($peminjaman->inventaris->jumlah < $peminjaman->jumlah) {
                 throw ValidationException::withMessages([
                     'jumlah' => 'Stok tidak mencukupi.',
@@ -52,15 +38,12 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
 
             $peminjaman->update(['status' => 'dipinjam']);
 
-            // Hanya kurangi stok jika sebelumnya masih menunggu
             if ($oldStatus === 'menunggu') {
-                $peminjaman->inventaris()->update([
-                    'frequensi_peminjaman' => $peminjaman->inventaris->frequensi_peminjaman + 1,
-                    'jumlah' => $peminjaman->inventaris->jumlah - $peminjaman->jumlah,
-                ]);
+                $peminjaman->inventaris()->decrement('jumlah', $peminjaman->jumlah);
+                $peminjaman->inventaris()->increment('frequensi_peminjaman', 1);
             }
 
-            $this->sendStatus($peminjaman, 'Diterima');
+            $peminjaman->sendStatusNotification('Diterima');
             session()->flash('success', 'Peminjaman berhasil diterima.');
         });
     }
@@ -69,17 +52,13 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
     {
         DB::transaction(function () use ($peminjaman) {
             $oldStatus = $peminjaman->status;
-
             $peminjaman->update(['status' => 'ditolak']);
 
-            // Kembalikan stok hanya jika sebelumnya sudah dipinjam
-            if ($oldStatus === 'dipinjam') {
-                $peminjaman->inventaris()->update([
-                    'jumlah' => $peminjaman->inventaris->jumlah + $peminjaman->jumlah,
-                ]);
+            if (in_array($oldStatus, ['dipinjam', 'terlambat'])) {
+                $peminjaman->inventaris()->increment('jumlah', $peminjaman->jumlah);
             }
 
-            $this->sendStatus($peminjaman, 'Ditolak');
+            $peminjaman->sendStatusNotification('Ditolak');
             session()->flash('success', 'Peminjaman berhasil ditolak.');
         });
     }
@@ -87,7 +66,6 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
     public function returnPeminjaman(Peminjaman $peminjaman, $hibah)
     {
         $validator = Validator::make(['hibah' => $hibah], ['hibah' => 'required|numeric|min:0']);
-
         if ($validator->fails()) {
             $this->dispatch('hibah-error', message: $validator->errors()->first());
             return;
@@ -95,20 +73,13 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
 
         DB::transaction(function () use ($peminjaman, $hibah) {
             $oldStatus = $peminjaman->status;
+            $peminjaman->update(['status' => 'dikembalikan', 'hibah' => $hibah]);
 
-            $peminjaman->update([
-                'status' => 'dikembalikan',
-                'hibah' => $hibah,
-            ]);
-
-            // Kembalikan stok hanya jika sebelumnya sedang dipinjam
-            if ($oldStatus === 'dipinjam') {
-                $peminjaman->inventaris()->update([
-                    'jumlah' => $peminjaman->inventaris->jumlah + $peminjaman->jumlah,
-                ]);
+            if (in_array($oldStatus, ['dipinjam', 'terlambat'])) {
+                $peminjaman->inventaris()->increment('jumlah', $peminjaman->jumlah);
             }
 
-            $this->sendStatus($peminjaman, 'Dikembalikan');
+            $peminjaman->sendStatusNotification('Dikembalikan');
             $this->dispatch('hibah-success');
             session()->flash('success', 'Peminjaman berhasil dikembalikan.');
         });
@@ -118,17 +89,13 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
     {
         DB::transaction(function () use ($peminjaman) {
             $oldStatus = $peminjaman->status;
-
             $peminjaman->update(['status' => 'menunggu']);
 
-            // Kembalikan stok jika sebelumnya diterima (acc dibatalkan)
             if ($oldStatus === 'dipinjam') {
-                $peminjaman->inventaris()->update([
-                    'jumlah' => $peminjaman->inventaris->jumlah + $peminjaman->jumlah,
-                ]);
+                $peminjaman->inventaris()->increment('jumlah', $peminjaman->jumlah);
             }
 
-            $this->sendStatus($peminjaman, 'Pending');
+            $peminjaman->sendStatusNotification('Pending');
             session()->flash('success', 'Peminjaman dikembalikan ke status pending.');
         });
     }
@@ -759,6 +726,32 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                                             </svg>
                                                             Pending
                                                         </button>
+                                                    @elseif ($peminjaman->status === 'terlambat')
+                                                        {{-- Dikembalikan --}}
+                                                        <button x-data
+                                                            x-on:click="$dispatch('open-hibah-modal', {id: {{ $peminjaman->id_peminjaman }}, defaultHibah: `0` })"
+                                                            class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-blue-600 transition-colors hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-950/40">
+                                                            <svg fill="currentColor" class="h-3 w-3" version="1.1"
+                                                                id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+                                                                xmlns:xlink="http://www.w3.org/1999/xlink"
+                                                                viewBox="0 0 384.97 384.97" xml:space="preserve">
+                                                                <g>
+                                                                    <g id="Arrow_Left_Circle">
+                                                                        <path
+                                                                            d="M192.485,0C86.185,0,0,86.185,0,192.485C0,298.797,86.185,384.97,192.485,384.97 c106.312,0,192.485-86.173,192.485-192.485C384.97,86.185,298.797,0,192.485,0z M192.485,360.909 c-93.018,0-168.424-75.406-168.424-168.424S99.467,24.061,192.485,24.061s168.424,75.406,168.424,168.424 S285.503,360.909,192.485,360.909z" />
+                                                                        <path
+                                                                            d="M300.758,180.226H113.169l62.558-63.46c4.692-4.74,4.692-12.439,0-17.179c-4.704-4.74-12.319-4.74-17.011,0l-82.997,84.2 c-2.25,2.25-3.537,5.414-3.537,8.59c0,3.164,1.299,6.328,3.525,8.59l82.997,84.2c4.704,4.752,12.319,4.74,17.011,0 c4.704-4.752,4.704-12.439,0-17.191l-62.558-63.46h187.601c6.641,0,12.03-5.438,12.03-12.151 C312.788,185.664,307.398,180.226,300.758,180.226z" />
+                                                                    </g>
+                                                                    <g></g>
+                                                                    <g></g>
+                                                                    <g></g>
+                                                                    <g></g>
+                                                                    <g></g>
+                                                                    <g></g>
+                                                                </g>
+                                                            </svg>
+                                                            Dikembalikan
+                                                        </button>
                                                     @endif
 
                                                     <flux:separator />
@@ -1010,7 +1003,7 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V12H4z"></path>
                             </svg>
                             <span class="text-[10px] font-medium text-stone-600 dark:text-stone-300">
-                                {{ __('Mengirim pesan...') }}
+                                {{ __('Menyimpan data...') }}
                             </span>
                         </div>
                     </div>
