@@ -4,8 +4,9 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\LaporanPeminjaman;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Title;
 
-new class extends Component {
+new #[Title('Kelola Laporan Peminjaman')] class extends Component {
     use WithPagination;
 
     public string $search = '';

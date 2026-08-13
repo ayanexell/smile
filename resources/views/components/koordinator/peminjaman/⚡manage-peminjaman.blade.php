@@ -144,10 +144,10 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                 x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 -translate-y-4"
                 x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-200"
                 x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-4"
-                class="fixed left-1/2 top-5 z-[9999] w-full max-w-sm -translate-x-1/2 px-4" style="display: none;">
+                class="z-9999 fixed left-1/2 top-5 w-full max-w-sm -translate-x-1/2 px-4" style="display: none;">
                 <div
                     class="flex select-none items-center gap-2.5 rounded-lg border border-emerald-100 bg-white py-2 pl-3 pr-2.5 shadow-xl shadow-stone-200/50 dark:border-emerald-950/60 dark:bg-stone-900 dark:shadow-none">
-                    <div class="flex-shrink-0 text-emerald-500 dark:text-emerald-400">
+                    <div class="shrink-0 text-emerald-500 dark:text-emerald-400">
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -158,7 +158,7 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                         {{ session('success') }}
                     </div>
                     <button @click="show = false"
-                        class="flex-shrink-0 rounded p-1 text-stone-400 transition-colors hover:text-stone-600 focus:outline-none dark:hover:text-stone-200">
+                        class="shrink-0 rounded p-1 text-stone-400 transition-colors hover:text-stone-600 focus:outline-none dark:hover:text-stone-200">
                         <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -221,7 +221,7 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                             <th class="px-2.5 py-1.5">Tgl. Pengembalian</th>
                             <th class="px-2.5 py-1.5 text-center">Jumlah</th>
                             <th class="px-2.5 py-1.5 text-center">Status</th>
-                            <th class="w-20 px-2.5 py-1.5 text-right">Aksi</th>
+                            {{-- <th class="w-20 px-2.5 py-1.5 text-right">Aksi</th> --}}
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-stone-100 dark:divide-stone-800/60">
@@ -319,11 +319,10 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                 </td>
 
                                 {{-- Aksi --}}
-                                <td class="px-2.5 py-1.5 text-right">
+                                {{-- <td class="px-2.5 py-1.5 text-right">
                                     <div class="flex items-center justify-end" x-data="{ open: false }">
                                         <div class="relative inline-block text-left">
 
-                                            {{-- Tombol titik tiga --}}
                                             <button @click="open = !open" @click.outside="open = false"
                                                 class="cursor-pointer rounded-md p-1 text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-700 focus:outline-none dark:hover:bg-stone-800 dark:hover:text-stone-200"
                                                 title="Menu Aksi">
@@ -334,7 +333,6 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                                 </svg>
                                             </button>
 
-                                            {{-- Dropdown menu --}}
                                             <div x-show="open" x-transition:enter="transition ease-out duration-100"
                                                 x-transition:enter-start="transform opacity-0 scale-95"
                                                 x-transition:enter-end="transform opacity-100 scale-100"
@@ -344,12 +342,10 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                                 class="absolute right-0 z-50 mt-1 w-36 origin-top-right rounded-md border border-stone-200 bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:border-stone-800 dark:bg-stone-900"
                                                 style="display: none;">
                                                 <div class="space-y-0.5 p-1">
-
                                                     @if ($peminjaman->status === 'dipinjam')
-                                                        {{-- Decline --}}
                                                         <button
                                                             x-on:click="
-                                                                                        $wire.declinePeminjaman({{ $peminjaman->id_peminjaman }})"
+                                                                                            $wire.declinePeminjaman({{ $peminjaman->id_peminjaman }})"
                                                             class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-rose-600 transition-colors hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/40">
                                                             <svg class="color-rose-600 h-3.5 w-3.5"
                                                                 viewBox="0 0 24 24" role="img"
@@ -366,10 +362,9 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                                             </svg>
                                                             Decline
                                                         </button>
-                                                        {{-- Pending --}}
                                                         <button
                                                             x-on:click="
-                                                                                            $wire.pendingPeminjaman({{ $peminjaman->id_peminjaman }})"
+                                                                                                $wire.pendingPeminjaman({{ $peminjaman->id_peminjaman }})"
                                                             class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-orange-500 transition-colors hover:bg-orange-50 dark:text-orange-400 dark:hover:bg-orange-950/40">
                                                             <svg class="color-orange-400 h-3 w-3" fill="currentColor"
                                                                 xmlns="http://www.w3.org/2000/svg"
@@ -382,7 +377,6 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                                             </svg>
                                                             Pending
                                                         </button>
-                                                        {{-- Dikembalikan --}}
                                                         <button x-data
                                                             x-on:click="$dispatch('open-hibah-modal', {id: {{ $peminjaman->id_peminjaman }}, defaultHibah: `0` })"
                                                             class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-blue-600 transition-colors hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-950/40">
@@ -408,10 +402,9 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                                             Dikembalikan
                                                         </button>
                                                     @elseif($peminjaman->status === 'ditolak')
-                                                        {{-- Accept --}}
                                                         <button
                                                             x-on:click="
-                                                                                            $wire.acceptPeminjaman({{ $peminjaman->id_peminjaman }})"
+                                                                                                $wire.acceptPeminjaman({{ $peminjaman->id_peminjaman }})"
                                                             class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-green-500 transition-colors hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-950/30">
                                                             <svg fill="currentColor" class="h-3.5 w-3.5"
                                                                 viewBox="0 0 24 24" id="check-mark-circle-2"
@@ -427,10 +420,9 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                                             </svg>
                                                             Accept
                                                         </button>
-                                                        {{-- Pending --}}
                                                         <button
                                                             x-on:click="
-                                                                                            $wire.pendingPeminjaman({{ $peminjaman->id_peminjaman }})"
+                                                                                                $wire.pendingPeminjaman({{ $peminjaman->id_peminjaman }})"
                                                             class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-orange-500 transition-colors hover:bg-orange-50 dark:text-orange-400 dark:hover:bg-orange-950/40">
                                                             <svg class="color-orange-400 h-3 w-3" fill="currentColor"
                                                                 xmlns="http://www.w3.org/2000/svg"
@@ -443,7 +435,6 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                                             </svg>
                                                             Pending
                                                         </button>
-                                                        {{-- Dikembalikan --}}
                                                         <button x-data
                                                             x-on:click="$dispatch('open-hibah-modal', {id: {{ $peminjaman->id_peminjaman }}, defaultHibah: 0 })"
                                                             class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-blue-600 transition-colors hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-950/40">
@@ -469,10 +460,9 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                                             Dikembalikan
                                                         </button>
                                                     @elseif ($peminjaman->status === 'menunggu')
-                                                        {{-- Accept --}}
                                                         <button
                                                             x-on:click="
-                                                                                            $wire.acceptPeminjaman({{ $peminjaman->id_peminjaman }})"
+                                                                                                $wire.acceptPeminjaman({{ $peminjaman->id_peminjaman }})"
                                                             class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-green-500 transition-colors hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-950/30">
                                                             <svg fill="currentColor" class="h-3.5 w-3.5"
                                                                 viewBox="0 0 24 24" id="check-mark-circle-2"
@@ -488,10 +478,9 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                                             </svg>
                                                             Accept
                                                         </button>
-                                                        {{-- Decline --}}
                                                         <button
                                                             x-on:click="
-                                                                                        $wire.declinePeminjaman({{ $peminjaman->id_peminjaman }})"
+                                                                                            $wire.declinePeminjaman({{ $peminjaman->id_peminjaman }})"
                                                             class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-rose-600 transition-colors hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/40">
                                                             <svg class="color-rose-600 h-3.5 w-3.5"
                                                                 viewBox="0 0 24 24" role="img"
@@ -508,7 +497,6 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                                             </svg>
                                                             Decline
                                                         </button>
-                                                        {{-- Dikembalikan --}}
                                                         <button
                                                             x-on:click="$dispatch('open-hibah-modal', {id: {{ $peminjaman->id_peminjaman }}, defaultHibah: 0 })"
                                                             class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-blue-600 transition-colors hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-950/40">
@@ -534,10 +522,9 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                                             Dikembalikan
                                                         </button>
                                                     @elseif ($peminjaman->status === 'dikembalikan')
-                                                        {{-- Accept --}}
                                                         <button
                                                             x-on:click="
-                                                                                            $wire.acceptPeminjaman({{ $peminjaman->id_peminjaman }})"
+                                                                                                $wire.acceptPeminjaman({{ $peminjaman->id_peminjaman }})"
                                                             class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-green-500 transition-colors hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-950/30">
                                                             <svg fill="currentColor" class="h-3.5 w-3.5"
                                                                 viewBox="0 0 24 24" id="check-mark-circle-2"
@@ -553,10 +540,9 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                                             </svg>
                                                             Accept
                                                         </button>
-                                                        {{-- Decline --}}
                                                         <button
                                                             x-on:click="
-                                                                                        $wire.declinePeminjaman({{ $peminjaman->id_peminjaman }})"
+                                                                                            $wire.declinePeminjaman({{ $peminjaman->id_peminjaman }})"
                                                             class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-rose-600 transition-colors hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/40">
                                                             <svg class="color-rose-600 h-3.5 w-3.5"
                                                                 viewBox="0 0 24 24" role="img"
@@ -573,10 +559,9 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                                             </svg>
                                                             Decline
                                                         </button>
-                                                        {{-- Pending --}}
                                                         <button
                                                             x-on:click="
-                                                                                            $wire.pendingPeminjaman({{ $peminjaman->id_peminjaman }})"
+                                                                                                $wire.pendingPeminjaman({{ $peminjaman->id_peminjaman }})"
                                                             class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-orange-500 transition-colors hover:bg-orange-50 dark:text-orange-400 dark:hover:bg-orange-950/40">
                                                             <svg class="color-orange-400 h-3 w-3" fill="currentColor"
                                                                 xmlns="http://www.w3.org/2000/svg"
@@ -590,7 +575,6 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                                             Pending
                                                         </button>
                                                     @elseif ($peminjaman->status === 'terlambat')
-                                                        {{-- Dikembalikan --}}
                                                         <button x-data
                                                             x-on:click="$dispatch('open-hibah-modal', {id: {{ $peminjaman->id_peminjaman }}, defaultHibah: `0` })"
                                                             class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-blue-600 transition-colors hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-950/40">
@@ -616,15 +600,12 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                                             Dikembalikan
                                                         </button>
                                                     @endif
-
                                                     <flux:separator />
-
-                                                    {{-- Chat Whatsapp --}}
                                                     <button x-data
                                                         x-on:click="$dispatch('open-wa-modal', {
-                                                                                        id: {{ $peminjaman->id_peminjaman }},
-                                                                                        defaultTarget: '{{ $peminjaman->user->no_wa ?? '' }}'
-                                                                                    })"
+                                                                                            id: {{ $peminjaman->id_peminjaman }},
+                                                                                            defaultTarget: '{{ $peminjaman->user->no_wa ?? '' }}'
+                                                                                        })"
                                                         class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-green-600 transition-colors hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-950/40">
                                                         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"
                                                             xmlns="http://www.w3.org/2000/svg">
@@ -634,8 +615,6 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                                         </svg>
                                                         Chat
                                                     </button>
-
-                                                    {{-- Hapus --}}
                                                     <button x-data
                                                         x-on:click="$dispatch('open-delete-modal', { id: {{ $peminjaman->id_peminjaman }} })"
                                                         class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-rose-600 transition-colors hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/40">
@@ -647,13 +626,12 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                                         </svg>
                                                         Hapus
                                                     </button>
-
                                                 </div>
                                             </div>
 
                                         </div>
                                     </div>
-                                </td>
+                                </td> --}}
                             </tr>
                         @empty
                             <tr>
@@ -690,7 +668,7 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                     class="w-full max-w-xs rounded-xl border border-stone-200 bg-white p-5 shadow-2xl dark:border-stone-800 dark:bg-stone-900">
                     <div class="flex items-start gap-3">
                         <div
-                            class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-red-50 dark:bg-red-950">
+                            class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-red-50 dark:bg-red-950">
                             <svg class="h-4 w-4 text-red-500" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
