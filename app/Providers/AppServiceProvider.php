@@ -27,24 +27,24 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->configureDefaults();
 
-        Gate::define('isSuperAdmin', function ($user){
+        Gate::define('isSuperAdmin', function ($user) {
             return $user->role->nama_role === "Super Admin" ? Response::allow() : Response::denyWithStatus(404);
         });
 
-        Gate::define('isAdmin', function ($user){
-            return $user->role->nama_role === "Admin"  ? Response::allow() : Response::denyWithStatus(404);
+        Gate::define('isAdmin', function ($user) {
+            return $user->role->nama_role === "Admin" ? Response::allow() : Response::denyWithStatus(404);
         });
 
-        Gate::define('isKoordinator', function ($user){
-            return $user->role->nama_role === "Koordinator"  ? Response::allow() : Response::denyWithStatus(404);
+        Gate::define('isKoordinator', function ($user) {
+            return $user->role->nama_role === "Koordinator" ? Response::allow() : Response::denyWithStatus(404);
         });
 
-        Gate::define('isUser', function ($user){
-            return $user->role->nama_role === "User"  ? Response::allow() : Response::denyWithStatus(404);
+        Gate::define('isUser', function ($user) {
+            return $user->role->nama_role === "User" ? Response::allow() : Response::denyWithStatus(404);
         });
 
-        Gate::define('isSuperAdminAndAdmin', function ($user){
-            return ($user->role->nama_role === "Super Admin" || $user->role->nama_role === 'Admin')  ? Response::allow() : Response::denyWithStatus(404);
+        Gate::define('isSuperAdminAndAdmin', function ($user) {
+            return ($user->role->nama_role === "Super Admin" || $user->role->nama_role === 'Admin') ? Response::allow() : Response::denyWithStatus(404);
         });
     }
 
@@ -59,14 +59,14 @@ class AppServiceProvider extends ServiceProvider
             app()->isProduction(),
         );
 
-        \Illuminate\Validation\Rules\Password::defaults(fn (): ?Password => app()->isProduction()
-            ? Password::min(12)
-                ->mixedCase()
-                ->letters()
-                ->numbers()
-                ->symbols()
-                ->uncompromised()
-            : null,
-        );
+        // \Illuminate\Validation\Rules\Password::defaults(fn (): ?Password => app()->isProduction()
+        //     ? Password::min(12)
+        //         ->mixedCase()
+        //         ->letters()
+        //         ->numbers()
+        //         ->symbols()
+        //         ->uncompromised()
+        //     : null,
+        // );
     }
 }

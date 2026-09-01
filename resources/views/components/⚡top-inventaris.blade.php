@@ -39,13 +39,9 @@ new class extends Component {
                         {{-- Visual Header --}}
                         <div
                             class="bg-sage-100 dark:bg-sage-900/30 relative flex h-32 w-full items-center justify-center">
-                            {{-- <svg class="text-sage-400 dark:text-sage-600 h-10 w-10" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="{{ $item->img }}" />
-                            </svg> --}}
                             @if ($item->img_path && Storage::exists($item->img_path))
-                                <img src="{{ $item->img_path }}" alt="Img">
+                                <img src="{{ Storage::url($item->img_path) }}" alt="{{ $item->nama_barang }}"
+                                    class="h-full w-full object-cover">
                             @else
                                 <div
                                     class="bg-sage-100 dark:bg-sage-900/40 flex h-1/2 w-1/2 shrink-0 items-center justify-center rounded-lg border border-stone-200 dark:border-stone-700">
