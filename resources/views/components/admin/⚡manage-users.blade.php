@@ -33,7 +33,7 @@ new #[Title('Manage Users')] class extends Component {
 
     public function updateUser($id)
     {
-        $this->dispatch('edit-user', id: $id);
+        $this->dispatch('edit-user-modal', userId: $id);
     }
 
     #[Computed]

@@ -319,7 +319,7 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                                 </td>
 
                                 {{-- Aksi --}}
-                                {{-- <td class="px-2.5 py-1.5 text-right">
+                                <td class="px-2.5 py-1.5 text-right">
                                     <div class="flex items-center justify-end" x-data="{ open: false }">
                                         <div class="relative inline-block text-left">
 
@@ -631,7 +631,7 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
 
                                         </div>
                                     </div>
-                                </td> --}}
+                                </td>
                             </tr>
                         @empty
                             <tr>
@@ -808,7 +808,7 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                         </button>
                     </div>
                     {{-- Tombol --}}
-                    {{-- <div class="flex justify-end gap-1.5">
+                    <div class="flex justify-end gap-1.5">
                         <button @click="show = false"
                             class="rounded bg-gray-200 px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-300 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500">
                             Batal
@@ -817,7 +817,7 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                             class="rounded bg-emerald-600 px-3 py-1.5 text-xs text-white hover:bg-emerald-700 focus:ring-2 focus:ring-emerald-400 focus:ring-offset-1">
                             Kirim
                         </button>
-                    </div> --}}
+                    </div>
                 </div>
             </div>
         </div>
