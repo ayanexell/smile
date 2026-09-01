@@ -86,7 +86,7 @@ new #[Title('Profile settings')] class extends Component {
             $path = $this->upload_ktp->store('ktp');
             $user->ktp_path = $path;
         }
-
+        $user->profile_status = $user->avatar && $user->ktp_path ? true : false;
         $user->save();
 
         Flux::toast(variant: 'success', text: __('Profil berhasil diperbarui.'));
@@ -160,13 +160,13 @@ new #[Title('Profile settings')] class extends Component {
 
                         {{-- Avatar --}}
                         <div
-                            class="{{ $this->profile_status ? '' : 'border-red-600!' }} flex flex-col items-center gap-2 rounded-xl border border-dashed border-stone-200 bg-stone-50 p-3 dark:border-stone-700 dark:bg-stone-800/50">
+                            class="{{ auth()->user()->profile_status ? 'border-green-500!' : 'border-red-500!' }} flex flex-col items-center gap-2 rounded-xl border border-dashed border-stone-200 bg-stone-50 p-3 dark:border-stone-700 dark:bg-stone-800/50">
                             <div class="group relative">
                                 @if ($this->upload_avatar)
                                     <img src="{{ $this->upload_avatar->temporaryUrl() }}" alt="Avatar"
                                         class="{{ $this->profile_status ? '' : 'ring-red-600!' }} ring-sage-200 dark:ring-sage-800 h-14 w-14 rounded-full object-cover ring-2 ring-offset-2 ring-offset-white dark:ring-offset-stone-900" />
                                 @elseif (auth()->user()->avatar)
-                                    <img src="{{ $this->avatar }}" alt="Avatar"
+                                    <img src="{{ Storage::url(auth()->user()->avatar) }}" alt="Avatar"
                                         class="ring-sage-200 dark:ring-sage-800 h-14 w-14 rounded-full object-cover ring-2 ring-offset-2 ring-offset-white dark:ring-offset-stone-900" />
                                 @else
                                     <div
@@ -201,7 +201,7 @@ new #[Title('Profile settings')] class extends Component {
 
                         {{-- KTP --}}
                         <div
-                            class="{{ $this->profile_status ? '' : 'border-red-600!' }} flex flex-col items-center gap-2 rounded-xl border border-dashed border-stone-200 bg-stone-50 p-3 dark:border-stone-700 dark:bg-stone-800/50">
+                            class="{{ auth()->user()->profile_status ? 'border-green-500!' : 'border-red-500!' }} flex flex-col items-center gap-2 rounded-xl border border-dashed border-stone-200 bg-stone-50 p-3 dark:border-stone-700 dark:bg-stone-800/50">
                             @if ($this->upload_ktp)
                                 <img src="{{ $this->upload_ktp->temporaryUrl() }}" alt="KTP"
                                     class="h-12 w-full rounded-lg border border-stone-200 object-cover dark:border-stone-700" />
