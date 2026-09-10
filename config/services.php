@@ -34,5 +34,8 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
-
+    'roboflow' => [
+        'endpoint' => env('ROBOFLOW_ENDPOINT'),
+        'api_key' => env('ROBOFLOW_API_KEY'),
+    ],
 ];

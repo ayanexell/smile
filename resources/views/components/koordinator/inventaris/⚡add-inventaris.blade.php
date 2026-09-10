@@ -62,25 +62,39 @@ new class extends Component {
 
     public function analyzeImage()
     {
+        if (!$this->img_upload) {
+            return;
+        }
+
         $this->analyzing = true;
 
         try {
-            $response = Http::attach('image', fopen($this->img_upload->getRealPath(), 'r'), $this->img_upload->getClientOriginalName())->post('http://localhost:5000/detect');
+            $imagePath = $this->img_upload->getRealPath();
+            $action = app(RoboflowAction::class);
+            $result = $action->analyzeFromPath($imagePath);
 
-            if ($response->successful()) {
-                $data = $response->json();
-                $this->nama_barang = $data['nama_barang'] ?? '';
-                $this->tipe = $data['tipe'] ?? '';
-                $this->warna = $data['warna'] ?? '';
-                $this->kondisi = $data['kondisi'] ?? 'baik';
-                $this->jumlah = 1;
+            if ($result['count'] > 0) {
+                $this->nama_barang = ucwords($result['first_class'] ?? 'Objek Terdeteksi');
+                $this->tipe = strtoupper($result['first_class'] ?? 'Kustom');
+                $this->jumlah = $result['count'];
+                $this->warna = 'Bawaan';
+                $this->kondisi = 'baik';
 
-                $this->dispatch('inventaris-toast', type: 'success', message: 'Analisis berhasil! Form telah terisi otomatis.');
+                session()->flash('notification', [
+                    'type' => 'success',
+                    'message' => "Analisis berhasil! Terdeteksi {$this->jumlah} objek {$this->nama_barang}.",
+                ]);
             } else {
-                $this->dispatch('inventaris-toast', type: 'error', message: 'Gagal menganalisis gambar: ' . $response->body());
+                session()->flash('notification', [
+                    'type' => 'warning',
+                    'message' => 'Analisis selesai, namun tidak ada objek yang berhasil terdeteksi pada gambar.',
+                ]);
             }
-        } catch (\Exception $e) {
-            $this->dispatch('inventaris-toast', type: 'error', message: 'Error koneksi ke API YOLO: ' . $e->getMessage());
+        } catch (Exception $e) {
+            session()->flash('notification', [
+                'type' => 'error',
+                'message' => 'Gagal menganalisis gambar: ' . $e->getMessage(),
+            ]);
         }
 
         $this->analyzing = false;
