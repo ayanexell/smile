@@ -33,9 +33,14 @@ new class extends Component {
     public $dpt_dipinjam = false; // 2MB max
 
     #[Validate('nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048')]
-    public $img_upload;
+    public $imgUpload;
 
     public $analyzing = false;
+
+    public function updatedImgUpload($path)
+    {
+        $this->analyzeImage();
+    }
 
     public function validationAttributes()
     {
@@ -76,23 +81,23 @@ new class extends Component {
 
     public function analyzeImage()
     {
-        if (!$this->img_upload) {
+        if (!$this->imgUpload) {
             return;
         }
 
         $this->analyzing = true;
 
         try {
-            $imagePath = $this->img_upload->getRealPath();
+            $imagePath = $this->imgUpload->getRealPath();
             $action = app(RoboflowAction::class);
             $result = $action->analyzeFromPath($imagePath);
 
             if ($result['count'] > 0) {
                 $this->nama_barang = ucwords($result['first_class'] ?? 'Objek Terdeteksi');
-                $this->tipe = strtoupper($result['first_class'] ?? 'Kustom');
+                $this->tipe = $result['type'];
                 $this->jumlah = $result['count'];
                 $this->warna = 'Bawaan';
-                $this->kondisi = 'baik';
+                // $this->kondisi = 'Baik';
 
                 session()->flash('notification', [
                     'type' => 'success',
@@ -370,10 +375,10 @@ new class extends Component {
                             class="hover:border-sage-400 dark:hover:border-sage-500 relative block w-full cursor-pointer rounded-lg border-2 border-dashed border-stone-300 p-4 text-center transition dark:border-stone-600">
 
                             {{-- Input file asli disembunyikan --}}
-                            <input type="file" wire:model.live="img_upload" accept="image/*" class="hidden">
+                            <input type="file" wire:model.live="imgUpload" accept="image/*" class="hidden">
 
                             {{-- Loading --}}
-                            <div wire:loading wire:target="img_upload"
+                            <div wire:loading wire:target="imgUpload"
                                 class="flex items-center justify-center gap-2 py-4 text-xs text-stone-500">
                                 <svg class="text-sage-500 h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg"
                                     fill="none" viewBox="0 0 24 24">
@@ -387,8 +392,8 @@ new class extends Component {
                             </div>
 
                             {{-- State Kosong --}}
-                            @if (!$img_upload)
-                                <div wire:loading.remove wire:target="img_upload" class="py-2">
+                            @if (!$imgUpload)
+                                <div wire:loading.remove wire:target="imgUpload" class="py-2">
                                     <svg class="mx-auto mb-1 h-6 w-6 text-stone-400" fill="none"
                                         stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
@@ -398,11 +403,11 @@ new class extends Component {
                                 </div>
                             @endif
 
-                            @error('img_upload')
+                            @error('imgUpload')
                                 <p class="mt-2 text-[10px] text-red-500">{{ $message }}</p>
                             @enderror
                         </label>
-                        @if ($img_upload)
+                        @if ($imgUpload)
                             {{-- Tombol analisis ulang (opsional) --}}
                             <div class="mt-2 text-center">
                                 <button type="button" wire:click="analyzeImage" :disabled="$wire.analyzing"
