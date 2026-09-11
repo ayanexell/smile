@@ -7,7 +7,7 @@ new class extends Component {
     public function render()
     {
         return $this->view([
-            'topBorrowedItems' => Inventaris::orderBy('frequensi_peminjaman', 'asc')->take(8)->get(),
+            'topBorrowedItems' => Inventaris::onlyDipinjamkan()->orderBy('frequensi_peminjaman', 'asc')->take(8)->get(),
         ]);
     }
 };
