@@ -12,10 +12,10 @@ new class extends Component {
         $sevenDaysAgo = $now->copy()->subDays(7);
 
         // ---------- Total Aset (jumlah total barang) ----------
-        $totalCurrent = Inventaris::sum('jumlah');
+        $totalCurrent = Inventaris::onlyDipinjamkan()->sum('jumlah');
 
         // Estimasi jumlah total 7 hari lalu: hanya barang yang sudah ada saat itu
-        $totalSevenDaysAgo = Inventaris::where('created_at', '<=', $sevenDaysAgo)->sum('jumlah');
+        $totalSevenDaysAgo = Inventaris::onlyDipinjamkan()->where('created_at', '<=', $sevenDaysAgo)->sum('jumlah');
 
         $totalChange = $this->calcPercentageChange($totalCurrent, $totalSevenDaysAgo);
 
@@ -27,22 +27,22 @@ new class extends Component {
         $dipinjamChange = $this->calcPercentageChange($dipinjamCurrent, $dipinjamSevenDaysAgo);
 
         // ---------- Kondisi Baik ----------
-        $totalJumlah = Inventaris::sum('jumlah');
-        $baikCurrent = Inventaris::where('kondisi', 'baik')->sum('jumlah');
+        $totalJumlah = Inventaris::onlyDipinjamkan()->sum('jumlah');
+        $baikCurrent = Inventaris::onlyDipinjamkan()->where('kondisi', 'baik')->sum('jumlah');
         $persenBaikCurrent = $totalJumlah > 0 ? round(($baikCurrent / $totalJumlah) * 100) : 0;
 
         // Persentase 7 hari lalu (hanya dari barang yang sudah ada saat itu)
-        $totalSevenDays = Inventaris::where('created_at', '<=', $sevenDaysAgo)->sum('jumlah');
-        $baikSevenDays = Inventaris::where('created_at', '<=', $sevenDaysAgo)->where('kondisi', 'baik')->sum('jumlah');
+        $totalSevenDays = Inventaris::onlyDipinjamkan()->where('created_at', '<=', $sevenDaysAgo)->sum('jumlah');
+        $baikSevenDays = Inventaris::onlyDipinjamkan()->where('created_at', '<=', $sevenDaysAgo)->where('kondisi', 'baik')->sum('jumlah');
         $persenBaikSevenDays = $totalSevenDays > 0 ? round(($baikSevenDays / $totalSevenDays) * 100) : 0;
 
         $baikChange = $persenBaikCurrent - $persenBaikSevenDays;
         $baikChangeFormatted = ($baikChange >= 0 ? '+' : '') . $baikChange . '%';
 
         // ---------- Perlu Servis (barang rusak) ----------
-        $totalBarangbisaDipinjam = Inventaris::where('dpt_dipinjam', 1)->sum('jumlah');
+        $totalBarangbisaDipinjam = Inventaris::onlyDipinjamkan()->where('dpt_dipinjam', 1)->sum('jumlah');
 
-        $dptDipinjam7hari = Inventaris::where('created_at', '<=', $sevenDaysAgo)->where('dpt_dipinjam', 1)->sum('jumlah');
+        $dptDipinjam7hari = Inventaris::onlyDipinjamkan()->where('created_at', '<=', $sevenDaysAgo)->where('dpt_dipinjam', 1)->sum('jumlah');
 
         $rusakChange = $totalBarangbisaDipinjam - $dptDipinjam7hari;
         $rusakChangeFormatted = ($rusakChange >= 0 ? '+' : '') . $rusakChange;
