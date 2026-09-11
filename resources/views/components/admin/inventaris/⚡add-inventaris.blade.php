@@ -108,7 +108,7 @@ new class extends Component {
                 'message' => 'Error koneksi ke API YOLO: ' . $e->getMessage(),
             ]);
         }
-
+ 
         $this->analyzing = false;
     }
 

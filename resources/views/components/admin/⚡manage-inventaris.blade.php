@@ -28,7 +28,7 @@ new #[Title('Manage Inventaris')] class extends Component {
 
     public function render()
     {
-        $inventaris = Inventaris::query()->when($this->search, fn($q) => $q->where('nama', 'like', "%{$this->search}%")->orWhere('tipe', 'like', "%{$this->search}%"))->when($this->filterKondisi, fn($q) => $q->where('kondisi', $this->filterKondisi))->when($this->filterDptDipinjam, fn($q) => $q->where('dpt_dipinjam', $this->filterDptDipinjam))->latest()->paginate(10);
+        $inventaris = Inventaris::query()->when($this->search, fn($q) => $q->where('nama_barang', 'like', "%{$this->search}%")->orWhere('tipe', 'like', "%{$this->search}%"))->when($this->filterKondisi, fn($q) => $q->where('kondisi', $this->filterKondisi))->when($this->filterDptDipinjam, fn($q) => $q->where('dpt_dipinjam', $this->filterDptDipinjam))->latest()->paginate(10);
         // dd($inventaris);
         return $this->view([
             'inventaris' => $inventaris,
@@ -94,7 +94,6 @@ new #[Title('Manage Inventaris')] class extends Component {
                     <option value="">Semua Kondisi</option>
                     <option value="baik">Baik</option>
                     <option value="rusak">Rusak</option>
-                    <option value="servis">Servis</option>
                 </select>
 
                 {{-- Filter Dapat Dipinjam --}}

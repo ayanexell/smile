@@ -27,8 +27,8 @@ class UserSeeder extends Seeder
         $dklh = Departemens::where('singkatan', 'DKLH')->first();
         $bk = Departemens::where('singkatan', 'BK')->first();
         $pu = Departemens::where('singkatan', 'PU')->first();
-        $dpbl = Departemens::where('singkatan', 'DPBL')->first();
         $porseni = Departemens::where('singkatan', 'PORSENI')->first();
+        // $dpbl = Departemens::where('singkatan', 'DPBL')->first();
 
         // Create Super Admin
         User::create([
@@ -48,7 +48,7 @@ class UserSeeder extends Seeder
         ]);
 
         // Create Admins
-        User::factory()->admin()->count(3)->create();
+        User::factory()->admin()->count(1)->create();
 
         // Create Koordinator
         User::factory()->koordinator()->count(1)->create([
@@ -72,9 +72,9 @@ class UserSeeder extends Seeder
         User::factory()->koordinator()->count(1)->create([
             'departemen_id' => $pu->id_departemen,
         ]);
-        User::factory()->koordinator()->count(1)->create([
-            'departemen_id' => $dpbl->id_departemen,
-        ]);
+        // User::factory()->koordinator()->count(1)->create([
+        //     'departemen_id' => $dpbl->id_departemen,
+        // ]);
         User::factory()->koordinator()->count(1)->create([
             'departemen_id' => $dok->id_departemen,
         ]);
@@ -83,6 +83,6 @@ class UserSeeder extends Seeder
         ]);
 
         // Create Regular Users
-        User::factory()->regularUser()->count(10)->create();
+        // User::factory()->regularUser()->count(10)->create();
     }
 }
