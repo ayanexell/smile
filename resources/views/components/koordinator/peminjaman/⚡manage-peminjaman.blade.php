@@ -709,12 +709,12 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                     this.errorMessage = '';
                     this.show = true;
                 });
-        
+
                 // Event sukses dari Livewire
                 window.addEventListener('hibah-success', (e) => {
                     this.show = false;
                 });
-        
+
                 // Event error dari Livewire
                 window.addEventListener('hibah-error', (e) => {
                     this.errorMessage = e.detail.message;

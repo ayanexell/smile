@@ -839,14 +839,14 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                     this.errorMessage = ''; // reset error setiap kali buka
                     this.show = true;
                 });
-        
+
                 // Event sukses dari Livewire
                 window.addEventListener('wa-message-sent', (e) => {
                     this.show = false;
                     // Opsional: tampilkan toast sukses global
                     alert(e.detail.message); // atau integrasi dengan notifikasi lain
                 });
-        
+
                 // Event error dari Livewire
                 window.addEventListener('wa-error', (e) => {
                     this.errorMessage = e.detail.message;
@@ -931,12 +931,12 @@ new #[Title('Manajemen Peminjaman')] class extends Component {
                     this.errorMessage = '';
                     this.show = true;
                 });
-        
+
                 // Event sukses dari Livewire
                 window.addEventListener('hibah-success', (e) => {
                     this.show = false;
                 });
-        
+
                 // Event error dari Livewire
                 window.addEventListener('hibah-error', (e) => {
                     this.errorMessage = e.detail.message;
