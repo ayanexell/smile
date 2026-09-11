@@ -1,3 +1,5 @@
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 <?php
 
 use Livewire\Component;

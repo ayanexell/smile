@@ -21,7 +21,7 @@ return new class extends Migration {
             $table->string('img_path');
             $table->string('warna');
             $table->boolean('dpt_dipinjam');
-            $table->integer('frequensi_peminjaman')->nullable();
+            $table->integer('frequensi_peminjaman')->default(0);
             $table->timestamps();
             $table->foreign('user_id')->references('id_user')->on('users');
         });
