@@ -146,7 +146,17 @@ new #[Layout('layouts.guest')] #[Title('List Inventaris')] class extends Compone
                     </div>
                 </div>
             @empty
-                <p class="text-center text-stone-500 dark:text-stone-400">Tidak ada inventaris yang tersedia.</p>
+                <div class="col-span-full flex items-center justify-center">
+                    <div class="flex w-full max-w-sm flex-col items-center justify-center">
+                        <!-- SVG Ilustrasi -->
+                        <x-list-inventaris-illustration class="w-40 text-stone-300 sm:w-56 dark:text-stone-600" />
+
+                        <!-- Teks -->
+                        <p class="text-center text-sm text-stone-500 lg:text-xl dark:text-stone-400">
+                            Belum ada inventaris yang tersedia.
+                        </p>
+                    </div>
+                </div>
             @endforelse
         </div>
         <livewire:modal-peminjaman />

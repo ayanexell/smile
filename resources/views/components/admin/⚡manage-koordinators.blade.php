@@ -34,7 +34,14 @@ new #[Title('Manage Koordinator')] class extends Component {
         return $this->dispatch('edit-koordinator', id: $id);
     }
 
-    public function render()
+    public function resetPassword(User $user)
+    {
+        $user->password = bcrypt('password');
+        $user->save();
+        session()->flash('success', 'Password Koordinator berhasil direset menjadi "password".');
+    }
+
+    public function with()
     {
         $users = User::onlyKoordinators()
             ->when(
@@ -49,10 +56,10 @@ new #[Title('Manage Koordinator')] class extends Component {
             ->latest()
             ->paginate(10);
 
-        return $this->view([
+        return [
             'users' => $users,
             'departemens' => Departemens::all(),
-        ]);
+        ];
     }
 };
 ?>
@@ -263,15 +270,13 @@ new #[Title('Manage Koordinator')] class extends Component {
                                                 x-transition:leave="transition ease-in duration-75"
                                                 x-transition:leave-start="transform opacity-100 scale-100"
                                                 x-transition:leave-end="transform opacity-0 scale-95"
-                                                class="absolute right-0 z-30 mt-1 w-32 origin-top-right rounded-md border border-stone-200 bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:border-stone-800 dark:bg-stone-900"
+                                                class="absolute right-0 z-30 mt-1 w-40 origin-top-right rounded-md border border-stone-200 bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:border-stone-800 dark:bg-stone-900"
                                                 style="display: none;">
                                                 <div class="space-y-0.5 p-1">
 
                                                     {{-- Edit --}}
                                                     <button x-data
-                                                        x-on:click="$dispatch('edit-koordinator-modal', {
-                                                                                                                            userId: {{ $user->id_user }},
-                                                                                                                        })"
+                                                        x-on:click="$dispatch('edit-koordinator-modal', { userId: {{ $user->id_user }} })"
                                                         @click="open = false"
                                                         class="text-sage-600 dark:text-sage-400 hover:bg-sage-50 dark:hover:bg-sage-950/30 flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs transition-colors">
                                                         <svg class="text-sage-500 h-3.5 w-3.5" fill="none"
@@ -281,6 +286,20 @@ new #[Title('Manage Koordinator')] class extends Component {
                                                                 d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
                                                         </svg>
                                                         Edit
+                                                    </button>
+
+                                                    {{-- Reset Password --}}
+                                                    <button x-data
+                                                        x-on:click="$dispatch('open-reset-modal', { id: {{ $user->id_user }} })"
+                                                        @click="open = false"
+                                                        class="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-left text-xs text-amber-600 transition-colors hover:bg-amber-50 dark:text-amber-400 dark:hover:bg-amber-950/40">
+                                                        <svg class="h-3.5 w-3.5 text-amber-500" fill="none"
+                                                            stroke="currentColor" stroke-width="2"
+                                                            viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" />
+                                                        </svg>
+                                                        Reset Password
                                                     </button>
 
                                                     <flux:separator />
@@ -334,5 +353,7 @@ new #[Title('Manage Koordinator')] class extends Component {
     <livewire:admin.koordinators.edit-koordinator />
     <x-modal-hapus modal_name="open-delete-modal" action_hapus="deleteKoordinator" title="Hapus Koordinator"
         description="Data koordinator akan dihapus permanen dari sistem." />
+    <x-modal-reset modal_name="open-reset-modal" action_reset="resetPassword" title="Reset Password"
+        description="Password koordinator akan direset." />
 
 </div>

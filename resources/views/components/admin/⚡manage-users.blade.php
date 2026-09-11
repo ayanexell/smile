@@ -348,7 +348,7 @@ new #[Title('Manage Users')] class extends Component {
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="9" class="px-2.5 py-10 text-center">
+                                <td colspan="10" class="px-2.5 py-10 text-center">
                                     <div class="flex flex-col items-center gap-1.5 text-stone-400">
                                         <p class="text-xs font-medium">{{ __('Tidak ada pengguna ditemukan') }}</p>
                                     </div>
