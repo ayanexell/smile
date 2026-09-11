@@ -3,10 +3,9 @@
 use Livewire\Component;
 use App\Models\Inventaris;
 use Livewire\WithFileUploads;
-use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Http;
+use App\Actions\RoboflowAction;
 use Illuminate\Support\Facades\Auth;
 
 new class extends Component {
@@ -62,23 +61,23 @@ new class extends Component {
 
     public function analyzeImage()
     {
-        if (!$this->img_upload) {
+        if (!$this->imgUpload) {
             return;
         }
 
         $this->analyzing = true;
 
         try {
-            $imagePath = $this->img_upload->getRealPath();
+            $imagePath = $this->imgUpload->getRealPath();
             $action = app(RoboflowAction::class);
             $result = $action->analyzeFromPath($imagePath);
 
             if ($result['count'] > 0) {
                 $this->nama_barang = ucwords($result['first_class'] ?? 'Objek Terdeteksi');
-                $this->tipe = strtoupper($result['first_class'] ?? 'Kustom');
+                $this->tipe = $result['type'];
                 $this->jumlah = $result['count'];
                 $this->warna = 'Bawaan';
-                $this->kondisi = 'baik';
+                // $this->kondisi = 'Baik';
 
                 session()->flash('notification', [
                     'type' => 'success',
