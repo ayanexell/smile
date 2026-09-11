@@ -20,7 +20,6 @@ class DepartemenSeeder extends Seeder
             ['nama_departemen' => 'Kebersihan dan Lingkungan Hidup', 'singkatan' => 'DKLH', 'deskripsi' => 'Departemen yang mengelola kegiatan Kebersihan dan Lingkungan Hidup.'],
             ['nama_departemen' => 'Bimbingan dan Konseling', 'singkatan' => 'BK', 'deskripsi' => 'Departemen yang mengelola kegiatan Bimbingan dan Konseling.'],
             ['nama_departemen' => 'Pekerjaan Umum', 'singkatan' => 'PU', 'deskripsi' => 'Departemen yang mengelola kegiatan Pekerjaan Umum.'],
-            ['nama_departemen' => 'Pengembangan Bahasa dan Lokal', 'singkatan' => 'DPBL', 'deskripsi' => 'Departemen yang mengelola kegiatan Pengembangan Bahasa dan Lokal.'],
             ['nama_departemen' => 'Publikasi Organisasi dan Seni', 'singkatan' => 'PORSENI', 'deskripsi' => 'Departemen yang mengelola kegiatan publikasi organisasi dan seni.'],
         ];
 

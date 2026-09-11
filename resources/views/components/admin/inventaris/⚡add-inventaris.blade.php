@@ -115,7 +115,7 @@ new class extends Component {
                 'message' => 'Gagal menganalisis gambar: ' . $e->getMessage(),
             ]);
         }
-
+ 
         $this->analyzing = false;
     }
 
