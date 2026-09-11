@@ -3,9 +3,9 @@
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\User;
-use App\Models\Roles;
 use App\Models\Departemens;
 use Livewire\Attributes\Title;
+use Illuminate\Support\Facades\Hash;
 
 new #[Title('Manage Koordinator')] class extends Component {
     use WithPagination;
@@ -36,7 +36,7 @@ new #[Title('Manage Koordinator')] class extends Component {
 
     public function resetPassword(User $user)
     {
-        $user->password = bcrypt('password');
+        $user->password = Hash::make('password');
         $user->save();
         session()->flash('success', 'Password Koordinator berhasil direset menjadi "password".');
     }

@@ -26,7 +26,7 @@ new class extends Component {
     public $dpt_dipinjam = false; // 2MB max
 
     #[Validate('nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048')]
-    public $img_upload;
+    public $imgUpload;
 
     public $analyzing = false;
 
@@ -43,10 +43,10 @@ new class extends Component {
             'warna.required' => 'Warna wajib diisi.',
             'dpt_dipinjam.required' => 'Status peminjaman harus dipilih.',
             'dpt_dipinjam.boolean' => 'Status peminjaman tidak valid.',
-            'img_upload.required' => 'File gambar wajib diunggah.',
-            'img_upload.mimes' => 'Format file harus PNG, JPG, atau JPEG.',
-            'img_upload.mimetypes' => 'File yang diunggah bukan gambar yang valid.',
-            'img_upload.max' => 'Ukuran file maksimal 2,28 MB.',
+            'imgUpload.required' => 'File gambar wajib diunggah.',
+            'imgUpload.mimes' => 'Format file harus PNG, JPG, atau JPEG.',
+            'imgUpload.mimetypes' => 'File yang diunggah bukan gambar yang valid.',
+            'imgUpload.max' => 'Ukuran file maksimal 2,28 MB.',
         ];
     }
 
@@ -54,7 +54,7 @@ new class extends Component {
 
     public function updatedImgUpload()
     {
-        if ($this->img_upload) {
+        if ($this->imgUpload) {
             $this->analyzeImage();
         }
     }
@@ -103,8 +103,8 @@ new class extends Component {
     {
         $this->validate();
 
-        if ($this->img_upload) {
-            $this->img_path = $this->img_upload->store('inventaris', 'public');
+        if ($this->imgUpload) {
+            $this->img_path = $this->imgUpload->store('inventaris', 'public');
         }
 
         try {
@@ -129,7 +129,7 @@ new class extends Component {
 
     public function resetForm()
     {
-        $this->reset(['nama_barang', 'jumlah', 'kondisi', 'tipe', 'img_path', 'warna', 'dpt_dipinjam', 'img_upload']);
+        $this->reset(['nama_barang', 'jumlah', 'kondisi', 'tipe', 'img_path', 'warna', 'dpt_dipinjam', 'imgUpload']);
     }
 };
 ?>
@@ -338,10 +338,10 @@ new class extends Component {
                             class="hover:border-sage-400 dark:hover:border-sage-500 relative block w-full cursor-pointer rounded-lg border-2 border-dashed border-stone-300 p-4 text-center transition dark:border-stone-600">
 
                             {{-- Input file asli disembunyikan --}}
-                            <input type="file" wire:model.live="img_upload" accept="image/*" class="hidden">
+                            <input type="file" wire:model.live="imgUpload" accept="image/*" class="hidden">
 
                             {{-- Loading --}}
-                            <div wire:loading wire:target="img_upload"
+                            <div wire:loading wire:target="imgUpload"
                                 class="flex items-center justify-center gap-2 py-4 text-xs text-stone-500">
                                 <svg class="text-sage-500 h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg"
                                     fill="none" viewBox="0 0 24 24">
@@ -355,8 +355,8 @@ new class extends Component {
                             </div>
 
                             {{-- State Kosong --}}
-                            @if (!$img_upload)
-                                <div wire:loading.remove wire:target="img_upload" class="py-2">
+                            @if (!$imgUpload)
+                                <div wire:loading.remove wire:target="imgUpload" class="py-2">
                                     <svg class="mx-auto mb-1 h-6 w-6 text-stone-400" fill="none"
                                         stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
@@ -366,11 +366,11 @@ new class extends Component {
                                 </div>
                             @endif
 
-                            @error('img_upload')
+                            @error('imgUpload')
                                 <p class="mt-2 text-[10px] text-red-500">{{ $message }}</p>
                             @enderror
                         </label>
-                        @if ($img_upload)
+                        @if ($imgUpload)
                             {{-- Tombol analisis ulang (opsional) --}}
                             <div class="mt-2 text-center">
                                 <button type="button" wire:click="analyzeImage" :disabled="$wire.analyzing"

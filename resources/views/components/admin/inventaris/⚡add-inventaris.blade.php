@@ -46,7 +46,7 @@ new class extends Component {
     {
         return [
             'nama_barang' => 'Nama Barang',
-            'img_upload' => 'Foto Barang', // ubah dari img_path
+            'imgUpload' => 'Foto Barang', // ubah dari img_path
             'dpt_dipinjam' => 'Status Ketersediaan Pinjam',
         ];
     }
@@ -67,9 +67,9 @@ new class extends Component {
             'tipe.required' => 'Tipe barang wajib diisi.',
             'tipe.max' => 'Tipe tidak boleh lebih dari 100 karakter.',
 
-            'img_upload.required' => 'Foto atau gambar barang wajib diunggah.',
-            'img_upload.image' => 'File harus berupa gambar (JPEG, PNG, dll).',
-            'img_upload.max' => 'Ukuran gambar tidak boleh lebih dari 2MB.',
+            'imgUpload.required' => 'Foto atau gambar barang wajib diunggah.',
+            'imgUpload.image' => 'File harus berupa gambar (JPEG, PNG, dll).',
+            'imgUpload.max' => 'Ukuran gambar tidak boleh lebih dari 2MB.',
 
             'warna.required' => 'Warna barang wajib diisi.',
             'warna.max' => 'Warna tidak boleh lebih dari 100 karakter.',
@@ -115,13 +115,13 @@ new class extends Component {
                 'message' => 'Gagal menganalisis gambar: ' . $e->getMessage(),
             ]);
         }
- 
+
         $this->analyzing = false;
     }
 
     public function saveInventaris()
     {
-        // 1. Validasi semua input (termasuk img_upload)
+        // 1. Validasi semua input (termasuk imgUpload)
         try {
             $this->validate();
         } catch (ValidationException $e) {
@@ -131,8 +131,8 @@ new class extends Component {
 
         // 2. Simpan file setelah validasi berhasil
         try {
-            if ($this->img_upload) {
-                $this->img_path = $this->img_upload->store('inventaris', 'public');
+            if ($this->imgUpload) {
+                $this->img_path = $this->imgUpload->store('inventaris', 'public');
             } else {
                 // Jika tidak ada file, kita beri default atau error
                 throw new \Exception('Gambar wajib diunggah.');
@@ -151,7 +151,7 @@ new class extends Component {
             ]);
 
             // 4. Reset form
-            $this->reset(['nama_barang', 'jumlah', 'kondisi', 'tipe', 'img_path', 'warna', 'dpt_dipinjam', 'img_upload']);
+            $this->reset(['nama_barang', 'jumlah', 'kondisi', 'tipe', 'img_path', 'warna', 'dpt_dipinjam', 'imgUpload']);
             $this->dispatch('add-success', ['message' => 'Inventaris berhasil ditambahkan!']);
             session()->flash('notification', [
                 'type' => 'success',

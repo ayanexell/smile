@@ -505,7 +505,7 @@ new #[Title('Kelola Inventaris')] class extends Component {
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="px-2.5 py-10 text-center">
+                                <td colspan="9" class="px-2.5 py-10 text-center">
                                     <div class="flex flex-col items-center gap-2 text-stone-400">
                                         <svg class="h-8 w-8 text-stone-300 dark:text-stone-700" fill="none"
                                             stroke="currentColor" viewBox="0 0 24 24">
